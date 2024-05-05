@@ -6,7 +6,10 @@ import DepartmentsView from '../views/DepartmentsView.vue'
 import CreateDepartment from '../pages/Departments/CreateDepartment.vue'
 import DepartmentDetails from '../pages/Departments/DepartmentDetails.vue'
 import EditDepartment from '../pages/Departments/EditDepartment.vue'
-
+import QualificationsView from '../views/QualificationsView.vue'
+import CreateQualification from '../pages/Qualifications/CreateQualification.vue'
+import QualificationDetails from '../pages/Qualifications/QualificationDetails.vue'
+import EditQualification from '../pages/Qualifications/EditQualification.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +54,32 @@ const router = createRouter({
       path: '/departments/departmentDetails/:id',
       name: 'DepartmentDetails',
       component: DepartmentDetails
+    },
+    {
+      path: '/qualifications',
+      component: QualificationsView,
+      children: [
+        {
+          path: '', 
+          name: 'Qualifications',
+          component: QualificationsView
+        }
+      ]
+    },
+    {
+      path: '/qualifications/create-qualification',
+      name: 'CreateQualification',
+      component: CreateQualification
+    },
+    {
+      path: '/qualifications/edit-qualification/:id',
+      name: 'EditQualification',
+      component: EditQualification
+    },
+    {
+      path: '/qualifications/qualificationDetails/:id',
+      name: 'QualificationDetails',
+      component: QualificationDetails
     },
     {
       path: '/about',
