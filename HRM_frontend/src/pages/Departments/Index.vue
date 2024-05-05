@@ -26,7 +26,7 @@
         </tbody>
       </table>
       <!-- Delete Confirmation Modal -->
-      <DeleteConfirmationModal v-if="departmentToDelete !== null" :departmentId="departmentToDelete" @cancel="cancelDelete" @ok="confirmDelete" />
+      <DeleteConfirmationModal itemType="department" v-if="departmentToDelete !== null" :departmentId="departmentToDelete" @cancel="cancelDelete" @ok="confirmDelete" />
     </div>
   </template>
   
