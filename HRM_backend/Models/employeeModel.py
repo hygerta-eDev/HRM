@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from Config.database import Base
 from .departmentsModel import Departments
@@ -42,7 +42,10 @@ class Employees(Base):
     active = Column(Boolean, default=True)
     qualification_id = Column(Integer, ForeignKey('qualifications.id'))
     user_id = Column(Integer, ForeignKey('users.user_id'))
-
+    created_at =Column(DateTime)
+    updated_at = Column(DateTime)
+    deleted_at= Column(DateTime)
+    
     ethnicity = relationship("Ethnicities", back_populates="employees")
     departments = relationship("Departments", back_populates="employees")
     job_positions = relationship("JobPosition", back_populates="employees")

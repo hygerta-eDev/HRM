@@ -8,6 +8,7 @@ from Models.registersModel import Users
 from Schema.registerSchema import UserCreate
 import secrets
 from passlib.hash import bcrypt
+from fastapi.security import OAuth2PasswordBearer
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -15,6 +16,8 @@ SECRET_KEY = secrets.token_hex(32)
 ALGORITHM = "HS256"
 
 class UserService:
+    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
     @staticmethod
     def get_all_users(db: Session = Depends(get_db)):
         return db.query(Users).all()
@@ -72,3 +75,16 @@ class UserService:
             data={"sub": user.username}, expires_delta=access_token_expires
         )
         return {"access_token": access_token, "token_type": "bearer"}
+
+    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+        print("Received token:", token)
+
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            username: str = payload.get("sub")
+            user = db.query(Users).filter(Users.username == username).first()
+            if user is None:
+                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+            return user
+        except JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
