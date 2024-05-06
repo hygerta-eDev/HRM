@@ -10,7 +10,10 @@ import QualificationsView from '../views/QualificationsView.vue'
 import CreateQualification from '../pages/Qualifications/CreateQualification.vue'
 import QualificationDetails from '../pages/Qualifications/QualificationDetails.vue'
 import EditQualification from '../pages/Qualifications/EditQualification.vue'
-
+import JobPositionsView from '../views/JobPositionView.vue'
+import CreateJobPosition from '../pages/JobPositions/CreateJobPosition.vue'
+import JobPositionDetails from '../pages/JobPositions/DetailsJobPosition.vue'
+import EditJobPosition from '../pages/JobPositions/EditJobPosition.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -80,6 +83,32 @@ const router = createRouter({
       path: '/qualifications/qualificationDetails/:id',
       name: 'QualificationDetails',
       component: QualificationDetails
+    },
+    {
+      path: '/jobPositions',
+      component: JobPositionsView,
+      children: [
+        {
+          path: '', 
+          name: 'JobPositions',
+          component: JobPositionsView
+        }
+      ]
+    },
+    {
+      path: '/jobPositions/create-jobPosition',
+      name: 'CreateJobPosition',
+      component: CreateJobPosition
+    },
+    {
+      path: '/jobPositions/edit-jobPosition/:id',
+      name: 'EditJobPosition',
+      component: EditJobPosition
+    },
+    {
+      path: '/jobPositions/jobPositionDetails/:id',
+      name: 'JobPositionDetails',
+      component: JobPositionDetails
     },
     {
       path: '/about',
