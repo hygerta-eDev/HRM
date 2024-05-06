@@ -6,5 +6,11 @@ class JobPositionCreate(BaseModel):
     slug: str
     department_id: int
     created_at:datetime
-    updated_at: datetime
+
+
+class JobPositionUpdate(BaseModel):
+    name: Optional[str]
+    slug: Optional[str]
+    department_id: Optional[int]
+    updated_at: Optional[datetime]
     deleted_at:Optional[datetime]
