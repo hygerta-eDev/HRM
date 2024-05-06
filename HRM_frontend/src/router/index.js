@@ -14,6 +14,10 @@ import JobPositionsView from '../views/JobPositionView.vue'
 import CreateJobPosition from '../pages/JobPositions/CreateJobPosition.vue'
 import JobPositionDetails from '../pages/JobPositions/DetailsJobPosition.vue'
 import EditJobPosition from '../pages/JobPositions/EditJobPosition.vue'
+import EthnicitiesView from '../views/EthnicitiesView.vue'
+import CreateEthnicity from '../pages/Ethnicities/CreateEthnicity.vue'
+import EthnicityDetails from '../pages/Ethnicities/EthnicityDetails.vue'
+import EditEthnicity from '../pages/Ethnicities/EditEthnicity.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -109,6 +113,32 @@ const router = createRouter({
       path: '/jobPositions/jobPositionDetails/:id',
       name: 'JobPositionDetails',
       component: JobPositionDetails
+    },
+    {
+      path: '/ethnicities',
+      component: EthnicitiesView,
+      children: [
+        {
+          path: '', 
+          name: 'Ethnicities',
+          component: EthnicitiesView
+        }
+      ]
+    },
+    {
+      path: '/ethnicities/create-ethnicity',
+      name: 'CreateEthnicity',
+      component: CreateEthnicity
+    },
+    {
+      path: '/ethnicities/edit-ethnicity/:id',
+      name: 'EditEthnicity',
+      component: EditEthnicity
+    },
+    {
+      path: '/ethnicities/ethnicityDetails/:id',
+      name: 'EthnicityDetails',
+      component: EthnicityDetails
     },
     {
       path: '/about',

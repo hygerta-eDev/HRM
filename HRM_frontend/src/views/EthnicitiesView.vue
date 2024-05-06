@@ -1,0 +1,14 @@
+<script setup>
+import Sidebar from '../components/Sidebar.vue'
+import Navbar from '../components/Navbar.vue';
+import Ethnicity from '../pages/Ethnicities/Index.vue'
+
+</script>
+
+<template>
+  <main>
+    <Navbar/>
+    <Sidebar />
+    <Ethnicity />
+  </main>
+</template>
