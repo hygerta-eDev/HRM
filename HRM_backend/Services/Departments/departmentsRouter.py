@@ -29,3 +29,8 @@ def update_department(department_id: int, department: DepartmentUpdate, db: Sess
 @router.delete("/delete_department/{department_id}")
 def delete_department(department_id: int, db: Session = Depends(get_db)):
     return DepartmentService.delete_department(department_id=department_id, db=db)
+
+# @app.get("/departments/{department_id}/job_positions/", response_model=DepartmentJobPositions)
+@router.get("/{department_id}/job_positions/")
+def get_department_job_positions(department_id: int, db: Session = Depends(get_db)):
+    return DepartmentService.get_department_job_positions(department_id=department_id, db=db)

@@ -1,18 +1,62 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref } from 'vue';
 import { api } from '@/api';
+
 const sidebarOpen = ref(false);
 const userMenuOpen = ref(false);
-
+const userName = ref('');
+const userEmail = ref('');
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
 };
 
-const toggleUserMenu = () => {
-    userMenuOpen.value = !userMenuOpen.value;
+const toggleUserMenu = async () => {
+  userMenuOpen.value = !userMenuOpen.value;
+  try {
+    const userData = await getUserData(); // Call method to retrieve user data
+    if (userData) {
+      userName.value = userData.name; // Assign user name
+      userEmail.value = userData.email; // Assign user email
+    }
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+  }
 };
+
+const getUserData = async () => {
+  try {
+    console.log('Fetching user data...');
+    const response = await api.get('/user');
+    console.log('Response:', response);
+
+    if (response.ok) {
+    //   const userData = await response.json();
+      console.log('User data:', userData);
+// Inside the login function
+localStorage.setItem('loggedInUser', JSON.stringify({ username: 'Neil Sims', email: 'neil.sims@flowbite.com' }));
+
+      const loggedInUserId = 4; // Example user ID
+      const loggedInUser = userData.find(user => user.user_id === loggedInUserId);
+
+      if (loggedInUser) {
+        return loggedInUser;
+      } else {
+        throw new Error('Logged-in user data not found');
+      }
+    } else {
+      throw new Error('Failed to retrieve user data: ' + response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw new Error('Failed to retrieve user data: ' + error.message);
+  }
+};
+
+
 </script>
+
+
 <template>
     <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="px-4 py-4 lg:px-5 lg:pl-3">
@@ -30,18 +74,19 @@ const toggleUserMenu = () => {
                     </a>
                 </div>
                 <div class="relative"> <!-- This container is positioned relative to the viewport -->
-                    <button @click="toggleUserMenu" type="button" class="flex items-center mr-5 bg-gray-800 rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                    <button @click="() => toggleUserMenu()" type="button" class="flex items-center mr-5 bg-gray-800 rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                         <span class="sr-only">Open user menu</span>
                         <img class="w-8 h-8 rounded-full lg:w-10 lg:h-10" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
                     </button>
                     <div :class="{ 'block': userMenuOpen, 'hidden':userMenuOpen }" class="absolute top-6 right-12 mt-2 w-48 bg-white shadow-lg rounded-md dark:bg-gray-700 lg:w-auto">
                         <div class="px-4 py-3" role="none">
                             <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                Neil Sims
-                            </p>
-                            <a href="#" class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                neil.sims@flowbite.com
-                            </a>
+                                {{ userName }}
+                                </p>
+                                <a href="#" class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
+                                {{ userEmail }}
+                                </a>
+
                         </div>
                         <ul class="py-1" role="none">
                             <!-- <li>

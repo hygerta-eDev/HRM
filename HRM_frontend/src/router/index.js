@@ -18,6 +18,14 @@ import EthnicitiesView from '../views/EthnicitiesView.vue'
 import CreateEthnicity from '../pages/Ethnicities/CreateEthnicity.vue'
 import EthnicityDetails from '../pages/Ethnicities/EthnicityDetails.vue'
 import EditEthnicity from '../pages/Ethnicities/EditEthnicity.vue'
+import EmployeesView from '../views/EmployeesView.vue'
+import CreateEmployee from '../pages/Employees/CreateEmployee.vue'
+import EmployeeDetails from '../pages/Employees/EmployeeDetails.vue'
+import EditEmployee from '../pages/Employees/EditEmployee.vue'
+
+
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -139,6 +147,32 @@ const router = createRouter({
       path: '/ethnicities/ethnicityDetails/:id',
       name: 'EthnicityDetails',
       component: EthnicityDetails
+    },
+    {
+      path: '/employees',
+      component: EmployeesView,
+      children: [
+        {
+          path: '', 
+          name: 'Employees',
+          component: EmployeesView
+        }
+      ]
+    },
+    {
+      path: '/employees/create-employee',
+      name: 'CreateEmployee',
+      component: CreateEmployee
+    },
+    {
+      path: '/employees/edit-employee/:id',
+      name: 'EditEmployee',
+      component: EditEmployee
+    },
+    {
+      path: '/employees/employeeDetails/:id',
+      name: 'EmployeeDetails',
+      component: EmployeeDetails
     },
     {
       path: '/about',

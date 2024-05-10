@@ -15,7 +15,7 @@
           </a>
             </li>
             <li>
-                <a href="#" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                <a href="/employees" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                     <!-- <div  class=" block text-gray-900 dark:text-white focus:outline-none focus:text-white"> -->
 
                     <svg :style="{ transform: sidebarOpen ? 'translateX(-80%)' :'translateX(-1100%)' }" class="fixed right-0 ml-4 flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -66,7 +66,7 @@
                             <a href="/qualifications" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">{{$t('qualifications')}}</a>
                         </li>
                         <li>
-                            <a href="/ethnicity" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">{{$t('ethnicity')}}</a>
+                            <a href="/ethnicities" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">{{$t('ethnicity')}}</a>
                         </li>
                         <li>
                             <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">{{$t('leaves')}}</a>

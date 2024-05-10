@@ -57,7 +57,7 @@
    };
    </script>
     -->
-<template>
+<!-- <template>
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
             <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -99,4 +99,72 @@
             </div>
         </div>
       </section>
+      </template> -->
+
+      <template>
+        <div class="bg-gray-100 min-h-screen flex items-center justify-center">
+          <div class="bg-white p-8 rounded shadow-md">
+            <h1 class="text-2xl font-bold mb-4">Login</h1>
+            <form @submit.prevent="login">
+              <div class="mb-4">
+                <label for="username" class="block text-gray-700">Username:</label>
+                <input type="text" id="username" v-model="username" required class="w-full mt-1 px-4 py-2 border rounded-md">
+              </div>
+              <div class="mb-4">
+                <label for="password" class="block text-gray-700">Password:</label>
+                <input type="password" id="password" v-model="password" required class="w-full mt-1 px-4 py-2 border rounded-md">
+              </div>
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Login</button>
+            </form>
+            <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
+          </div>
+        </div>
       </template>
+      
+      <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { api } from '@/api';
+
+const username = ref('');
+const password = ref('');
+const error = ref('');
+const router = useRouter();
+
+const login = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('username', username.value);
+    formData.append('password', password.value);
+
+    const response = await api.post('/user/login', formData);
+    console.log('API Response:', response);
+
+    const responseData = response.data; // Access the data property
+    console.log('Parsed Response Data:', responseData);
+
+    if (!responseData) {
+      throw new Error('No data received from server');
+    }
+
+    const { access_token, user_id } = responseData;
+
+    localStorage.setItem('access_token', access_token);
+
+    // Log the user ID to console
+    console.log('User ID:', user_id);
+
+    // Redirect to dashboard or any other page on successful login
+    router.push('/');
+  } catch (error) {
+    console.error('Error occurred during login:', error);
+    error.value = error.message;
+  }
+};
+
+</script>
+
+      <style scoped>
+      /* Add your Tailwind CSS styles here */
+      </style>
+      

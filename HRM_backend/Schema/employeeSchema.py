@@ -44,6 +44,8 @@ class EmployeeBase(BaseModel):
     user_id: Optional[int]
     # bank_account: str
     # bank_id: int
+    cv: Optional[bytes]
+    the_workouts_selection:Optional[str]
 
 
 

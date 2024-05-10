@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime,LargeBinary
 from sqlalchemy.orm import relationship
 from Config.database import Base
 from .departmentsModel import Departments
@@ -42,6 +42,9 @@ class Employees(Base):
     active = Column(Boolean, default=True)
     qualification_id = Column(Integer, ForeignKey('qualifications.id'))
     user_id = Column(Integer, ForeignKey('users.user_id'))
+    cv = Column(LargeBinary)
+    the_workouts_selection = Column(String) #(Primar apo Sekondar)  
+
     created_at =Column(DateTime)
     updated_at = Column(DateTime)
     deleted_at= Column(DateTime)
