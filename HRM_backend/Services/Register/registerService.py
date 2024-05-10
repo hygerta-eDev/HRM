@@ -65,26 +65,52 @@ class UserService:
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
 
+    # @staticmethod
+    # def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
+    #     user = UserService.authenticate_user(db, username, password)
+    #     if not user:
+    #         raise HTTPException(status_code=401, detail="Incorrect username or password")
+    #     access_token_expires = timedelta(minutes=30)
+    #     access_token = UserService.create_access_token(
+    #         data={"sub": user.username}, expires_delta=access_token_expires
+    #     )
+    #     return {"access_token": access_token, "token_type": "bearer"}
+
+    # def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    #     print("Received token:", token)
+
+    #     try:
+    #         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    #         username: str = payload.get("sub")
+    #         user = db.query(Users).filter(Users.username == username).first()
+    #         if user is None:
+    #             raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+    #         return user
+    #     except JWTError:
+    #         raise HTTPException(status_code=401, detail="Invalid token")
     @staticmethod
-    def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
+    def create_access_token(data: dict, expires_delta: timedelta):
+        to_encode = data.copy()
+        expire = datetime.utcnow() + expires_delta
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+
+    
+    @staticmethod
+    def login_for_access_token(username: str, password: str, db: Session):
         user = UserService.authenticate_user(db, username, password)
         if not user:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
+        
+        # Get the user ID
+        user_id = user.user_id
+        
+        # Generate the access token
         access_token_expires = timedelta(minutes=30)
         access_token = UserService.create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
+            data={"sub": user.username, "user_id": user_id}, expires_delta=access_token_expires
         )
-        return {"access_token": access_token, "token_type": "bearer"}
-
-    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-        print("Received token:", token)
-
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            username: str = payload.get("sub")
-            user = db.query(Users).filter(Users.username == username).first()
-            if user is None:
-                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-            return user
-        except JWTError:
-            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        # Return both access token and user ID
+        return {"access_token": access_token, "token_type": "bearer", "user_id": user_id}

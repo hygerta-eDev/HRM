@@ -33,7 +33,7 @@ class DepartmentService:
         db.add(db_departments)
         db.commit()
         db.refresh(db_departments)
-
+        
         return db_departments
     @staticmethod
     def update_department(department_id: int, department: DepartmentUpdate, db: Session = Depends(get_db)):
@@ -58,3 +58,10 @@ class DepartmentService:
             db.commit()
 
         return db_department
+    @staticmethod
+    def get_department_job_positions(department_id: int, db: Session = Depends(get_db)):
+        department = db.query(Departments).filter(Departments.id == department_id).first()
+        if department is None:
+            raise HTTPException(status_code=404, detail="Department not found")
+        job_positions = department.job_positions
+        return {"department_id": department_id, "job_positions": job_positions}
