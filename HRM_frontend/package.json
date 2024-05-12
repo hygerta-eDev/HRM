@@ -14,10 +14,13 @@
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
+    "notivue": "^2.4.4",
+    "unimport": "^3.7.1",
     "vue": "^3.4.21",
     "vue-i18n": "^9.13.1",
     "vue-router": "^4.3.0",
-    "vue3-datepicker": "^0.4.0"
+    "vue3-datepicker": "^0.4.0",
+    "vue3-toastify": "^0.2.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
