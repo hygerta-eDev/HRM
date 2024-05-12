@@ -22,6 +22,10 @@ import EmployeesView from '../views/EmployeesView.vue'
 import CreateEmployee from '../pages/Employees/CreateEmployee.vue'
 import EmployeeDetails from '../pages/Employees/EmployeeDetails.vue'
 import EditEmployee from '../pages/Employees/EditEmployee.vue'
+import LeaveTypesView from '../views/LeavesTypeView.vue'
+import CreateLeavesType from '../pages/LeavesType/CreateLeavesType.vue'
+import LeaveTypeDetails from '../pages/LeavesType/LeavesTypeDetails.vue'
+import EditLeavesType from '../pages/LeavesType/EditLeavesType.vue'
 
 
 
@@ -173,6 +177,32 @@ const router = createRouter({
       path: '/employees/employeeDetails/:id',
       name: 'EmployeeDetails',
       component: EmployeeDetails
+    },
+    {
+      path: '/leaveTypes',
+      component: LeaveTypesView,
+      children: [
+        {
+          path: '', 
+          name: 'LeaveTypes',
+          component: LeaveTypesView
+        }
+      ]
+    },
+    {
+      path: '/leaveTypes/create-leaveType',
+      name: 'CreateLeavesType',
+      component: CreateLeavesType
+    },
+    {
+      path: '/leaveTypes/edit-leaveType/:id',
+      name: 'EditLeavesType',
+      component: EditLeavesType
+    },
+    {
+      path: '/leaveTypes/leaveTypeDetails/:id',
+      name: 'LeaveTypeDetails',
+      component: LeaveTypeDetails
     },
     {
       path: '/about',
