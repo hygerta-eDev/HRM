@@ -15,15 +15,12 @@ class LeaveBase(BaseModel):
     rejected_at: Optional[datetime] = None
     rejected_comment: Optional[str] = None
     status: Optional[str] = 'Inactive'
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    deleted_at: Optional[datetime]
 
 class LeaveCreate(LeaveBase):
-    pass
+    created_at: Optional[datetime]
 
 class LeaveUpdate(LeaveBase):
-    pass
+    updated_at: Optional[datetime]
 
 class LeaveInDBBase(LeaveBase):
     id: int

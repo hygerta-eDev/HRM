@@ -24,6 +24,8 @@ class JobPositionService:
             name=JobPositions.name,
             slug=JobPositions.slug,
             department_id=JobPositions.department_id,
+            user_id=JobPositions.user_id,
+
             created_at=JobPositions.created_at
         )
 

@@ -18,16 +18,16 @@ class AssessmentBase(BaseModel):
     employee_notes_date: Optional[str] = None
 
 class AssessmentCreate(AssessmentBase):
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    deleted_at: Optional[datetime] = None
-    pass
+    created_at: Optional[datetime]
 
-class Assessment(AssessmentBase):
-    id: int
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    deleted_at: Optional[str] = None
+class AssessmentUpdate(AssessmentBase):
+    updated_at: Optional[datetime]
 
-    class Config:
-        orm_mode = True
+# class Assessment(AssessmentBase):
+#     id: int
+#     created_at: Optional[str] = None
+#     updated_at: Optional[str] = None
+#     deleted_at: Optional[str] = None
+
+#     class Config:
+#         orm_mode = True

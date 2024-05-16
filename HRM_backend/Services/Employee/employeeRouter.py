@@ -46,7 +46,9 @@ def create_employee(Employee: EmployeeCreate, db: Session = Depends(get_db)):
 @router.put("/update_employee/{employee_id}")
 def update_employee(employee_id: int, Employee: EmployeeUpdate, db: Session = Depends(get_db)):
     return EmployeeService.update_employee(employee_id=employee_id, Employee=Employee, db=db)
-
+@router.delete("/delete_employee/{employee_id}")
+def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+    return EmployeeService.delete_employee(employee_id=employee_id, db=db)
 
 @router.get("/marital_status", response_model=List[str])
 def get_marital_status_options():

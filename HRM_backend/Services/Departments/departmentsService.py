@@ -25,8 +25,10 @@ class DepartmentService:
         db_departments = Departments(
             name=Department.name,
             slug = Department.slug,
+            institution_id=Department.institution_id,
+            user_id = Department.user_id,
+            created_at=Department.created_at
             # manager_id=Department.manager_id
-            # ethnicity_id=Department.ethnicity_id
 
         )
 
@@ -44,6 +46,12 @@ class DepartmentService:
                 db_department.name = department.name
             if db_department.slug is not None:
                 db_department.slug = department.slug
+            if db_department.institution_id is not None:
+                db_department.institution_id = department.institution_id
+            if db_department.updated_at is not None:
+                db_department.updated_at = department.updated_at
+            if db_department.deleted_at is not None:
+                db_department.deleted_at = department.deleted_at
 
             db.commit()
             db.refresh(db_department)
@@ -54,7 +62,8 @@ class DepartmentService:
         db_department = db.query(Departments).filter(Departments.id == department_id).first()
 
         if db_department:
-            db.delete(db_department)
+            db_department.soft_delete()  
+            # db.delete(db_department)
             db.commit()
 
         return db_department

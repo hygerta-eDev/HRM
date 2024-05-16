@@ -11,15 +11,16 @@ class TrainingBase(BaseModel):
     user_id: int
     active: bool
     completed_at: Optional[datetime]
-    created_at:datetime
-    updated_at:datetime
-    deleted_at:datetime
+    user_id:int
+
 
 class TrainingCreate(TrainingBase):
-    pass
+    created_at:datetime
+
 
 class TrainingUpdate(TrainingBase):
-    pass
+    updated_at: Optional[datetime]
+    
 
 class TrainingInDBBase(TrainingBase):
     id: int
@@ -33,3 +34,11 @@ class Training(TrainingInDBBase):
 class EmployeeTrainingCreate(BaseModel):
     employee_id: int
     training_id: int
+    created_at:datetime
+    user_id:int
+
+class EmployeeTrainingUpdate(BaseModel):
+    employee_id: int
+    training_id: int
+    updated_at: Optional[datetime]
+    user_id:int
