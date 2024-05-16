@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, DECIMAL,DateTime
+from sqlalchemy import Column, Integer, ForeignKey, DECIMAL,DateTime,func
 from sqlalchemy.orm import relationship
 from Config.database import Base
 
@@ -13,9 +13,18 @@ class EmployeeLeaveQuota(Base):
     available = Column(DECIMAL(6, 2))
     carried_over = Column(DECIMAL(6, 2))
     additional_approved = Column(DECIMAL(6, 2))
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
     leave_type = relationship("LeaveType", back_populates="employee_leave_quota")
     employee = relationship("Employees", back_populates="employee_leave_quota")
+
+
+    def soft_delete(self):
+        self.deleted_at = func.now()
+
+    def is_deleted(self):
+        return self.deleted_at is not None
+
     # leave_period = relationship("LeavePeriod", back_populates="employee_leave_quota")

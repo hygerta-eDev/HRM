@@ -2,18 +2,34 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from Config.database import get_db
 from Models.employeeModel import Employees
+from Models.jobPositionModel import JobPosition
+from Models.departmentsModel import Departments
+
 from Schema.employeeSchema import EmployeeCreate, EmployeeUpdate
 from Services.Register.registerService import UserService
 from Models.registersModel import Users
 from fastapi.responses import FileResponse
+from pathlib import Path
+import os
+import tempfile
+
+
 
 class EmployeeService:
     @staticmethod
+    # def get_all_employees(db: Session = Depends(get_db)):
+    #     return db.query(Employees).all()
     def get_all_employees(db: Session = Depends(get_db)):
-        return db.query(Employees).all()
+        employees = db.query(Employees).all()
+        for employee in employees:
+            job_position_name = db.query(JobPosition.name).filter(JobPosition.id == employee.job_position_id).scalar()
+            department_name = db.query(Departments.name).filter(Departments.id == employee.department_id).scalar()
+            employee.job_position_id = job_position_name
+            employee.department_id = department_name
+        return employees
     @staticmethod
     def get_employee_by_id(db: Session, employee_id: int):
         return db.query(Employees).filter(Employees.id == employee_id).first()
@@ -148,7 +164,15 @@ class EmployeeService:
             db.refresh(db_updateEmployee)
 
         return db_updateEmployee
+    @staticmethod
+    def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+        db_employee = db.query(Employees).filter(Employees.id == employee_id).first()
 
+        if db_employee:
+            db.delete(db_employee)
+            db.commit()
+
+        return db_employee
     @staticmethod
     def get_employee_by_number(db: Session, number: str):
         return db.query(Employees).filter(Employees.number == number).first()
@@ -158,14 +182,65 @@ class EmployeeService:
         return db.query(Employees).filter(Employees.personal_number == personal_number).first()
 
     @staticmethod
-    def download_cv(employee_id: int, db: Session):
+    def download_cv(employee_id: int, db: Session = Depends(get_db)):
         # Query the database to check if the employee exists
         employee = db.query(Employees).filter(Employees.id == employee_id).first()
         if not employee:
             raise HTTPException(status_code=404, detail="Employee not found")
 
-        # Get the employee's CV path
-        cv = employee.cv
+        # Get the employee's CV in binary form from the database
+        cv_data = employee.cv
+        if not cv_data:
+            raise HTTPException(status_code=404, detail="CV file not found")
 
-        # Return the CV file
-        return FileResponse(cv, media_type='application/pdf', filename='employee_cv.pdf')
+        try:
+            # Create a temporary file to store the CV data
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+                temp_file.write(cv_data)
+                temp_file_path = temp_file.name
+
+            # Return the temporary file as a response
+            return FileResponse(temp_file_path, media_type='application/pdf', filename='employee_cv.pdf')
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error downloading CV: {str(e)}")
+
+    # def download_cv(employee_id: int, db: Session = Depends(get_db)):
+    #     # Query the database to check if the employee exists
+    #     employee = db.query(Employees).filter(Employees.id == employee_id).first()
+    #     if not employee:
+    #         raise HTTPException(status_code=404, detail="Employee not found")
+
+    #     # Get the employee's CV in binary form from the database
+    #     cv_data = employee.cv
+    #     if not cv_data:
+    #         raise HTTPException(status_code=404, detail="CV file not found")
+
+    #     # Generate a temporary file path
+    #     temp_file_path = "DMS/temp_cv.pdf"
+
+    #     # Write the CV data to the temporary file
+    #     with open(temp_file_path, "wb") as temp_file:
+    #         temp_file.write(cv_data)
+
+    #     # Return the temporary file as a response
+    #     return FileResponse(temp_file_path, media_type='application/pdf', filename='employee_cv.pdf')
+
+
+    
+    # @staticmethod
+    # def download_cv(employee_id: int, db: Session):
+    #         # Query the database to check if the employee exists
+    #         employee = db.query(Employees).filter(Employees.id == employee_id).first()
+    #         if not employee:
+    #             raise HTTPException(status_code=404, detail="Employee not found")
+
+    #         # Get the employee's CV path
+    #         cv_path_str = employee.cv.decode() if isinstance(employee.cv, bytes) else str(employee.cv)
+    #         cv_path = Path(cv_path_str)
+    #         print(cv_path.is_file())
+    #         # Check if the file exists
+    #         if not cv_path.is_file():
+    #             raise HTTPException(status_code=404, detail="CV file not found")
+
+    #         # Return the CV file
+    #         return FileResponse(cv_path, media_type='application/pdf', filename='employee_cv.pdf')

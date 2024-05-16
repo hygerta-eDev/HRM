@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey,func
 from sqlalchemy.orm import relationship
 from Config.database import Base
 from Models.registersModel import Users
@@ -19,9 +19,9 @@ class Leaves(Base):
     rejected_at = Column(DateTime)
     rejected_comment = Column(String)
     status = Column(String, default='Inactive')
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
 
     # Define relationships
     leave_type = relationship("LeaveType", back_populates="leaves")
@@ -29,3 +29,10 @@ class Leaves(Base):
     employee = relationship("Employees", back_populates="leaves")
     approved_by = relationship("Users", foreign_keys=[approved_by_id])
     rejected_by = relationship("Users", foreign_keys=[rejected_by_id])
+
+    def soft_delete(self):
+        self.deleted_at = func.now()
+
+    def is_deleted(self):
+        return self.deleted_at is not None
+

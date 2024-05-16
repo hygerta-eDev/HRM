@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import date
-from typing import Optional
+from typing import Optional,List
 from datetime import datetime
 from .enums.genders import Genders
 from .enums.Marital_status import MaritalStatus
@@ -45,6 +45,7 @@ class EmployeeBase(BaseModel):
     # bank_account: str
     # bank_id: int
     cv: Optional[bytes]
+    documents: Optional[List[bytes]] = None  # Fix array declaration
     the_workouts_selection:Optional[str]
 
 

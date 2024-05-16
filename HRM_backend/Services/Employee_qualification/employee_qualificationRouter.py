@@ -10,6 +10,10 @@ router = APIRouter(prefix="/qualification", tags=["Qualification"])
 def get_all_qualifications(db: Session = Depends(get_db)):
     return QualificationService.get_all_qualifications(db=db)
 
+@router.get("/active_qualifications")
+def get_all_active_qualifications(db: Session = Depends(get_db)):
+    return QualificationService.get_all_active_qualifications(db=db)
+
 @router.get("/{qualification_id}")
 def get_department(qualification_id: int, db: Session = Depends(get_db)):
     qualification = QualificationService.get_qualification_by_id(db, qualification_id)
@@ -23,7 +27,10 @@ def create_qualifications(Qualifications: QualificationCreate, db: Session = Dep
 
 @router.put("/update_qualifications/{qualification_id}")
 def update_qualifications(qualification_id: int, qualification: QualificationUpdate, db: Session = Depends(get_db)):
-    return QualificationService.update_qualifications(qualification_id=qualification_id, qualification=qualification, db=db)
+    qualification =  QualificationService.update_qualifications(qualification_id=qualification_id, qualification=qualification, db=db)
+    if qualification is None:
+        raise HTTPException(status_code=404, detail="qualification not found or has been soft-deleted")
+    return qualification
 
 @router.delete("/delete_qualification/{qualification_id}")
 def delete_qualification(qualification_id: int, db: Session = Depends(get_db)):
