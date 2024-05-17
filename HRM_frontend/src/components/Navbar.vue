@@ -1,110 +1,54 @@
+<template>
+    <div class="w-full bg-gray-100">
+        <div class="flex justify-between items-center h-[50px]">
+            <div class="p-4 cursor-pointer hover:bg-gray-50" @click="clickHamburger">
+                <i class="pi pi-bars"></i>
+            </div>
+            <div class="py-2">
+                {{ dataOpenSideBar }}
+                <InputText type="text" v-model="value" class="40px" placeholder="Search..."/>
+            </div>
+            <div class="flex space-x-3 items-center justify-center px-3">
+                <div class="text-md">Admin</div>
+                <Avatar icon="pi pi-user" style="background-color: #dee9fc; color: #1a2551" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
+                <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"  />
+            </div>
+        </div>
+    </div>
+</template>
+
 <script setup>
-import { ref } from 'vue';
-import { api } from '@/api';
+import { ref } from "vue";
 
-const sidebarOpen = ref(false);
-const userMenuOpen = ref(false);
-const userName = ref('');
-const userEmail = ref('');
+import Avatar from 'primevue/avatar';
+import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
 
-const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value;
-};
+// Define props
+const props = defineProps({
+  dataOpenSideBar: Boolean,
+  clickHamburger:Function
+});
 
-const toggleUserMenu = async () => {
-  userMenuOpen.value = !userMenuOpen.value;
-  try {
-    const userData = await getUserData(); // Call method to retrieve user data
-    if (userData) {
-      userName.value = userData.name; // Assign user name
-      userEmail.value = userData.email; // Assign user email
+const menu = ref();
+const items = ref([
+    {
+        label: 'Options',
+        items: [
+            {
+                label: 'Profile',
+                icon: 'pi pi-user'
+            },
+            {
+                label: 'Logout',
+                icon: 'pi pi-sign-out'
+            }
+        ]
     }
-  } catch (error) {
-    console.error('Error retrieving user data:', error);
-  }
-};
-
-const getUserData = async () => {
-  try {
-    console.log('Fetching user data...');
-    const response = await api.get('/user');
-    console.log('Response:', response);
-
-    if (response.ok) {
-    //   const userData = await response.json();
-      console.log('User data:', userData);
-// Inside the login function
-localStorage.setItem('loggedInUser', JSON.stringify({ username: 'Neil Sims', email: 'neil.sims@flowbite.com' }));
-
-      const loggedInUserId = 4; // Example user ID
-      const loggedInUser = userData.find(user => user.user_id === loggedInUserId);
-
-      if (loggedInUser) {
-        return loggedInUser;
-      } else {
-        throw new Error('Logged-in user data not found');
-      }
-    } else {
-      throw new Error('Failed to retrieve user data: ' + response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    throw new Error('Failed to retrieve user data: ' + error.message);
-  }
+]);
+const toggle = (event) => {
+    menu.value.toggle(event);
 };
 
 
 </script>
-
-
-<template>
-    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-        <div class="px-4 py-4 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center justify-start rtl:justify-end">
-                <!-- <button @click="toggleSidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                    <span class="sr-only">Toggle Sidebar</span>
-                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 6h16V5H4v1zm0 6h16v-1H4v1zm0 6h16v-1H4v1z"></path>
-                    </svg>
-                </button> -->
-                    <a href="https://etech-rks.com" class="flex ms-2 md:me-24">
-                        <img src="../assets/logo.jpeg" class="h-8 me-3" alt="eTech-CyberOne-eDev Logo" />
-                        <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">eTech-CyberOne-eDev</span>
-                    </a>
-                </div>
-                <div class="relative"> <!-- This container is positioned relative to the viewport -->
-                    <button @click="() => toggleUserMenu()" type="button" class="flex items-center mr-5 bg-gray-800 rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                        <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 rounded-full lg:w-10 lg:h-10" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
-                    </button>
-                    <div :class="{ 'block': userMenuOpen, 'hidden':userMenuOpen }" class="absolute top-6 right-12 mt-2 w-48 bg-white shadow-lg rounded-md dark:bg-gray-700 lg:w-auto">
-                        <div class="px-4 py-3" role="none">
-                            <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                {{ userName }}
-                                </p>
-                                <a href="#" class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                {{ userEmail }}
-                                </a>
-
-                        </div>
-                        <ul class="py-1" role="none">
-                            <!-- <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Dashboard</a>
-                            </li>
-                            <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Settings</a>
-                            </li>
-                            <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Earnings</a>
-                            </li> -->
-                            <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-</template>
