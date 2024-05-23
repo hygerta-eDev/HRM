@@ -8,61 +8,101 @@ from Models.institutionModel import Institution
 from Models.ethnicitiesModel import Ethnicities
 from Models.departmentsModel import Departments
 from Models.jobPositionModel import JobPosition
-from Schema.institutionsSchema import InstitutionCreate, InstitutionUpdate
-
+from Models.registersModel import Log
+from Schema.institutionsSchema import InstitutionCreate, InstitutionUpdate,InstitutionResponse
+from Config.logging_utils import log_function_call
+from typing import Any, Optional
+from sqlalchemy import func
 
 class InstitutionService:
+
     @staticmethod
+    @log_function_call(entity_name="Institution")
     def get_all_institutions(db: Session = Depends(get_db)):
         return db.query(Institution).all()
     
     @staticmethod
+    @log_function_call(entity_name="Institution")
     def get_all_active_institutions(db: Session = Depends(get_db)):
         return db.query(Institution).filter(Institution.deleted_at == None).all()
     
     @staticmethod
-    def get_institution_by_id(db: Session, institution_id: int):
-        return db.query(Institution).filter(Institution.id == institution_id).first()
+    @log_function_call(entity_name="Institution")
+    def get_institution_by_id(db: Session, entity_id: int) -> Optional[Institution]:
+        return db.query(Institution).filter(Institution.id == entity_id).first()
     
-    def create_institutions(Institutions: InstitutionCreate, db: Session = Depends(get_db)):
-
-        db_institutions = Institution(
-            name=Institutions.name,
-            slug = Institutions.slug,
-            user_id = Institutions.user_id,
-            created_at=Institutions.created_at
-            # manager_id=Department.manager_id
-            # ethnicity_id=Department.ethnicity_id
-
+    @staticmethod
+    @log_function_call(entity_name="Institution")
+    def create_institutions(InstitutionData: InstitutionCreate, db: Session ) -> InstitutionResponse:
+        db_institution = Institution(
+            name=InstitutionData.name,
+            slug=InstitutionData.slug,
+            user_id=InstitutionData.user_id,
+            active=InstitutionData.active,
+            created_at=InstitutionData.created_at
         )
-
-        db.add(db_institutions)
+        db.add(db_institution)
         db.commit()
-        db.refresh(db_institutions)
+        db.refresh(db_institution)
         
-        return db_institutions
+        return db_institution
+    # @staticmethod
+    # @log_function_call
+    # def create_institutions(entity_data: Any, entity_type: Any, db: Session = Depends(get_db), user_id: int = 1):
+    #     db_entity = entity_type(**entity_data.dict())
+    #     db.add(db_entity)
+    #     db.commit()
+    #     db.refresh(db_entity)
+    #     return db_entity
+
+    # @log_function_call
+    # @staticmethod
+    # def update_institutions(institution_id: int, institucion: InstitutionUpdate, db: Session = Depends(get_db))-> InstitutionResponse:
+    #     db_institutions = db.query(Institution).filter(Institution.deleted_at == None, Institution.id == institution_id).first()
+
+    #     if db_institutions:
+    #         if institucion.name is not None:
+    #             db_institutions.name = institucion.name
+    #         if institucion.slug is not None:
+    #             db_institutions.slug = institucion.slug
+    #         if institucion.user_id is not None:
+    #             db_institutions.user_id = institucion.user_id
+    #         if institucion.active is not None:
+    #             db_institutions.active = institucion.active
+    #         if institucion.updated_at is not None:
+    #             db_institutions.updated_at = institucion.updated_at
+    #         db.commit()
+    #         db.refresh(db_institutions)
+
+    #     return db_institutions
+
     @staticmethod
-    def update_institutions(institution_id: int, institucion: InstitutionUpdate, db: Session = Depends(get_db)):
-        db_institutions = db.query(Institution).filter(Institution.deleted_at == None, Institution.id == institution_id).first()
+    @log_function_call(entity_name="Institution")
+    def update_institution(institution_id: int, institution_data: 'InstitutionUpdate', entity_id: int, entity_type: Any, db: Session = Depends(get_db), user_id: int = 1, **kwargs):
+        db_institution = db.query(Institution).filter(Institution.deleted_at == None, Institution.id == institution_id).first()
 
-        if db_institutions:
-            if institucion.name is not None:
-                db_institutions.name = institucion.name
-            if institucion.slug is not None:
-                db_institutions.slug = institucion.slug
-            if institucion.user_id is not None:
-                db_institutions.user_id = institucion.user_id
-            if institucion.updated_at is not None:
-                db_institutions.updated_at = institucion.updated_at
+        if not db_institution:
+            raise HTTPException(status_code=404, detail="Institution not found")
+
+        changes = {}
+        for field, value in institution_data.dict(exclude_unset=True).items():
+            if getattr(db_institution, field) != value:
+                changes[field] = (getattr(db_institution, field), value)
+                setattr(db_institution, field, value)
+
+        kwargs['changes'] = changes  # Pass changes to kwargs for logging
+
+        if changes:
+            db_institution.updated_at = func.now()
             db.commit()
-            db.refresh(db_institutions)
+            db.refresh(db_institution)
 
-        return db_institutions
-
+        return db_institution
     
     @staticmethod
-    def delete_institution(institution_id: int, db: Session):
-        db_institution = db.query(Institution).filter(Institution.id == institution_id).first()
+    @log_function_call(entity_name="Institution")
+    def delete_institution(entity_id: int, db: Session):
+        db_institution = db.query(Institution).filter(Institution.id == entity_id).first()
 
         if db_institution:
             db_institution.soft_delete()  

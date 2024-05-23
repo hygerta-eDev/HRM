@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,DateTime,func
+from sqlalchemy import Column, Integer, String, ForeignKey,DateTime,func,Boolean
 from sqlalchemy.orm import relationship
 from Config.database import Base
 
@@ -8,6 +8,7 @@ class Institution(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     slug = Column(String)
+    active = Column(Boolean)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

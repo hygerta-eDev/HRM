@@ -18,3 +18,10 @@ class DepartmentUpdate(BaseModel):
     updated_at: Optional[datetime]
     deleted_at:Optional[datetime]
     # ethnicity_id:Optional[int]
+class Department(BaseModel):
+    id: int
+    name: str
+    slug: str
+    institution_id:int
+    created_at:datetime
+    user_id:int
