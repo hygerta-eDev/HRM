@@ -6,60 +6,68 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.departmentsModel import Departments
 from Models.ethnicitiesModel import Ethnicities
+from Config.logging_utils import log_function_call
 
 from Schema.departmentsSchema import DepartmentCreate, DepartmentUpdate
 
 
 class DepartmentService:
     @staticmethod
-    def get_all_departments(db: Session = Depends(get_db)):
+    @log_function_call(entity_name="Department")
+    # @log_function_call
+    def get_all_departments(db: Session,user_id: int = None):
         return db.query(Departments).all()
     
     @staticmethod
-    def get_department_by_id(db: Session, department_id: int):
-        return db.query(Departments).filter(Departments.id == department_id).first()
+    @log_function_call(entity_name="Department")
+    # @log_function_call
+    def get_all_active_departments(db: Session = Depends(get_db)):
+        return db.query(Departments).filter(Departments.deleted_at == None).all()
+
+    @staticmethod
+    @log_function_call(entity_name="Department")
+    # @log_function_call
+    def get_department_by_id(db: Session, entity_id: int):
+        return db.query(Departments).filter(Departments.id == entity_id).first()
     
 
-    def create_departments(Department: DepartmentCreate, db: Session = Depends(get_db)):
-
+    @staticmethod
+    @log_function_call(entity_name="Department")
+    def create_departments(Department: DepartmentCreate, db: Session) -> DepartmentCreate:
         db_departments = Departments(
             name=Department.name,
-            slug = Department.slug,
+            slug=Department.slug,
             institution_id=Department.institution_id,
-            user_id = Department.user_id,
+            user_id=Department.user_id,
             created_at=Department.created_at
-            # manager_id=Department.manager_id
-
         )
 
         db.add(db_departments)
         db.commit()
         db.refresh(db_departments)
-        
+
         return db_departments
+    
     @staticmethod
-    def update_department(department_id: int, department: DepartmentUpdate, db: Session = Depends(get_db)):
-        db_department = db.query(Departments).filter(Departments.id == department_id).first()
+    @log_function_call(entity_name="Department")
+    def update_department(department_id: int, entity_id: int, entity_type: type, department: DepartmentUpdate, db: Session) -> DepartmentUpdate:
+        db_department = db.query(entity_type).filter(entity_type.id == entity_id).first()
 
-        if db_department:
-            if department.name is not None:
-                db_department.name = department.name
-            if db_department.slug is not None:
-                db_department.slug = department.slug
-            if db_department.institution_id is not None:
-                db_department.institution_id = department.institution_id
-            if db_department.updated_at is not None:
-                db_department.updated_at = department.updated_at
-            if db_department.deleted_at is not None:
-                db_department.deleted_at = department.deleted_at
+        if not db_department:
+            raise HTTPException(status_code=404, detail="Department not found")
 
-            db.commit()
-            db.refresh(db_department)
+        for key, value in department.dict().items():
+            setattr(db_department, key, value)
+
+        db.commit()
+        db.refresh(db_department)
 
         return db_department
+
     @staticmethod
-    def delete_department(department_id: int, db: Session = Depends(get_db)):
-        db_department = db.query(Departments).filter(Departments.id == department_id).first()
+    @log_function_call(entity_name="Department")
+    def delete_department(entity_id: int, db: Session = Depends(get_db)):
+        db_department = db.query(Departments).filter(Departments.id == entity_id).first()
 
         if db_department:
             db_department.soft_delete()  
@@ -67,7 +75,9 @@ class DepartmentService:
             db.commit()
 
         return db_department
+    
     @staticmethod
+    # @log_function_call
     def get_department_job_positions(department_id: int, db: Session = Depends(get_db)):
         department = db.query(Departments).filter(Departments.id == department_id).first()
         if department is None:
