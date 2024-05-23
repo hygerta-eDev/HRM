@@ -1,216 +1,61 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import LoginView from '../views/LoginView.vue'
-import DepartmentsView from '../views/DepartmentsView.vue'
-import CreateDepartment from '../pages/Departments/CreateDepartment.vue'
-import DepartmentDetails from '../pages/Departments/DepartmentDetails.vue'
-import EditDepartment from '../pages/Departments/EditDepartment.vue'
-import QualificationsView from '../views/QualificationsView.vue'
-import CreateQualification from '../pages/Qualifications/CreateQualification.vue'
-import QualificationDetails from '../pages/Qualifications/QualificationDetails.vue'
-import EditQualification from '../pages/Qualifications/EditQualification.vue'
-import JobPositionsView from '../views/JobPositionView.vue'
-import CreateJobPosition from '../pages/JobPositions/CreateJobPosition.vue'
-import JobPositionDetails from '../pages/JobPositions/DetailsJobPosition.vue'
-import EditJobPosition from '../pages/JobPositions/EditJobPosition.vue'
-import EthnicitiesView from '../views/EthnicitiesView.vue'
-import CreateEthnicity from '../pages/Ethnicities/CreateEthnicity.vue'
-import EthnicityDetails from '../pages/Ethnicities/EthnicityDetails.vue'
-import EditEthnicity from '../pages/Ethnicities/EditEthnicity.vue'
-import EmployeesView from '../views/EmployeesView.vue'
-import CreateEmployee from '../pages/Employees/CreateEmployee.vue'
-import EmployeeDetails from '../pages/Employees/EmployeeDetails.vue'
-import EditEmployee from '../pages/Employees/EditEmployee.vue'
-import LeaveTypesView from '../views/LeavesTypeView.vue'
-import CreateLeavesType from '../pages/LeavesType/CreateLeavesType.vue'
-import LeaveTypeDetails from '../pages/LeavesType/LeavesTypeDetails.vue'
-import EditLeavesType from '../pages/LeavesType/EditLeavesType.vue'
-
-
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-    },
-    {
-      path: '/departments',
-      component: DepartmentsView,
+      name: 'main',
+      component: () => import('../views/layout/Main.vue'),
       children: [
         {
-          path: '', 
-          name: 'Departments',
-          component: DepartmentsView
-        }
-      ]
-    },
-    {
-      path: '/departments/create-department',
-      name: 'CreateDepartment',
-      component: CreateDepartment
-    },
-    {
-      path: '/departments/edit-department/:id',
-      name: 'EditDepartment',
-      component: EditDepartment
-    },
-    {
-      path: '/departments/departmentDetails/:id',
-      name: 'DepartmentDetails',
-      component: DepartmentDetails
-    },
-    {
-      path: '/qualifications',
-      component: QualificationsView,
-      children: [
+          path: 'Dashboard',
+          name: 'dashboard',
+          component: () => import('./../views/Dashboard.vue')
+        },
+        // Employee fillon ktu---------------
         {
-          path: '', 
-          name: 'Qualifications',
-          component: QualificationsView
-        }
-      ]
-    },
-    {
-      path: '/qualifications/create-qualification',
-      name: 'CreateQualification',
-      component: CreateQualification
-    },
-    {
-      path: '/qualifications/edit-qualification/:id',
-      name: 'EditQualification',
-      component: EditQualification
-    },
-    {
-      path: '/qualifications/qualificationDetails/:id',
-      name: 'QualificationDetails',
-      component: QualificationDetails
-    },
-    {
-      path: '/jobPositions',
-      component: JobPositionsView,
-      children: [
+          path: 'Employee',
+          name: 'Employee',
+          component: () => import('../views/Employee/Employee.vue')
+        },
         {
-          path: '', 
-          name: 'JobPositions',
-          component: JobPositionsView
-        }
-      ]
-    },
-    {
-      path: '/jobPositions/create-jobPosition',
-      name: 'CreateJobPosition',
-      component: CreateJobPosition
-    },
-    {
-      path: '/jobPositions/edit-jobPosition/:id',
-      name: 'EditJobPosition',
-      component: EditJobPosition
-    },
-    {
-      path: '/jobPositions/jobPositionDetails/:id',
-      name: 'JobPositionDetails',
-      component: JobPositionDetails
-    },
-    {
-      path: '/ethnicities',
-      component: EthnicitiesView,
-      children: [
+          path: 'Employee/NewEmployee',
+          name: 'NewEmployee',
+          component: () => import('../views/Employee/NewEmployee.vue')
+        },
         {
-          path: '', 
-          name: 'Ethnicities',
-          component: EthnicitiesView
-        }
-      ]
-    },
-    {
-      path: '/ethnicities/create-ethnicity',
-      name: 'CreateEthnicity',
-      component: CreateEthnicity
-    },
-    {
-      path: '/ethnicities/edit-ethnicity/:id',
-      name: 'EditEthnicity',
-      component: EditEthnicity
-    },
-    {
-      path: '/ethnicities/ethnicityDetails/:id',
-      name: 'EthnicityDetails',
-      component: EthnicityDetails
-    },
-    {
-      path: '/employees',
-      component: EmployeesView,
-      children: [
+          path: 'Employee/ViewEmployee',
+          name: 'ViewEmployee',
+          component: () => import('../views/Employee/ViewEmployee.vue')
+        },
         {
-          path: '', 
-          name: 'Employees',
-          component: EmployeesView
-        }
-      ]
-    },
-    {
-      path: '/employees/create-employee',
-      name: 'CreateEmployee',
-      component: CreateEmployee
-    },
-    {
-      path: '/employees/edit-employee/:id',
-      name: 'EditEmployee',
-      component: EditEmployee
-    },
-    {
-      path: '/employees/employeeDetails/:id',
-      name: 'EmployeeDetails',
-      component: EmployeeDetails
-    },
-    {
-      path: '/leaveTypes',
-      component: LeaveTypesView,
-      children: [
+          path: 'Employee/EditEmployee',
+          name: 'EditEmployee',
+          component: () => import('../views/Employee/EditEmployee.vue')
+        },
+        // Companies fillon ktu---------------
         {
-          path: '', 
-          name: 'LeaveTypes',
-          component: LeaveTypesView
-        }
+          path: 'Companies',
+          name: 'Companies',
+          component: () => import('../views/Companies/Companies.vue')
+        },
+        {
+          path: 'Companies/NewCompany',
+          name: 'NewCompany',
+          component: () => import('../views/Companies/NewCompany.vue')
+        },
+        {
+          path: 'Companies/:id',
+          name: 'ViewCompany',
+          component: () => import('../views/Companies/ViewCompany.vue')
+        },
+        {
+          path: 'Companies/EditCompany',
+          name: 'EditCompany',
+          component: () => import('../views/Companies/EditCompany.vue')
+        },
       ]
-    },
-    {
-      path: '/leaveTypes/create-leaveType',
-      name: 'CreateLeavesType',
-      component: CreateLeavesType
-    },
-    {
-      path: '/leaveTypes/edit-leaveType/:id',
-      name: 'EditLeavesType',
-      component: EditLeavesType
-    },
-    {
-      path: '/leaveTypes/leaveTypeDetails/:id',
-      name: 'LeaveTypeDetails',
-      component: LeaveTypeDetails
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
     }
   ]
 })

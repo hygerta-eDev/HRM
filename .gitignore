@@ -2,3 +2,4 @@
 *node_modul_es
 *__pycache__
 *.log
+*.env
