@@ -40,14 +40,14 @@ class InstitutionBase(BaseModel):
     active: bool
 
 class InstitutionCreate(InstitutionBase):
-    created_at: datetime
+    pass
 
 class InstitutionUpdate(InstitutionBase):
     updated_at: Optional[datetime]
 
 class InstitutionResponse(InstitutionBase):
     id: int
-    created_at: datetime
+    created_at: Optional[datetime]
     updated_at: Optional[datetime]
     deleted_at: Optional[datetime]
 
