@@ -39,13 +39,15 @@ class InstitutionService:
             slug=InstitutionData.slug,
             user_id=InstitutionData.user_id,
             active=InstitutionData.active,
-            created_at=InstitutionData.created_at
+            # created_at=InstitutionData.created_at
         )
         db.add(db_institution)
+        db_institution.created_at = func.now()
         db.commit()
         db.refresh(db_institution)
         
         return db_institution
+    
     # @staticmethod
     # @log_function_call
     # def create_institutions(entity_data: Any, entity_type: Any, db: Session = Depends(get_db), user_id: int = 1):

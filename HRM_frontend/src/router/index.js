@@ -51,7 +51,7 @@ const router = createRouter({
           component: () => import('../views/Companies/ViewCompany.vue')
         },
         {
-          path: 'Companies/EditCompany',
+          path: 'Companies/Edit/:id',
           name: 'EditCompany',
           component: () => import('../views/Companies/EditCompany.vue')
         },
