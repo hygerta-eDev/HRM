@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey,DateTime,Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from Config.database import Base
@@ -9,6 +9,7 @@ class Departments(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     slug = Column(String)
+    active = Column(Boolean)
     institution_id = Column(Integer, ForeignKey('institutions.id'))    
     user_id = Column(Integer, ForeignKey('users.user_id'))
     created_at = Column(DateTime, default=func.now())
