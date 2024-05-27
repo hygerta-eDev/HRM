@@ -55,6 +55,29 @@ const router = createRouter({
           name: 'EditCompany',
           component: () => import('../views/Companies/EditCompany.vue')
         },
+        // Departments fillon ktu---------------
+
+
+        {
+          path: 'Departments',
+          name: 'Departments',
+          component: () => import('../views/Departments/Departments.vue')
+        },
+        {
+          path: 'Departments/NewDepartment',
+          name: 'NewDepartment',
+          component: () => import('../views/Departments/NewDepartment.vue')
+        },
+        {
+          path: 'Departments/:id',
+          name: 'ViewDepartment',
+          component: () => import('../views/Departments/ViewDepartment.vue')
+        },
+        {
+          path: 'Departments/Edit/:id',
+          name: 'EditDepartment',
+          component: () => import('../views/Departments/EditDepartment.vue')
+        },
       ]
     }
   ]

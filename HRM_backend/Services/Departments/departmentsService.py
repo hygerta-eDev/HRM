@@ -7,6 +7,7 @@ from Config.database import get_db
 from Models.departmentsModel import Departments
 from Models.ethnicitiesModel import Ethnicities
 from Config.logging_utils import log_function_call
+from sqlalchemy import func
 
 from Schema.departmentsSchema import DepartmentCreate, DepartmentUpdate
 
@@ -39,10 +40,13 @@ class DepartmentService:
             slug=Department.slug,
             institution_id=Department.institution_id,
             user_id=Department.user_id,
-            created_at=Department.created_at
+            active=Department.active,
+
+            # created_at=Department.created_at
         )
 
         db.add(db_departments)
+        db_departments.created_at = func.now()
         db.commit()
         db.refresh(db_departments)
 
@@ -58,8 +62,10 @@ class DepartmentService:
 
         for key, value in department.dict().items():
             setattr(db_department, key, value)
+        db_department.updated_at = func.now()
 
         db.commit()
+
         db.refresh(db_department)
 
         return db_department
