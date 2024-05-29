@@ -27,10 +27,10 @@ from Services.Employee_Roles import employee_rolesRouter
 from Services.Institucions import institutionsRouter
 from Services.DMS import dmsRouter
 from Models.registersModel import Log
+from Config.Seeders.seeders import seed_all
 
 # from sqlalchemy import event
 # from Models.leaveTypeModel import LeaveType
-from Config.Seeders.leaveTypeSeed import seed_leave_types
 from Config.database import engine, Base,get_db
 from Config.middleware import LogUserActionsMiddleware
 from fastapi import Depends
@@ -59,7 +59,13 @@ app.add_middleware(LogUserActionsMiddleware, db_session_factory=get_db)
 # def configure():
 #     Base.metadata.create_all(bind=engine)
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(engine)
+    # from sqlalchemy import event
+# from Models.institutionModel import Institution
+# from Config.Seeders.institutionSeed import on_after_create
+
+# # Bind the event listener
+# event.listen(Institution.__table__, 'after_create', on_after_create)
 # @app.middleware("http")
 # async def log_user_actions_middleware(request: Request, call_next):
 #     response = await call_next(request)
@@ -146,3 +152,18 @@ app.include_router(institutionsRouter.router)
 app.include_router(dmsRouter.router)
 
 
+def create_tables_and_seed():
+    # Create tables
+    Base.metadata.create_all(engine)
+    
+    # Seed initial data
+    with Session(engine) as session:
+        seed_all(session)
+        # seed_initial_users(session)
+
+        # seed_initial_data(session)
+
+# Event handler for startup
+@app.on_event("startup")
+async def on_startup():
+    create_tables_and_seed()

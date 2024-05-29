@@ -50,7 +50,7 @@
             <div v-if="adminDropdownOpen" class="pl-6 mt-2 space-y-6" id="dropdown-menu"> <!-- Changed space-y-2 to space-y-4 -->
               <router-link to="/Companies" class="block text-gray-300 hover:text-white">Companies</router-link>
               <router-link to="/Departments" class="block text-gray-300 hover:text-white">Departments</router-link>
-              <router-link to="/Jobs" class="block text-gray-300 hover:text-white">Jobs</router-link>
+              <router-link to="/JobPositions" class="block text-gray-300 hover:text-white">Jobs</router-link>
               <router-link to="/Qualifications" class="block text-gray-300 hover:text-white">Qualifications</router-link>
               <router-link to="/Ethnicity" class="block text-gray-300 hover:text-white">Ethnicity</router-link>
               <router-link to="/LeaveTypes" class="block text-gray-300 hover:text-white">LeaveTypes</router-link>

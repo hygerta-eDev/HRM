@@ -78,6 +78,50 @@ const router = createRouter({
           name: 'EditDepartment',
           component: () => import('../views/Departments/EditDepartment.vue')
         },
+        // JobPosition fillon ktu---------------
+
+
+        {
+          path: 'JobPositions',
+          name: 'JobPositions',
+          component: () => import('../views/JobPositions/JobPositions.vue')
+        },
+        {
+          path: 'JobPositions/NewJobPosition',
+          name: 'NewJobPosition',
+          component: () => import('../views/JobPositions/NewJobPosition.vue')
+        },
+        {
+          path: 'JobPositions/:id',
+          name: 'ViewJobPosition',
+          component: () => import('../views/JobPositions/ViewJobPosition.vue')
+        },
+        {
+          path: 'JobPositions/Edit/:id',
+          name: 'EditJobPosition',
+          component: () => import('../views/JobPositions/EditJobPosition.vue')
+        },
+
+        // {
+        //   path: 'JobPosition',
+        //   name: 'JobPosition',
+        //   component: () => import('../views/JobPosition/JobPosition.vue')
+        // },
+        // {
+        //   path: 'JobPosition/NewJobPosition',
+        //   name: 'NewJobPosition',
+        //   component: () => import('../views/JobPosition/NewJobPosition.vue')
+        // },
+        // {
+        //   path: 'JobPosition/:id',
+        //   name: 'ViewJobPosition',
+        //   component: () => import('../views/JobPosition/ViewJobPosition.vue')
+        // },
+        // {
+        //   path: 'JobPosition/Edit/:id',
+        //   name: 'EditJobPosition',
+        //   component: () => import('../views/JobPosition/EditJobPosition.vue')
+        // },
       ]
     }
   ]
