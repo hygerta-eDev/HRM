@@ -102,26 +102,26 @@ const router = createRouter({
           component: () => import('../views/JobPositions/EditJobPosition.vue')
         },
 
-        // {
-        //   path: 'JobPosition',
-        //   name: 'JobPosition',
-        //   component: () => import('../views/JobPosition/JobPosition.vue')
-        // },
-        // {
-        //   path: 'JobPosition/NewJobPosition',
-        //   name: 'NewJobPosition',
-        //   component: () => import('../views/JobPosition/NewJobPosition.vue')
-        // },
-        // {
-        //   path: 'JobPosition/:id',
-        //   name: 'ViewJobPosition',
-        //   component: () => import('../views/JobPosition/ViewJobPosition.vue')
-        // },
-        // {
-        //   path: 'JobPosition/Edit/:id',
-        //   name: 'EditJobPosition',
-        //   component: () => import('../views/JobPosition/EditJobPosition.vue')
-        // },
+        {
+          path: 'Qualifications',
+          name: 'Qualifications',
+          component: () => import('../views/Qualifications/Qualifications.vue')
+        },
+        {
+          path: 'Qualifications/NewQualifications',
+          name: 'NewQualifications',
+          component: () => import('../views/Qualifications/NewQualifications.vue')
+        },
+        {
+          path: 'Qualifications/:id',
+          name: 'ViewQualifications',
+          component: () => import('../views/Qualifications/ViewQualifications.vue')
+        },
+        {
+          path: 'Qualifications/Edit/:id',
+          name: 'EditQualifications',
+          component: () => import('../views/Qualifications/EditQualifications.vue')
+        },
       ]
     }
   ]
