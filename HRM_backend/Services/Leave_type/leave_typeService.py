@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.leaveTypeModel import LeaveType
 from Schema.leave_typeSchema import LeaveTypeCreate, LeaveTypeUpdate
-from Config.Seeders.leaveTypeSeed import seed_leave_types
 
 
 

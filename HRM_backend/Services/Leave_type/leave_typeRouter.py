@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from .leave_typeService import LeaveTypeService
 from Schema.leave_typeSchema import LeaveTypeCreate,LeaveTypeUpdate
 from Config.database import get_db
-# from Config.Seeders.leaveTypeSeed import seed_leave_types
 
 router = APIRouter(prefix="/leaveType", tags=["LeaveType"])
 
