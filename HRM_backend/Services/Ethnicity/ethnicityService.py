@@ -2,6 +2,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.ethnicitiesModel import Ethnicities
@@ -26,10 +27,11 @@ class EthnicityService:
         db_ethnicity = Ethnicities(
             name=Ethnicity.name,
             user_id = Ethnicity.user_id,
-            created_at=Ethnicity.created_at
+            # created_at=Ethnicity.created_at
         )
 
         db.add(db_ethnicity)
+        db_ethnicity.created_at=func.now()
         db.commit()
         db.refresh(db_ethnicity)
 
