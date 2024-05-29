@@ -101,7 +101,7 @@ const router = createRouter({
           name: 'EditJobPosition',
           component: () => import('../views/JobPositions/EditJobPosition.vue')
         },
-
+        // Qualifications
         {
           path: 'Qualifications',
           name: 'Qualifications',
@@ -121,6 +121,28 @@ const router = createRouter({
           path: 'Qualifications/Edit/:id',
           name: 'EditQualifications',
           component: () => import('../views/Qualifications/EditQualifications.vue')
+        },
+
+                // Ethnicities
+        {
+          path: 'Ethnicities',
+          name: 'Ethnicities',
+          component: () => import('../views/Ethnicities/Ethnicities.vue')
+        },
+        {
+          path: 'Ethnicities/NewEthnicity',
+          name: 'NewEthnicity',
+          component: () => import('../views/Ethnicities/NewEthnicity.vue')
+        },
+        {
+          path: 'Ethnicities/:id',
+          name: 'ViewEthnicity',
+          component: () => import('../views/Ethnicities/ViewEthnicity.vue')
+        },
+        {
+          path: 'Ethnicities/Edit/:id',
+          name: 'EditEthnicity',
+          component: () => import('../views/Ethnicities/EditEthnicity.vue')
         },
       ]
     }

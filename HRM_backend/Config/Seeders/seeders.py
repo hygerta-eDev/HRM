@@ -8,7 +8,7 @@ from Models.rolesModel import Roles
 from Models.leaveTypeModel import LeaveType
 from Models.holidayModel import Holiday 
 from Models.employeeQualificationModel import Qualification
-
+from Models.ethnicitiesModel import Ethnicities
 def seed_initial_users(db: Session):
     if db.query(Users).count() == 0:
         users = [
@@ -85,7 +85,20 @@ def seed_initial_qualifications(db: Session):  # Added seed function for Qualifi
         ]
         db.add_all(qualifications)
         db.commit()
+def seed_initial_ethnicities(db: Session):
+    if db.query(Ethnicities).count() == 0:
+        ethnicities = [
+            Ethnicities(name='Ethnicity A', user_id=1),
+            Ethnicities(name='Ethnicity B', user_id=1),
+            Ethnicities(name='Ethnicity C', user_id=1)
+        ]
+        db.add_all(ethnicities)
+        db.commit()
 
+
+
+
+        
 def seed_all(db: Session):
     seed_initial_users(db)
     seed_initial_institutions(db)
@@ -95,3 +108,4 @@ def seed_all(db: Session):
     seed_initial_leave_types(db)
     seed_initial_holidays(db)
     seed_initial_qualifications(db)
+    seed_initial_ethnicities(db)

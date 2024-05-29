@@ -4,7 +4,7 @@ from Config.database import get_db
 from typing import Optional
 
 class EthnicityCreate(BaseModel):
-    created_at:datetime
+    # created_at:datetime
     user_id:int
     name: str
 
