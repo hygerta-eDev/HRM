@@ -46,8 +46,8 @@ class Employees(Base):
     active = Column(Boolean, default=True)
     qualification_id = Column(Integer, ForeignKey('qualifications.id'))
     user_id = Column(Integer, ForeignKey('users.user_id'))
-    cv = Column(LargeBinary)
-    documents = Column(ARRAY(LargeBinary))
+    # cv = Column(LargeBinary)
+    # documents = Column(ARRAY(LargeBinary))
     the_workouts_selection = Column(String) #(Primar apo Sekondar)  
 
     created_at =Column(DateTime)
@@ -69,6 +69,13 @@ class Employees(Base):
     leaves = relationship("Leaves", back_populates="employee")
     employee_leave_quota = relationship("EmployeeLeaveQuota", back_populates="employee")
     employee_roles = relationship("EmployeeRoles", back_populates="employee")
+
+
+    documents = relationship("Document", back_populates="creator")
+    document_versions = relationship("DocumentVersion", back_populates="creator")
+    document_access = relationship("DocumentAccess", back_populates="employee", foreign_keys="[DocumentAccess.employee_id]")
+    document_audits = relationship("DocumentAudit", back_populates="employee", foreign_keys="[DocumentAudit.employee_id]")
+    granted_access = relationship("DocumentAccess", back_populates="granter", foreign_keys="[DocumentAccess.granted_by]")
 
 
     # def set_documents(self, documents):

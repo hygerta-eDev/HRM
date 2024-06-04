@@ -9,6 +9,11 @@ from Models.leaveTypeModel import LeaveType
 from Models.holidayModel import Holiday 
 from Models.employeeQualificationModel import Qualification
 from Models.ethnicitiesModel import Ethnicities
+from Models.DMS import DocumentCategory,Document
+from datetime import datetime
+
+
+
 def seed_initial_users(db: Session):
     if db.query(Users).count() == 0:
         users = [
@@ -48,6 +53,7 @@ def seed_initial_job_positions(db: Session):
         ]
         db.add_all(job_positions)
         db.commit()
+
 def seed_initial_roles(db: Session):
     if db.query(Roles).count() == 0:
         roles = [
@@ -85,6 +91,8 @@ def seed_initial_qualifications(db: Session):  # Added seed function for Qualifi
         ]
         db.add_all(qualifications)
         db.commit()
+
+
 def seed_initial_ethnicities(db: Session):
     if db.query(Ethnicities).count() == 0:
         ethnicities = [
@@ -96,9 +104,60 @@ def seed_initial_ethnicities(db: Session):
         db.commit()
 
 
+def seed_document_categories(db: Session):
+    if db.query(DocumentCategory).count() == 0:
+
+        categories = [
+            {
+                "category_name": "Personal",
+                "description": "Documents related to personal information",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+            {
+                "category_name": "Professional",
+                "description": "Documents related to professional career",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+            {
+                "category_name": "Legal",
+                "description": "Documents related to legal matters",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+        ]
+        for category in categories:
+            db_category = DocumentCategory(**category)
+            db.add(db_category)
+        db.commit()
+
+def seed_documents(db: Session):
+    if db.query(Document).count() == 0:
+
+        documents = [
+            {
+                "title": "Passport",
+                "description": "Employee passport",
+                "file_path": "/path/to/passport.pdf",
+                "created_by": 1,
+                "category_id": 1
+            },
+            {
+                "title": "Contract",
+                "description": "Employment contract",
+                "file_path": "/path/to/contract.pdf",
+                "created_by": 1,
+                "category_id": 2
+            }
+        ]
+        for document in documents:
+            db_document = Document(**document)
+            db.add(db_document)
+        db.commit()
 
 
-        
+
 def seed_all(db: Session):
     seed_initial_users(db)
     seed_initial_institutions(db)
@@ -109,3 +168,5 @@ def seed_all(db: Session):
     seed_initial_holidays(db)
     seed_initial_qualifications(db)
     seed_initial_ethnicities(db)
+    seed_document_categories(db)
+    seed_documents(db)
