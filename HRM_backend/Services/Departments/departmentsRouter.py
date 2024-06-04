@@ -53,3 +53,10 @@ def delete_department(department_id: int, db: Session = Depends(get_db)):
 @router.get("/{department_id}/job_positions/")
 def get_department_job_positions(department_id: int, db: Session = Depends(get_db)):
     return DepartmentService.get_department_job_positions(department_id=department_id, db=db)
+
+@router.get("/institutions/{institution_id}/departments")
+def get_departments(institution_id: int, db: Session = Depends(get_db)):
+    departments = db.query(Departments).filter(Departments.institution_id == institution_id, Departments.deleted_at == None).all()
+    if not departments:
+        raise HTTPException(status_code=404, detail="Departments not found")
+    return departments

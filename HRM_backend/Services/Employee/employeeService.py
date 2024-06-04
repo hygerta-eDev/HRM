@@ -30,6 +30,7 @@ class EmployeeService:
             employee.job_position_id = job_position_name
             employee.department_id = department_name
         return employees
+    
     @staticmethod
     def get_employee_by_id(db: Session, employee_id: int):
         return db.query(Employees).filter(Employees.id == employee_id).first()
@@ -49,6 +50,7 @@ class EmployeeService:
             date_of_birth=Employee.date_of_birth,
             date_hired=Employee.date_hired,
             contract_end_date=Employee.contract_end_date,
+            institucion_id=Employee.institucion_id,
             department_id=Employee.department_id,
             personal_number=Employee.personal_number,
             salary=Employee.salary,
@@ -70,11 +72,9 @@ class EmployeeService:
             active=Employee.active,
             qualification_id=Employee.qualification_id,
             user_id=Employee.user_id,
-            cv=Employee.cv,
+            # documents=Employee.documents,
             the_workouts_selection=Employee.the_workouts_selection,
-
             created_at = Employee.created_at
-
         )
 
         db.add(db_userCreate)
@@ -203,6 +203,21 @@ class EmployeeService:
             return FileResponse(temp_file_path, media_type='application/pdf', filename='employee_cv.pdf')
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error downloading CV: {str(e)}")
+
+
+
+    @staticmethod
+    def get_last_employee_id(db: Session = Depends(get_db)):
+        # Query to get the last employee ID
+        last_employee = db.query(Employees).order_by(Employees.id.desc()).first()
+        if last_employee:
+            return last_employee.id
+        else:
+            raise HTTPException(status_code=404, detail="No employees found")
+
+
+
+
 
     # def download_cv(employee_id: int, db: Session = Depends(get_db)):
     #     # Query the database to check if the employee exists

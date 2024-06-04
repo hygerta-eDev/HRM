@@ -20,6 +20,7 @@ class EmployeeBase(BaseModel):
     date_of_birth: Optional[date]
     date_hired: Optional[date]
     contract_end_date: Optional[date]
+    institucion_id: Optional[int]
     department_id: Optional[int]
     personal_number: Optional[str] = Field(..., unique=True, index=True)
     salary: Optional[str] = '0'
@@ -44,8 +45,8 @@ class EmployeeBase(BaseModel):
     user_id: Optional[int]
     # bank_account: str
     # bank_id: int
-    cv: Optional[bytes]
-    documents: Optional[List[bytes]] = None  # Fix array declaration
+    # cv: Optional[bytes]
+    # documents: Optional[List[bytes]] = None  # Fix array declaration
     the_workouts_selection:Optional[str]
 
 

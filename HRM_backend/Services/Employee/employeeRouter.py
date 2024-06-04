@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 from .employeeService import EmployeeService
 from Schema.employeeSchema import EmployeeCreate,EmployeeUpdate
 from Config.database import get_db
-from typing import List
+from typing import List,Dict
 from Schema.enums.Marital_status import MaritalStatus
 from Schema.enums.genders import Genders
+from Schema.enums.city import cities_data,CityResponse,City
 
 router = APIRouter(prefix="/employees", tags=["Employee"])
 
@@ -86,3 +87,25 @@ def download_cv(employee_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Employee not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+@router.get("/last_employee_id")
+def get_last_employee_id(db: Session = Depends(get_db)):
+    return EmployeeService.get_last_employee_id(db=db)
+
+
+@router.get("/cities", response_model=List[CityResponse])
+async def get_cities():
+    city_responses = [
+        CityResponse(city_name=city_name, zip_codes=cities_data[city_name]) 
+        for city_name in cities_data.keys()
+    ]
+    return city_responses
+
+@router.get("/zipcodes", response_model=CityResponse)
+def get_cities(city_name: str):
+    if city_name not in cities_data:
+        raise HTTPException(status_code=404, detail="City not found")
+    zip_codes = cities_data[city_name]
+    return CityResponse(city_name=city_name, zip_codes=zip_codes)
