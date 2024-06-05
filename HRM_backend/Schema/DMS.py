@@ -26,7 +26,7 @@ class Documentss(BaseModel):
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
     file_path: str
-    created_by: int
+    employee_id: int
 
 class DocumentVersionBase(BaseModel):
     document_id: int
