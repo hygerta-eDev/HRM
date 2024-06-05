@@ -140,14 +140,14 @@ def seed_documents(db: Session):
                 "title": "Passport",
                 "description": "Employee passport",
                 "file_path": "/path/to/passport.pdf",
-                "created_by": 1,
+                "employee_id": 1,
                 "category_id": 1
             },
             {
                 "title": "Contract",
                 "description": "Employment contract",
                 "file_path": "/path/to/contract.pdf",
-                "created_by": 1,
+                "employee_id": 1,
                 "category_id": 2
             }
         ]

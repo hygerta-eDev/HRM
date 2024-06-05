@@ -74,9 +74,9 @@ class DocumentMetadata(BaseModel):
     description: Optional[str]
     category_id: Optional[int]
 
-@router.post("/attach_documents/{employee_id}")
+@router.post("/attach_documents/{employees_id}")
 async def attach_documents_to_employee(
-    employee_id: int,
+    employees_id: int,
     files: List[UploadFile] = File(...),
     metadata_json: str = Form(...),
     db: Session = Depends(get_db)
@@ -92,7 +92,7 @@ async def attach_documents_to_employee(
             title=data["title"],
             description=data.get("description"),
             file_path=file_path,
-            created_by=employee_id,
+            employee_id=employees_id,
             category_id=data.get("category_id"),
             created_at=datetime.now(),
             updated_at=datetime.now()
@@ -124,10 +124,10 @@ async def download_file(filename: str):
     return FileResponse(path=file_path, filename=filename, media_type='application/octet-stream')
 
 
-@router.get("/download_all/{employee_id}")
-async def download_all_files(employee_id: int, db: Session = Depends(get_db)):
+@router.get("/download_all/{employees_id}")
+async def download_all_files(employees_id: int, db: Session = Depends(get_db)):
     # Query the database to get all documents for the employee
-    documents = db.query(Document).filter(Document.created_by == employee_id).all()
+    documents = db.query(Document).filter(Document.employee_id == employees_id).all()
 
     if not documents:
         raise HTTPException(status_code=404, detail="No documents found for the employee")
@@ -142,15 +142,15 @@ async def download_all_files(employee_id: int, db: Session = Depends(get_db)):
         
         tmp_file_path = tmp_file.name
 
-    return FileResponse(path=tmp_file_path, filename=f"employee_{employee_id}_documents.zip", media_type='application/zip')
+    return FileResponse(path=tmp_file_path, filename=f"employee_{employees_id}_documents.zip", media_type='application/zip')
 
 
 
-@router.get("/employee_documents_by_title/{employee_id}")
-async def get_employee_documents(employee_id: int, db: Session = Depends(get_db)):
+@router.get("/employee_documents_by_title/{employees_id}")
+async def get_employee_documents(employees_id: int, db: Session = Depends(get_db)):
     # Query the database to get all documents for the employee
     # documents = db.query(Document).filter(Document.created_by == employee_id).all()
-    documents = db.query(Document).filter(Document.created_by == employee_id).all()
+    documents = db.query(Document).filter(Document.employee_id == employees_id).all()
 
     if not documents:
         raise HTTPException(status_code=404, detail="No documents found for the employee")

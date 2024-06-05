@@ -171,7 +171,7 @@
       <div class="container mx-auto p-6">
         <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
           <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-          <form @submit.prevent="submitForm">
+          <form >
             <div v-for="(doc, index) in metadata" :key="index">
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
@@ -181,9 +181,18 @@
                 <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
                 <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               </div>
-              <div class="mb-4">
+              <!-- <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Category ID:</label>
                 <input v-model="doc.category_id" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div> -->
+              <div class="w-full mb-4 px-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Zip Code</label>
+                <select id="category" v-model="selectedCategory" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                <option value="">Select Category</option>
+                <option v-for="category in categories" :key="category" :value="category.category_id">
+                  {{ category.category_name }}
+                </option>
+              </select>
               </div>
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
@@ -191,6 +200,45 @@
               </div>
             </div>
             <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
+          </form>
+        </div>
+      </div>
+      <div class="container mx-auto p-6">
+        <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
+          <h1 class="text-2xl font-bold mb-6">workExperience</h1>
+          <form @submit.prevent="submitForm">
+            <div>
+              <div class="mb-4">
+                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                <input type="text" id="name" v-model="workExperienceData.name" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div>
+              <!-- <div class="mb-4">
+                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+                <input type="text" id="type" v-model="workExperienceData.type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div> -->
+
+              <div class="mb-4">
+            <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+            <select v-model="workExperienceData.type" id="type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Type</option>
+              <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
+                {{ work_experience_type }}
+              </option>
+            </select>
+          </div>
+              <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+                <label for="start" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+                <input id="start" v-model="workExperienceData.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div>
+              <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+                <label for="end" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+                <input id="end" v-model="workExperienceData.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div>
+              <div class="mb-4">
+                <label for="days" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                <input type="number" id="days" v-model="workExperienceData.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -205,7 +253,7 @@
 </template>
 
 <script>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted,watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { api } from '@/api';
   import { toast } from 'vue3-toastify';
@@ -219,11 +267,15 @@
       const jobPositions = ref([]);
       const ethnicities = ref([]);
       const maritalStatusOptions = ref([]);
+      const workExperienceOptions = ref([]);
       const genderOptions = ref([]);
       const cityOptions = ref([]);
       const zipCodeOptions = ref([]);
       const cities = ref([]);
       const zipCodes = ref([]);
+      const selectedCategory = ref('');
+      const categories = ref('')
+
       const newEmployee = ref({
         selectedInstitution: null,
         selectedDepartment: null,
@@ -264,8 +316,57 @@
         the_workouts_selection: 'primar',
         created_at: new Date().toISOString(),
       });
+      const workExperienceData = ref({
+      name: '',
+      start: '',
+      type: '',
+      end: '',
+      days: 0,
+      employee_id: 0,
+      created_at: new Date().toISOString(),
+      user_id: 1, // Assigning user_id here
+    });
+    
+    const fetchWorkExperienceType = async () => {
+          try {
+            const response = await api.get('/workExperience/work_experience/type');
+            workExperienceOptions.value = response.data;
+          } catch (error) {
+            handleApiError(error, 'marital status options');
+          }
+        };
+    const calculateDays = () => {
+      if (workExperienceData.value.start && workExperienceData.value.end) {
+        const startDate = new Date(workExperienceData.value.start);
+        const endDate = new Date(workExperienceData.value.end);
+        const timeDifference = endDate - startDate;
+        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        workExperienceData.value.days = daysDifference;
+      } else {
+        workExperienceData.value.days = 0;
+      }
+    };
+
+    watch(() => [workExperienceData.value.start, workExperienceData.value.end], calculateDays);
+
+    const submitWorkExperience = async () => {
+      try {
+        const responseEmployeeId = await api.get('/employees/last_employee_id');
+        const lastEmployeeId = responseEmployeeId.data;
+
+        workExperienceData.value.employee_id = lastEmployeeId;
+
+        const response = await api.post('/workExperience/create_WorkExperience', workExperienceData.value);
+        console.log('Success:', response.data);
+        // Optionally, you can redirect or show a success message here
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle error here
+      }
+    };
+
       const files = ref([])
-      const metadata = ref([{ title: '', description: '', category_id: null }]);
+      const metadata = ref([{ title: '', description: '', category_id: selectedCategory.value }]);
 
       const submitForm = async () => {
         try {
@@ -279,10 +380,10 @@
             const metadataObject = {
               title: doc.title,
               description: doc.description,
-              category_id: doc.category_id,
+              category_id: selectedCategory.value,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-              created_by: lastEmployeeId 
+              employee_id: lastEmployeeId 
             };
 
             formData.append('metadata_json', JSON.stringify([metadataObject]));
@@ -322,6 +423,16 @@
         const addDocument = () => {
           metadata.value.push({ title: '', description: '', category_id: null });
         };
+        
+      const fetchCategories = async () => {
+          try {
+            const response = await api.get('/all-categories');
+            categories.value = response.data;
+          } catch (error) {
+            handleApiError(error, 'ethnicities');
+          }
+        };
+
 
         const fetchCitiesAndZipCodes = async () => {
             try {
@@ -457,7 +568,7 @@
             console.log('Employee created successfully:', response.data);
 
             await submitForm();     
-
+            await submitWorkExperience();
             router.push('/Employee');
 
             setTimeout(() => {
@@ -486,11 +597,15 @@
 
 
         onMounted(() => {
+          fetchCategories();
+
           fetchInstitutions();
           fetchEthnicities();
           fetchMaritalStatusOptions();
           fetchGenderOptions();
           fetchCitiesAndZipCodes();
+          fetchWorkExperienceType();
+
             });
 
         return {
@@ -503,6 +618,7 @@
           onDepartmentChange,
           ethnicities,
           maritalStatusOptions,
+          workExperienceOptions,
           genderOptions,
           cityOptions,
           zipCodeOptions,
@@ -516,7 +632,10 @@
           handleFileChange,
           addDocument,
           files,
-
+          selectedCategory,
+          categories,
+          workExperienceData,
+          submitWorkExperience,
       };
     },
 };

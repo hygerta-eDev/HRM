@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from .employee_work_experienceService import WorkExperienceService
 from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate
 from Config.database import get_db
+from typing import List 
+from Schema.enums.work_experience import Work_experience
 
 router = APIRouter(prefix="/workExperience", tags=["WorkExperience"])
 
@@ -36,3 +38,7 @@ def update_workExperiences(workExperience_id: int, workExperience: WorkExperienc
 def delete_workExperience(workExperience_id: int, db: Session = Depends(get_db)):
     return WorkExperienceService.delete_workExperience(workExperience_id=workExperience_id, db=db)
 
+@router.get("/work_experience/type")
+def get_work_experience_type():
+    work_experience_type = [status.value for status in Work_experience]
+    return work_experience_type
