@@ -109,20 +109,38 @@ def seed_document_categories(db: Session):
 
         categories = [
             {
-                "category_name": "Personal",
+                "category_name": "Personal Information",
                 "description": "Documents related to personal information",
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow()
             },
             {
-                "category_name": "Professional",
+                "category_name": "Employment Details",
                 "description": "Documents related to professional career",
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow()
             },
             {
-                "category_name": "Legal",
+                "category_name": "Performance",
+                "description": "Documents related to performance",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+                        {
+                "category_name": "Training ",
+                "description": "Documents related to trainings",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+                        {
+                "category_name": "Legal Documents",
                 "description": "Documents related to legal matters",
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+                        {
+                "category_name": "Other",
+                "description": "Other category documents ",
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow()
             },
@@ -137,14 +155,14 @@ def seed_documents(db: Session):
 
         documents = [
             {
-                "title": "Passport",
+                "title": "passport",
                 "description": "Employee passport",
                 "file_path": "/path/to/passport.pdf",
                 "employee_id": 1,
                 "category_id": 1
             },
             {
-                "title": "Contract",
+                "title": "employment_contracts",
                 "description": "Employment contract",
                 "file_path": "/path/to/contract.pdf",
                 "employee_id": 1,

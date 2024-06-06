@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 from fastapi import UploadFile
+from .enums.documents_title import documentsTitle
+
 
 class DocumentBase(BaseModel):
     title: str
@@ -21,7 +23,7 @@ class DocumentI(DocumentBase):
     class Config:
         orm_mode = True
 class Documentss(BaseModel):
-    title: str
+    title: documentsTitle
     # document_id: int
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
@@ -127,3 +129,10 @@ class DocumentCategorys(BaseModel):
 
 class FileUpload(BaseModel):
     files: List[UploadFile]
+
+
+class TitleResponse(BaseModel):
+    title: str
+
+    class Config:
+        orm_mode = True

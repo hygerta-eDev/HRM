@@ -81,7 +81,7 @@
               </svg>
             </button>
           </div>
-          <div class="mt-16 flex-1 h-10 overflow-y-auto">
+          <div class="mt-16 flex-1 h-10 ">
             <div class="w-6/12 mb-16 ml-14">
               <img src="../assets/img/logo-etech.png" alt="" />
             </div>

@@ -52,14 +52,14 @@ class DMSService:
     #     return attached_documents
     
 
-    def attach_documents_to_employee(db: Session, employee_id: int, documents: List[UploadFile]):
+    def attach_documents_to_employee(db: Session, employees_id: int, documents: List[UploadFile]):
         attached_documents = []
         for document_file in documents:
             # Save the file to a specified directory
             file_path = save_uploaded_file(document_file)
 
             # Create the document in the database
-            document = Document(file_path=file_path, created_by=employee_id)
+            document = Document(file_path=file_path, employee_id=employees_id)
             db.add(document)
             db.commit()
             db.refresh(document)

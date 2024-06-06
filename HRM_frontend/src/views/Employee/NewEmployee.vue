@@ -173,26 +173,25 @@
           <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
           <form >
             <div v-for="(doc, index) in metadata" :key="index">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-                <input v-model="doc.title" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <div class="w-full mb-4 ">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="category">Select Category:</label>
+                <select  class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" id="category" v-model="selectedCategory" @change="fetchTitles">
+                  <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
+                    {{ category.category_name }}
+                  </option>
+                </select>
+              </div>
+              <div class="w-full mb-4 ">
+                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
+                <select id="title" v-model="doc.selectedTitle" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                  <option v-for="title in titles" :key="title.title_id" :value="title.title">
+                    {{ title.title }}
+                  </option>
+                </select>
               </div>
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
                 <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-              <!-- <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Category ID:</label>
-                <input v-model="doc.category_id" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div> -->
-              <div class="w-full mb-4 px-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Zip Code</label>
-                <select id="category" v-model="selectedCategory" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                <option value="">Select Category</option>
-                <option v-for="category in categories" :key="category" :value="category.category_id">
-                  {{ category.category_name }}
-                </option>
-              </select>
               </div>
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
@@ -212,20 +211,15 @@
                 <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
                 <input type="text" id="name" v-model="workExperienceData.name" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               </div>
-              <!-- <div class="mb-4">
-                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
-                <input type="text" id="type" v-model="workExperienceData.type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div> -->
-
               <div class="mb-4">
-            <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
-            <select v-model="workExperienceData.type" id="type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option value="">Select Type</option>
-              <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
-                {{ work_experience_type }}
-              </option>
-            </select>
-          </div>
+                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+                <select v-model="workExperienceData.type" id="type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                  <option value="">Select Type</option>
+                  <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
+                    {{ work_experience_type }}
+                  </option>
+                </select>
+              </div>
               <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
                 <label for="start" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
                 <input id="start" v-model="workExperienceData.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
@@ -235,7 +229,7 @@
                 <input id="end" v-model="workExperienceData.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               </div>
               <div class="mb-4">
-                <label for="days" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                <label for="days" class="block text-gray-700 text-sm font-bold mb-2">Days:</label>
                 <input type="number" id="days" v-model="workExperienceData.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
               </div>
             </div>
@@ -273,16 +267,19 @@
       const zipCodeOptions = ref([]);
       const cities = ref([]);
       const zipCodes = ref([]);
+      const selectedZipCode = ref('');
       const selectedCategory = ref('');
-      const categories = ref('')
-
+      const categories = ref([]);
+      const titles = ref([]);
+      const selectedTitle = ref('');
+      const files = ref([])
+      const metadata = ref([{ selectedTitle: '', description: '', category_id: selectedCategory.value }]);
       const newEmployee = ref({
         selectedInstitution: null,
         selectedDepartment: null,
         selectedJobPosition: null,
         selectedCity: '',
         selectedZipCode: '',
-
         name: '',
         number: '',
         username: '',
@@ -312,73 +309,88 @@
         active: true,
         qualification_id: 1,
         user_id: 0,
-        cv: 'test',
         the_workouts_selection: 'primar',
         created_at: new Date().toISOString(),
       });
       const workExperienceData = ref({
-      name: '',
-      start: '',
-      type: '',
-      end: '',
-      days: 0,
-      employee_id: 0,
-      created_at: new Date().toISOString(),
-      user_id: 1, // Assigning user_id here
-    });
-    
-    const fetchWorkExperienceType = async () => {
+        name: '',
+        start: '',
+        type: '',
+        end: '',
+        days: 0,
+        employee_id: 0,
+        created_at: new Date().toISOString(),
+        user_id: 1, 
+      });
+
+      const fetchCategories = async () => {
+        try {
+          const response = await api.get('/api/categories');
+          categories.value = response.data;
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+
+      const fetchTitles = async () => {
+        if (selectedCategory.value) {
           try {
-            const response = await api.get('/workExperience/work_experience/type');
-            workExperienceOptions.value = response.data;
+            const response = await api.get(`/api/titles?category_id=${selectedCategory.value}`);
+            titles.value = response.data;
           } catch (error) {
-            handleApiError(error, 'marital status options');
+            console.error("Error fetching titles:", error);
           }
-        };
-    const calculateDays = () => {
-      if (workExperienceData.value.start && workExperienceData.value.end) {
-        const startDate = new Date(workExperienceData.value.start);
-        const endDate = new Date(workExperienceData.value.end);
-        const timeDifference = endDate - startDate;
-        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-        workExperienceData.value.days = daysDifference;
-      } else {
-        workExperienceData.value.days = 0;
-      }
-    };
+        }
+      };
+      const fetchWorkExperienceType = async () => {
+        try {
+          const response = await api.get('/workExperience/work_experience/type');
+          workExperienceOptions.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'marital status options');
+        }
+      };
+      const calculateDays = () => {
+        if (workExperienceData.value.start && workExperienceData.value.end) {
+          const startDate = new Date(workExperienceData.value.start);
+          const endDate = new Date(workExperienceData.value.end);
+          const timeDifference = endDate - startDate;
+          const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+          workExperienceData.value.days = daysDifference;
+        } else {
+          workExperienceData.value.days = 0;
+        }
+      };
 
-    watch(() => [workExperienceData.value.start, workExperienceData.value.end], calculateDays);
+      watch(() => [workExperienceData.value.start, workExperienceData.value.end], calculateDays);
 
-    const submitWorkExperience = async () => {
-      try {
-        const responseEmployeeId = await api.get('/employees/last_employee_id');
-        const lastEmployeeId = responseEmployeeId.data;
+      const submitWorkExperience = async () => {
+        try {
+          const responseEmployeeId = await api.get('/employees/last_employee_id');
+          const lastEmployeeId = responseEmployeeId.data;
 
-        workExperienceData.value.employee_id = lastEmployeeId;
+          workExperienceData.value.employee_id = lastEmployeeId;
 
-        const response = await api.post('/workExperience/create_WorkExperience', workExperienceData.value);
-        console.log('Success:', response.data);
-        // Optionally, you can redirect or show a success message here
-      } catch (error) {
-        console.error('Error:', error);
-        // Handle error here
-      }
-    };
-
-      const files = ref([])
-      const metadata = ref([{ title: '', description: '', category_id: selectedCategory.value }]);
-
+          const response = await api.post('/workExperience/create_WorkExperience', workExperienceData.value);
+          console.log('Success:', response.data);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
       const submitForm = async () => {
         try {
           const response = await api.get('/employees/last_employee_id');
+
           const lastEmployeeId = response.data;
 
           for (let i = 0; i < metadata.value.length; i++) {
+
             const doc = metadata.value[i];
+
             const formData = new FormData();
 
             const metadataObject = {
-              title: doc.title,
+              title: doc.selectedTitle,
               description: doc.description,
               category_id: selectedCategory.value,
               created_at: new Date().toISOString(),
@@ -400,7 +412,7 @@
             console.log('Document uploaded:', uploadResponse.data);
           }
         } catch (error) {
-          console.error('Error uploading documents:', error);
+            console.error('Error uploading documents:', error);
         }
       };
 
@@ -412,643 +424,230 @@
   //     files.value[index] = selectedFiles[0];
   //   }
   // };
-        const handleFileChange = (index, event) => {
-          const selectedFiles = event.target.files;
-          if (selectedFiles && selectedFiles.length > 0) {
-            // Store all selected files for the current document
-            files.value[index] = selectedFiles;
-          }
-        };
+      const handleFileChange = (index, event) => {
+        const selectedFiles = event.target.files;
+        if (selectedFiles && selectedFiles.length > 0) {
+          files.value[index] = selectedFiles;
+        }
+      };
 
-        const addDocument = () => {
-          metadata.value.push({ title: '', description: '', category_id: null });
-        };
-        
-      const fetchCategories = async () => {
-          try {
-            const response = await api.get('/all-categories');
-            categories.value = response.data;
+      const addDocument = () => {
+        metadata.value.push({ selectedTitle: '', description: '', category_id: null });
+      };
+
+      const fetchCitiesAndZipCodes = async () => {
+        try {
+            const response = await api.get('/employees/cities');
+            // console.log("response", response);
+            cities.value = response.data;
+            // console.log(cities.value);
           } catch (error) {
-            handleApiError(error, 'ethnicities');
+            console.error('Error fetching cities:', error);
           }
-        };
+      };
 
-
-        const fetchCitiesAndZipCodes = async () => {
-            try {
-              const response = await api.get('/employees/cities');
-              console.log("response", response);
-              cities.value = response.data;
-              console.log(cities.value);
-            } catch (error) {
-              console.error('Error fetching cities:', error);
+      const fetchZipCodes = async (cityName) => {
+        try {
+          const response = await api.get('/employees/zipcodes', {
+            params: {
+              city_name: cityName
+            },
+            headers: {
+              'Accept': 'application/json'
             }
-        };
-        const selectedZipCode = ref('');
-
-        const fetchZipCodes = async (cityName) => {
-          try {
-            const response = await api.get('/employees/zipcodes', {
-              params: {
-                city_name: cityName
-              },
-              headers: {
-                'Accept': 'application/json'
-              }
-            });
-            console.log(response.data);
-            const zipCodesData = response.data.zip_codes;
-            if (Array.isArray(zipCodesData)) {
-              zipCodes.value = zipCodesData;
-              if (zipCodesData.length === 1) {
-                newEmployee.value.selectedZipCode = zipCodesData[0];
-              }
-            }
-          } catch (error) {
-            console.error('Error fetching zip codes:', error);
-            handleApiError(error, 'zipcodes');
-
-          }
-        };
-
-        const onCityChange = (event) => {
-          const cityName = event.target.value;
-          fetchZipCodes(cityName);
-        };
-
-        const fetchEthnicities = async () => {
-          try {
-            const response = await api.get('/ethnicities/active_ethnicities');
-            ethnicities.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'ethnicities');
-          }
-        };
-
-        const fetchInstitutions = async () => {
-          try {
-            const response = await api.get('/institutions/active_institutions');
-            institutions.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'institutions');
-          }
-        };
-
-        const fetchMaritalStatusOptions = async () => {
-          try {
-            const response = await api.get('/employees/marital_status');
-            maritalStatusOptions.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'marital status options');
-          }
-        };
-
-        const fetchGenderOptions = async () => {
-          try {
-            const response = await api.get('/employees/genders');
-            genderOptions.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'gender options');
-          }
-        };
-
-        const fetchDepartments = async (institutionId) => {
-          try {
-            const response = await api.get(`/departments/institutions/${institutionId}/departments`);
-            departments.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'departments');
-          }
-        };
-
-        const fetchJobPositions = async (institutionId, departmentId) => {
-          try {
-            const response = await api.get(`/institutions/job_positions/${institutionId}/${departmentId}?institutions_id=${institutionId}`);
-            jobPositions.value = response.data;
-          } catch (error) {
-            handleApiError(error, 'job positions');
-          }
-        };
-
-        const onInstitutionChange = () => {
-          const institutionId = newEmployee.value.selectedInstitution;
-          if (institutionId) {
-            fetchDepartments(institutionId);
-            jobPositions.value = [];
-            const departmentId = newEmployee.value.selectedDepartment;
-            if (departmentId) {
-              fetchJobPositions(institutionId, departmentId);
+          });
+          // console.log(response.data);
+          const zipCodesData = response.data.zip_codes;
+          if (Array.isArray(zipCodesData)) {
+            zipCodes.value = zipCodesData;
+            if (zipCodesData.length === 1) {
+              newEmployee.value.selectedZipCode = zipCodesData[0];
             }
           }
-        };
+        } catch (error) {
+          console.error('Error fetching zip codes:', error);
+          handleApiError(error, 'zipcodes');
+        }
+      };
 
-        const onDepartmentChange = () => {
-          const institutionId = newEmployee.value.selectedInstitution;
+      const onCityChange = (event) => {
+        const cityName = event.target.value;
+        fetchZipCodes(cityName);
+      };
+
+      const fetchEthnicities = async () => {
+        try {
+          const response = await api.get('/ethnicities/active_ethnicities');
+          ethnicities.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'ethnicities');
+        }
+      };
+
+      const fetchInstitutions = async () => {
+        try {
+          const response = await api.get('/institutions/active_institutions');
+          institutions.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'institutions');
+        }
+      };
+
+      const fetchMaritalStatusOptions = async () => {
+        try {
+          const response = await api.get('/employees/marital_status');
+          maritalStatusOptions.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'marital status options');
+        }
+      };
+
+      const fetchGenderOptions = async () => {
+        try {
+          const response = await api.get('/employees/genders');
+          genderOptions.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'gender options');
+        }
+      };
+
+      const fetchDepartments = async (institutionId) => {
+        try {
+          const response = await api.get(`/departments/institutions/${institutionId}/departments`);
+          departments.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'departments');
+        }
+      };
+
+      const fetchJobPositions = async (institutionId, departmentId) => {
+        try {
+          const response = await api.get(`/institutions/job_positions/${institutionId}/${departmentId}?institutions_id=${institutionId}`);
+          jobPositions.value = response.data;
+        } catch (error) {
+          handleApiError(error, 'job positions');
+        }
+      };
+
+      const onInstitutionChange = () => {
+        const institutionId = newEmployee.value.selectedInstitution;
+        if (institutionId) {
+          fetchDepartments(institutionId);
+          jobPositions.value = [];
           const departmentId = newEmployee.value.selectedDepartment;
-          // const jobPositionId=newEmployee.value.selectedJobPosition
-          if (institutionId && departmentId ) {
+          if (departmentId) {
             fetchJobPositions(institutionId, departmentId);
-          } else {
-            console.error('Either institutionId or departmentId is null.');
           }
-        };
+        }
+      };
 
-        const validateAndRegisterEmployee = async (documentUpload) => {
-          newEmployee.value.institucion_id = newEmployee.value.selectedInstitution;
-          newEmployee.value.department_id = newEmployee.value.selectedDepartment;
-          newEmployee.value.job_position_id = newEmployee.value.selectedJobPosition;
-          newEmployee.value.city=newEmployee.value.selectedCity
+      const onDepartmentChange = () => {
+        const institutionId = newEmployee.value.selectedInstitution;
+        const departmentId = newEmployee.value.selectedDepartment;
+        // const jobPositionId=newEmployee.value.selectedJobPosition
+        if (institutionId && departmentId ) {
+          fetchJobPositions(institutionId, departmentId);
+        } else {
+          console.error('Either institutionId or departmentId is null.');
+        }
+      };
 
-          newEmployee.value.zipcode=newEmployee.value.selectedZipCode
+      const validateAndRegisterEmployee = async (documentUpload) => {
+        newEmployee.value.institucion_id = newEmployee.value.selectedInstitution;
+        newEmployee.value.department_id = newEmployee.value.selectedDepartment;
+        newEmployee.value.job_position_id = newEmployee.value.selectedJobPosition;
+        newEmployee.value.city=newEmployee.value.selectedCity
 
-          newEmployee.value.user_id = 1;
+        newEmployee.value.zipcode=newEmployee.value.selectedZipCode
 
-          try {
-            const response = await api.post('/employees/create_employee', newEmployee.value);
-            console.log('Employee created successfully:', response.data);
+        newEmployee.value.user_id = 1;
 
-            await submitForm();     
-            await submitWorkExperience();
-            router.push('/Employee');
-
-            setTimeout(() => {
-              toast.success('Employee created successfully!', {
-                autoClose: 3000,
-                position: toast.POSITION.TOP_RIGHT,
-              });
-            }, 250);
-          } catch (error) {
-            console.error('Error creating employee:', error);
-            toast.error('Failed to create employee!', {
+        try {
+          const response = await api.post('/employees/create_employee', newEmployee.value);
+          // console.log('Employee created successfully:', response.data);
+          await submitForm();     
+          await submitWorkExperience();
+          router.push('/Employee');
+          setTimeout(() => {
+            toast.success('Employee created successfully!', {
               autoClose: 3000,
               position: toast.POSITION.TOP_RIGHT,
             });
-          }
-        };
-
-        const handleApiError = (error, resourceName) => {
-          console.error(`Error fetching ${resourceName}:`, error);
-          toast.error(`Failed to fetch ${resourceName}!`, {
+          }, 250);
+        } catch (error) {
+          console.error('Error creating employee:', error);
+          toast.error('Failed to create employee!', {
             autoClose: 3000,
             position: toast.POSITION.TOP_RIGHT,
           });
-        };
+        }
+      };
+      const handleApiError = (error, resourceName) => {
+        console.error(`Error fetching ${resourceName}:`, error);
+        toast.error(`Failed to fetch ${resourceName}!`, {
+          autoClose: 3000,
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      };
 
 
 
-        onMounted(() => {
-          fetchCategories();
+      onMounted(() => {
+        fetchCategories();
+        fetchInstitutions();
+        fetchEthnicities();
+        fetchMaritalStatusOptions();
+        fetchGenderOptions();
+        fetchCitiesAndZipCodes();
+        fetchWorkExperienceType();
+      });
 
-          fetchInstitutions();
-          fetchEthnicities();
-          fetchMaritalStatusOptions();
-          fetchGenderOptions();
-          fetchCitiesAndZipCodes();
-          fetchWorkExperienceType();
-
-            });
-
-        return {
-          institutions,
-          departments,
-          jobPositions,
-          newEmployee,
-          validateAndRegisterEmployee,
-          onInstitutionChange,
-          onDepartmentChange,
-          ethnicities,
-          maritalStatusOptions,
-          workExperienceOptions,
-          genderOptions,
-          cityOptions,
-          zipCodeOptions,
-          cities,
-          zipCodes,
-          onCityChange,
-          selectedZipCode,
-          documentUpload,
-          metadata,
-          submitForm,
-          handleFileChange,
-          addDocument,
-          files,
-          selectedCategory,
-          categories,
-          workExperienceData,
-          submitWorkExperience,
+      return {
+        institutions,
+        departments,
+        jobPositions,
+        newEmployee,
+        validateAndRegisterEmployee,
+        onInstitutionChange,
+        onDepartmentChange,
+        ethnicities,
+        maritalStatusOptions,
+        workExperienceOptions,
+        genderOptions,
+        cityOptions,
+        zipCodeOptions,
+        cities,
+        zipCodes,
+        onCityChange,
+        selectedZipCode,
+        documentUpload,
+        metadata,
+        submitForm,
+        handleFileChange,
+        addDocument,
+        files,
+        selectedCategory,
+        categories,
+        titles,
+        selectedTitle,
+        newEmployee,
+        workExperienceData,
+        fetchTitles,
+        fetchCategories,
+        selectedTitle,
+        workExperienceData,
+        submitWorkExperience,
       };
     },
-};
+  };
 </script>
 
 <style scoped>
-.container {
-  max-width: 1200px;
-}
+  .container {
+    max-width: 1200px;
+  }
 </style> 
 
 
 
 
-
-
-
-<!-- 
-
-
-
-<template>
-  <div class="container mx-auto p-6">
-    <div class="create-employee p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-      <h1 class="text-2xl font-bold mb-6">Register New Employee</h1>
-      <div class="employee-details flex flex-wrap">
-        <div v-for="(field, index) in formFields" :key="index" class="w-full md:w-1/3 mb-4 px-2">
-          <label :class="labelClass">{{ field.label }}</label>
-          <input v-if="field.type === 'input'" v-model="newEmployee[field.model]" :type="field.inputType" :class="inputClass" />
-          <select v-else-if="field.type === 'select'" v-model="newEmployee[field.model]" :class="inputClass" @change="field.onChange">
-            <option value="">{{ field.placeholder }}</option>
-            <option v-for="option in field.options" :key="option.value" :value="option.value">
-              {{ option.text }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <DocumentUploadComponent />
-      <div class="w-full text-right mt-4 px-2">
-        <button @click="validateAndRegisterEmployee" type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
-        <router-link :to="`/Employee`">
-          <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
-        </router-link>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { api } from '@/api';
-import { toast } from 'vue3-toastify';
-import DocumentUploadComponent from '../test/test.vue';
-
-export default {
-  components: { DocumentUploadComponent },
-
-  setup() {
-    const router = useRouter();
-    const documentUpload = ref(null);
-
-    const institutions = ref([]);
-    const departments = ref([]);
-    const jobPositions = ref([]);
-    const ethnicities = ref([]);
-    const maritalStatusOptions = ref([]);
-    const genderOptions = ref([]);
-    const cities = ref([]);
-    const zipCodes = ref([]);
-    const newEmployee = ref({
-      selectedInstitution: null,
-      selectedDepartment: null,
-      selectedJobPosition: null,
-      selectedCity: '',
-      selectedZipCode: '',
-      name: '',
-      number: '',
-      username: '',
-      middle_name: '',
-      last_name: '',
-      gender: 'N/A',
-      ethnicity_id: 0,
-      marital_status: 'Single',
-      date_of_birth: '',
-      date_hired: '',
-      contract_end_date: '',
-      personal_number: '',
-      salary: '0',
-      addition: 0,
-      street: 'Hulaj',
-      city: '',
-      zipcode: '',
-      country: 'Kosova',
-      phone_number: '044364211',
-      phone_number_2: '044364211',
-      email: 'hulajhygerta@gmail.com',
-      email_2: 'hulajhygerta@gmail.com',
-      days_off: 0,
-      transferred_days_off: 0,
-      earned_days_off: 0,
-      next_year_earned_days_off: 2028,
-      active: true,
-      qualification_id: 1,
-      user_id: 0,
-      cv: 'test',
-      the_workouts_selection: 'primar',
-      created_at: new Date().toISOString(),
-    });
-    const files = ref([[]]);
-    const metadata = ref([{ title: '', description: '', category_id: null }]);
-
-    const submitForm = async () => {
-      try {
-        const response = await api.get('/employees/last_employee_id');
-        const lastEmployeeId = response.data;
-
-        for (let i = 0; i < metadata.value.length; i++) {
-          const doc = metadata.value[i];
-          const formData = new FormData();
-
-          const metadataObject = {
-            title: doc.title,
-            description: doc.description,
-            category_id: doc.category_id,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            created_by: lastEmployeeId,
-          };
-
-          formData.append('metadata_json', JSON.stringify([metadataObject]));
-
-          for (let j = 0; j < files.value[i].length; j++) {
-            formData.append(`files[${j}]`, files.value[i][j]);
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, i * 100));
-
-          const uploadResponse = await api.post(`/attach_documents/${lastEmployeeId}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-
-          console.log('Document uploaded:', uploadResponse.data);
-        }
-      } catch (error) {
-        console.error('Error uploading documents:', error);
-      }
-    };
-
-    const handleFileChange = (index, event) => {
-      const selectedFiles = event.target.files;
-      if (selectedFiles && selectedFiles.length > 0) {
-        files.value[index] = Array.from(selectedFiles);
-      }
-    };
-
-    const addDocument = () => {
-      metadata.value.push({ title: '', description: '', category_id: null });
-      files.value.push([]);
-    };
-
-    const fetchCitiesAndZipCodes = async () => {
-      try {
-        const response = await api.get('/employees/cities');
-        cities.value = response.data;
-      } catch (error) {
-        console.error('Error fetching cities:', error);
-      }
-    };
-
-    const fetchZipCodes = async (cityName) => {
-  try {
-    const response = await api.get('/employees/zipcodes', {
-      params: {
-        city_name: cityName
-      },
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    console.log(response.data);
-    const zipCodesData = response.data.zip_codes;
-    if (Array.isArray(zipCodesData)) {
-      // Assign all zip codes to the zipCodes array
-      zipCodes.value = zipCodesData;
-      // If there's only one zip code, automatically select it
-      if (zipCodesData.length === 1) {
-        newEmployee.value.selectedZipCode = zipCodesData[0];
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching zip codes:', error);
-    // Handle errors here
-  }
-};
-
-
-    const onCityChange = () => {
-      const cityName = newEmployee.value.selectedCity;
-      fetchZipCodes(cityName);
-    };
-
-    const fetchEthnicities = async () => {
-      try {
-        const response = await api.get('/ethnicities/active_ethnicities');
-        ethnicities.value = response.data.map(ethnicity => ({ value: ethnicity.id, text: ethnicity.name }));
-      } catch (error) {
-        handleApiError(error, 'ethnicities');
-      }
-    };
-
-    const fetchInstitutions = async () => {
-      try {
-        const response = await api.get('/institutions/active_institutions');
-        institutions.value = response.data.map(institution => ({ value: institution.id, text: institution.name }));
-      } catch (error) {
-        handleApiError(error, 'institutions');
-      }
-    };
-
-    const fetchMaritalStatusOptions = async () => {
-      try {
-        const response = await api.get('/employees/marital_status');
-        maritalStatusOptions.value = response.data.map(status => ({ value: status.id, text: status.status }));
-      } catch (error) {
-        handleApiError(error, 'marital status options');
-      }
-    };
-
-    const fetchGenderOptions = async () => {
-      try {
-        const response = await api.get('/employees/genders');
-        genderOptions.value = response.data.map(gender => ({ value: gender.id, text: gender.gender }));
-      } catch (error) {
-        handleApiError(error, 'gender options');
-      }
-    };
-
-    const fetchDepartments = async (institutionId) => {
-      try {
-        const response = await api.get(`/departments/institutions/${institutionId}/departments`);
-        departments.value = response.data.map(department => ({ value: department.id, text: department.name }));
-      } catch (error) {
-        handleApiError(error, 'departments');
-      }
-    };
-
-    const fetchJobPositions = async (institutionId, departmentId) => {
-      try {
-        const response = await api.get(`/institutions/job_positions/${institutionId}/${departmentId}?institutions_id=${institutionId}`);
-        jobPositions.value = response.data.map(jobPosition => ({ value: jobPosition.id, text: jobPosition.name }));
-      } catch (error) {
-        handleApiError(error, 'job positions');
-      }
-    };
-
-    const onInstitutionChange = () => {
-      const institutionId = newEmployee.value.selectedInstitution;
-      if (institutionId) {
-        fetchDepartments(institutionId);
-        jobPositions.value = [];
-        newEmployee.value.selectedDepartment = null;
-        newEmployee.value.selectedJobPosition = null;
-      }
-    };
-
-    const onDepartmentChange = () => {
-      const institutionId = newEmployee.value.selectedInstitution;
-      const departmentId = newEmployee.value.selectedDepartment;
-      if (institutionId && departmentId) {
-        fetchJobPositions(institutionId, departmentId);
-      }
-    };
-    const validateAndRegisterEmployee = async () => {
-      newEmployee.value.institucion_id = newEmployee.value.selectedInstitution;
-      newEmployee.value.department_id = newEmployee.value.selectedDepartment;
-      newEmployee.value.city = newEmployee.value.selectedCity;
-      newEmployee.value.zipcode = newEmployee.value.selectedZipCode;
-      newEmployee.value.position_id = newEmployee.value.selectedJobPosition;
-
-      try {
-        const response = await api.post('/employees/register_employee', newEmployee.value);
-        console.log('Employee created successfully:', response.data);
-        await submitForm();
-        router.push('/Employee');
-        setTimeout(() => {
-          toast.success('Employee created successfully!', {
-            autoClose: 3000,
-            position: toast.POSITION.TOP_RIGHT,
-          });
-        }, 250);
-      } catch (error) {
-        console.error('Error creating employee:', error);
-        toast.error('Failed to create employee!', {
-          autoClose: 3000,
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      }
-    };
-
-    const handleApiError = (error, resourceName) => {
-      console.error(`Error fetching ${resourceName}:`, error);
-      toast.error(`Failed to fetch ${resourceName}!`, {
-        autoClose: 3000,
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    };
-
-    onMounted(() => {
-      fetchInstitutions();
-      fetchEthnicities();
-      fetchMaritalStatusOptions();
-      fetchGenderOptions();
-      fetchCitiesAndZipCodes();
-    });
-
-    const formFields = computed(() => [
-      { label: 'Name', model: 'name', type: 'input', inputType: 'text' },
-      { label: 'Number', model: 'number', type: 'input', inputType: 'text' },
-      { label: 'Username', model: 'username', type: 'input', inputType: 'text' },
-      { label: 'Middle Name', model: 'middle_name', type: 'input', inputType: 'text' },
-      { label: 'Last Name', model: 'last_name', type: 'input', inputType: 'text' },
-      { label: 'Gender', model: 'gender', type: 'select', options: genderOptions.value, placeholder: 'Select Gender' },
-      { label: 'Ethnicity', model: 'ethnicity_id', type: 'select', options: ethnicities.value, placeholder: 'Select Ethnicity' },
-      { label: 'Marital Status', model: 'marital_status', type: 'select', options: maritalStatusOptions.value, placeholder: 'Select Marital Status' },
-      { label: 'Date of Birth', model: 'date_of_birth', type: 'input', inputType: 'date' },
-      { label: 'Date Hired', model: 'date_hired', type: 'input', inputType: 'date' },
-      { label: 'Contract End Date', model: 'contract_end_date', type: 'input', inputType: 'date' },
-      {
-        label: 'Institution',
-        type: 'select',
-        model: 'selectedInstitution',
-        placeholder: 'Select an Institution',
-        options: institutions.value,
-        onChange: onInstitutionChange,
-      },
-      {
-        label: 'Department',
-        type: 'select',
-        model: 'selectedDepartment',
-        placeholder: 'Select a Department',
-        options: departments.value,
-        onChange: onDepartmentChange,
-      },
-      { label: 'Personal Number', model: 'personal_number', type: 'input', inputType: 'text' },
-      { label: 'Salary', model: 'salary', type: 'input', inputType: 'text' },
-      { label: 'Addition', model: 'addition', type: 'input', inputType: 'number' },
-      {
-        label: 'Job Position',
-        type: 'select',
-        model: 'selectedJobPosition',
-        placeholder: 'Select a Job Position',
-        options: jobPositions.value,
-      },
-      { label: 'Street', model: 'street', type: 'input', inputType: 'text' },
-      {
-        label: 'City',
-        type: 'select',
-        model: 'selectedCity',
-        placeholder: 'Select a City',
-        options: cities.value.map((city) => ({
-          value: city.name,
-          text: city.city_name,
-        })),
-        onChange: onCityChange,
-      },
-      {
-        label: 'Zip Code',
-        type: 'select',
-        model: 'selectedZipCode',
-        placeholder: 'Select a Zip Code',
-        options: zipCodes.value.map((zipCode) => ({
-          value: zipCode.city_name,
-          text: zipCode,
-        })),
-      },
-      { label: 'Country', model: 'country', type: 'input', inputType: 'text' },
-      { label: 'Phone Number', model: 'phone_number', type: 'input', inputType: 'text' },
-      { label: 'Phone Number 2', model: 'phone_number_2', type: 'input', inputType: 'text' },
-      { label: 'Email', model: 'email', type: 'input', inputType: 'email' },
-      { label: 'Email 2', model: 'email_2', type: 'input', inputType: 'email' },
-      { label: 'Days Off', model: 'days_off', type: 'input', inputType: 'number' },
-      { label: 'Transferred Days Off', model: 'transferred_days_off', type: 'input', inputType: 'number' },
-      { label: 'Earned Days Off', model: 'earned_days_off', type: 'input', inputType: 'number' },
-      { label: 'Next Year Earned Days Off', model: 'next_year_earned_days_off', type: 'input', inputType: 'number' },
-      { label: 'CV', model: 'cv', type: 'input', inputType: 'text' },
-      { label: 'The Workouts Selection', model: 'the_workouts_selection', type: 'input', inputType: 'text' },
-    ]);
-
-    const labelClass = "block text-gray-700 text-sm font-bold mb-2";
-    const inputClass = "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md";
-
-    return {
-      formFields,
-      newEmployee,
-      institutions,
-      departments,
-      jobPositions,
-      ethnicities,
-      maritalStatusOptions,
-      genderOptions,
-      cities,
-      zipCodes,
-      labelClass,
-      inputClass,
-      validateAndRegisterEmployee,
-    };
-  },
-};
-</script>
-
-<style scoped>
-/* Add any additional styles here */
-</style> -->

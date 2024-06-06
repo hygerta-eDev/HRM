@@ -4,11 +4,12 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from typing import List
 from Config.database import Base,get_db
-from Schema.DMS import DocumentBase, DocumentCreate,DocumentI,DocumentVersionCreate,DocumentVersion,DocumentCategorys,Documentss
+from Schema.DMS import DocumentBase, DocumentCreate,DocumentI,DocumentVersionCreate,DocumentVersion,DocumentCategorys,Documentss,TitleResponse
 from .dmsService import DMSService,save_uploaded_file
+from Schema.enums.documents_title import CATEGORY_TITLE_MAPPING
 import aiofiles
 from datetime import datetime
-from Models.DMS import Document
+from Models.DMS import Document,DocumentCategory
 import zipfile
 from tempfile import NamedTemporaryFile
 import json
@@ -171,6 +172,21 @@ def get_all_categories(db: Session = Depends(get_db)):
     return DMSService.get_all_categories(db)
 
 
+
+
+
+@router.get("/api/titles", response_model=List[TitleResponse])
+def get_titles_by_category(category_id: int, db: Session = Depends(get_db)):
+    if category_id not in CATEGORY_TITLE_MAPPING:
+        raise HTTPException(status_code=404, detail="No titles found for this category")
+    
+    titles = CATEGORY_TITLE_MAPPING[category_id]
+    return [TitleResponse(title=title.value) for title in titles]
+
+@router.get("/api/categories", response_model=List[DocumentCategorys])
+def get_categories(db: Session = Depends(get_db)):
+    categories = db.query(DocumentCategory).all()
+    return categories
 # @router.post("/upload/")
 # async def upload_files(files: List[UploadFile] = File(...)):
 #     file_names = []

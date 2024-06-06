@@ -71,7 +71,7 @@ class Employees(Base):
     employee_roles = relationship("EmployeeRoles", back_populates="employee")
 
 
-    documents = relationship("Document", back_populates="creator")
+    documents = relationship("Document", back_populates="employee")
     document_versions = relationship("DocumentVersion", back_populates="creator")
     document_access = relationship("DocumentAccess", back_populates="employee", foreign_keys="[DocumentAccess.employee_id]")
     document_audits = relationship("DocumentAudit", back_populates="employee", foreign_keys="[DocumentAudit.employee_id]")
