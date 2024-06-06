@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="p-10">
     <div class="container mx-auto" :class="{ 'blurred': deleteDialogVisible }">
 
@@ -64,6 +65,7 @@
         <Button label="Cancel" @click="cancelDelete" class="mr-3 ml-5" :style="{ backgroundColor: '#6B7280', borderColor: '#6B7280' }" />
       </div>
     </Dialog>
+  </div>
   </div>
 </template>
 

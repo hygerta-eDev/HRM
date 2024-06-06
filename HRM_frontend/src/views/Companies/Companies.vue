@@ -1,4 +1,5 @@
 <template >
+  <div>
   <div class="p-10" >
     <div class="container mx-auto " :class="{ 'blurred': deleteDialogVisible }">
       <div class="flex justify-between items-center mb-4" >
@@ -61,6 +62,7 @@
       </div>
     </Dialog>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -71,6 +73,7 @@
   import { api } from '@/api';
   import Paginator from 'primevue/paginator';
   import { toast } from 'vue3-toastify';
+
 
   const router = useRouter();
   const companies = ref([]);
@@ -154,3 +157,5 @@
 }
 
 </style>
+
+
