@@ -10,14 +10,11 @@ class HolidayBase(BaseModel):
 
 class HolidayCreate(HolidayBase):
     created_at: datetime
-    updated_at: datetime
-    deleted_at: Optional[datetime]
+
     # pass
 
-class Holiday(HolidayBase):
-    created_at: datetime
+class HolidayUpdate(HolidayBase):
     updated_at: datetime
-    deleted_at: Optional[datetime]
 
     class Config:
         orm_mode = True

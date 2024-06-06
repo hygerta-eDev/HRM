@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey,func
 from sqlalchemy.orm import relationship
 from Config.database import Base
 
@@ -10,6 +10,13 @@ class Holiday(Base):
     recurring = Column(Integer)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     description = Column(String)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
+    
+    
+    def soft_delete(self):
+        self.deleted_at = func.now()
+
+    def is_deleted(self):
+        return self.deleted_at is not None

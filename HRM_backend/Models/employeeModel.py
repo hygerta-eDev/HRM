@@ -1,9 +1,12 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime,LargeBinary,ARRAY
 from sqlalchemy.orm import relationship
 from Config.database import Base
 from .departmentsModel import Departments
 from .ethnicitiesModel import Ethnicities
 from .jobPositionModel import JobPosition
+import pickle
+
+# from .leavesModel import Leaves
 
 class Employees(Base):
     __tablename__ = 'employees'
@@ -20,6 +23,7 @@ class Employees(Base):
     date_of_birth = Column(Date)
     date_hired = Column(Date)
     contract_end_date = Column(Date)
+    institucion_id = Column(Integer, ForeignKey('institutions.id'))
     department_id = Column(Integer, ForeignKey('departments.id'))
     personal_number = Column(String, unique=True, index=True)
     salary = Column(String, default='0')
@@ -42,9 +46,18 @@ class Employees(Base):
     active = Column(Boolean, default=True)
     qualification_id = Column(Integer, ForeignKey('qualifications.id'))
     user_id = Column(Integer, ForeignKey('users.user_id'))
+    # cv = Column(LargeBinary)
+    # documents = Column(ARRAY(LargeBinary))
+    the_workouts_selection = Column(String) #(Primar apo Sekondar)  
 
+    created_at =Column(DateTime)
+    updated_at = Column(DateTime)
+    deleted_at= Column(DateTime)
+    
     ethnicity = relationship("Ethnicities", back_populates="employees")
     departments = relationship("Departments", back_populates="employees")
+    institucion = relationship("Institution", back_populates="employees")
+
     job_positions = relationship("JobPosition", back_populates="employees")
     WorkTerminationReason = relationship("TerminationReason", back_populates="employees")
     qualifications = relationship("Qualification", back_populates="employees")
@@ -52,11 +65,24 @@ class Employees(Base):
     employee_work_experience = relationship("WorkExperience", back_populates="employee")
     assessments = relationship("Assessment", back_populates="employee")
     employee_training = relationship("EmployeeTraining", back_populates="employee")
+    # leaves = relationship("Leaves", back_populates="employee")
     leaves = relationship("Leaves", back_populates="employee")
     employee_leave_quota = relationship("EmployeeLeaveQuota", back_populates="employee")
+    employee_roles = relationship("EmployeeRoles", back_populates="employee")
 
 
+    documents = relationship("Document", back_populates="employee")
+    document_versions = relationship("DocumentVersion", back_populates="creator")
+    document_access = relationship("DocumentAccess", back_populates="employee", foreign_keys="[DocumentAccess.employee_id]")
+    document_audits = relationship("DocumentAudit", back_populates="employee", foreign_keys="[DocumentAudit.employee_id]")
+    granted_access = relationship("DocumentAccess", back_populates="granter", foreign_keys="[DocumentAccess.granted_by]")
 
+
+    # def set_documents(self, documents):
+    #     self.documents = pickle.dumps(documents)
+
+    # def get_documents(self):
+    #     return pickle.loads(self.documents) if self.documents else []
 
 # class Employees(Base):
 #     __tablename__ = 'employees'

@@ -5,9 +5,12 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.registersModel import Users
+from Models.employeeRolesModels import EmployeeRoles
+
 from Schema.registerSchema import UserCreate
 import secrets
 from passlib.hash import bcrypt
+from fastapi.security import OAuth2PasswordBearer
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -15,6 +18,8 @@ SECRET_KEY = secrets.token_hex(32)
 ALGORITHM = "HS256"
 
 class UserService:
+    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
     @staticmethod
     def get_all_users(db: Session = Depends(get_db)):
         return db.query(Users).all()
@@ -62,13 +67,87 @@ class UserService:
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
 
+    # @staticmethod
+    # def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
+    #     user = UserService.authenticate_user(db, username, password)
+    #     if not user:
+    #         raise HTTPException(status_code=401, detail="Incorrect username or password")
+    #     access_token_expires = timedelta(minutes=30)
+    #     access_token = UserService.create_access_token(
+    #         data={"sub": user.username}, expires_delta=access_token_expires
+    #     )
+    #     return {"access_token": access_token, "token_type": "bearer"}
+
+    # def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    #     print("Received token:", token)
+
+    #     try:
+    #         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    #         username: str = payload.get("sub")
+    #         user = db.query(Users).filter(Users.username == username).first()
+    #         if user is None:
+    #             raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+    #         return user
+    #     except JWTError:
+    #         raise HTTPException(status_code=401, detail="Invalid token")
+    
+    
     @staticmethod
-    def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
+    def create_access_token(data: dict, expires_delta: timedelta):
+        to_encode = data.copy()
+        expire = datetime.utcnow() + expires_delta
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+    
+    def get_user_role(user_id: int, db: Session):
+        user_role = (
+            db.query(EmployeeRoles.role_id)
+            .filter(EmployeeRoles.user_id == user_id)
+            .first()
+        )
+        if not user_role:
+            return None
+        return user_role[0]
+    
+    @staticmethod
+    def login_for_access_token(username: str, password: str, db: Session):
         user = UserService.authenticate_user(db, username, password)
         if not user:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
+        
+        # Fetch user details including user_id and name
+        user_details = db.query(Users).filter(Users.username == username).first()
+        user_id = user_details.user_id
+        name = user_details.name
+        
+        # Get the user's role
+        role = UserService.get_user_role(user_id, db)
+        
+        # Generate the access token
         access_token_expires = timedelta(minutes=30)
         access_token = UserService.create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
+            data={"sub": user.username, "user_id": user_id, "role": role}, expires_delta=access_token_expires
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        
+        # Return access token, user ID, role, and name
+        return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "role": role, "name": name}
+
+    # @staticmethod
+    # def login_for_access_token(username: str, password: str, db: Session):
+    #     user = UserService.authenticate_user(db, username, password)
+    #     if not user:
+    #         raise HTTPException(status_code=401, detail="Incorrect username or password")
+        
+    #     # Get the user ID and role
+    #     user_id = user.user_id
+    #     role = UserService.get_user_role(user_id, db)
+        
+    #     # Generate the access token
+    #     access_token_expires = timedelta(minutes=30)
+    #     access_token = UserService.create_access_token(
+    #         data={"sub": user.username, "user_id": user_id, "role": role}, expires_delta=access_token_expires
+    #     )
+        
+    #     # Return both access token, user ID, and role
+    #     return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "role": role}
