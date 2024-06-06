@@ -51,8 +51,8 @@
                     </td>
                     <td class="px-4 py-4 actions text-left">
                       <router-link :to="`/JobPositions/${job.id}`" @click="onViewJob(job.id)">
-  <i class="fas fa-eye fa-lg text-green-500 cursor-pointer"></i>
-</router-link>
+                        <i class="fas fa-eye fa-lg text-green-500 cursor-pointer"></i>
+                      </router-link>
 
                       <router-link :to="`/JobPositions/Edit/${job.id}`">
                         <i class="fas fa-edit fa-lg text-yellow-500 cursor-pointer ml-6"></i>
