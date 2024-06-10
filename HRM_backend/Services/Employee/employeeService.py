@@ -78,6 +78,9 @@ class EmployeeService:
         )
 
         db.add(db_userCreate)
+        # db_userCreate.number = db_userCreate.generate_unique_number()
+        # db_userCreate.username = db_userCreate.generate_unique_number()
+
         db.commit()
         db.refresh(db_userCreate)
         return db_userCreate
@@ -92,8 +95,8 @@ class EmployeeService:
 
             if Employee.name is not None:
                 db_updateEmployee.name = Employee.name
-            if Employee.number is not None:
-                db_updateEmployee.number = Employee.number
+            # if Employee.number is not None:
+            #     db_updateEmployee.number = Employee.number
             if Employee.username is not None:
                 db_updateEmployee.username = Employee.username
             if Employee.middle_name is not None:
@@ -216,7 +219,23 @@ class EmployeeService:
             raise HTTPException(status_code=404, detail="No employees found")
 
 
+    @staticmethod
+    def generate_unique_number(db: Session) -> str:
+        # Fetch all employee numbers and filter out non-numeric values
+        employees = db.query(Employees).all()
+        valid_numbers = []
+        for employee in employees:
+            try:
+                valid_numbers.append(int(employee.number))
+            except ValueError:
+                continue  # Skip invalid numbers
 
+        if valid_numbers:
+            new_number = max(valid_numbers) + 1
+        else:
+            new_number = 1  # Start from 1 if no valid numbers are found
+
+        return f"{new_number:06d}"
 
 
     # def download_cv(employee_id: int, db: Session = Depends(get_db)):

@@ -77,7 +77,12 @@ class Employees(Base):
     document_audits = relationship("DocumentAudit", back_populates="employee", foreign_keys="[DocumentAudit.employee_id]")
     granted_access = relationship("DocumentAccess", back_populates="granter", foreign_keys="[DocumentAccess.granted_by]")
 
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.number = self.generate_unique_number()
 
+    # def generate_unique_number(self):
+    #     return f'EMP-{self.id:05d}'
     # def set_documents(self, documents):
     #     self.documents = pickle.dumps(documents)
 

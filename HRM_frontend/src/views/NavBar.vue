@@ -258,7 +258,7 @@
 export default {
   data() {
     return {
-      isSidebarOpen: false,
+      isSidebarOpen: true,
       isAdminDropdownOpen: false,
     };
   },

@@ -230,10 +230,8 @@ export default {
 
                   <!-- <button class="bg-green-500 text-white px-2 py-1 rounded-lg">View</button> -->
                 </router-link>
-                <router-link :to="'/Employee/EditEmployee/' + employee.id">
-                  <i @click="editCompany(employee.id)" class="fas fa-edit fa-lg text-yellow-500 cursor-pointer ml-6"></i>
-
-                  <!-- <button class="bg-yellow-500 text-white px-2 py-1 rounded-lg ml-2">Edit</button> -->
+                <router-link :to="`/Employee/EditEmployee/${employee.id}`">
+                  <i @click="editEmployee(employee.id)" class="fas fa-edit fa-lg text-yellow-500 cursor-pointer ml-6"></i>
                 </router-link>
                 <i @click="confirmDelete(employee.id, employee.name)" class="fas fa-trash-alt fa-lg text-red-500 cursor-pointer ml-6"></i>
 
@@ -281,7 +279,9 @@ export default {
         return employees.value.filter(employee => getInstitutionName(employee.institucion_id) === selectedCompany.value);
       }
     });
-
+    const editEmployee = (EmployeeId) => {
+      router.push(`/Employee/EditEmployee/${EmployeeId}`);
+    };
     const getInstitutionName = (institutionId) => {
       return institutions.value[institutionId] || '';
     };
@@ -298,7 +298,8 @@ export default {
       selectedCompany,
       displayedEmployees,
       getInstitutionName,
-      deleteEmployee
+      deleteEmployee,
+      editEmployee, 
     };
   }
 }

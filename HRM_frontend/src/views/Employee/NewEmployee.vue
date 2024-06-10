@@ -9,7 +9,7 @@
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Number</label>
-          <input v-model="newEmployee.number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          <input v-model="newEmployee.number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" disabled>
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
@@ -270,6 +270,8 @@
       const selectedZipCode = ref('');
       const selectedCategory = ref('');
       const categories = ref([]);
+      const generatedNumber = ref([]);
+
       const titles = ref([]);
       const selectedTitle = ref('');
       const files = ref([])
@@ -322,6 +324,24 @@
         created_at: new Date().toISOString(),
         user_id: 1, 
       });
+
+      watch([() => newEmployee.value.name, () => newEmployee.value.last_name], () => {
+      if (newEmployee.value.name && newEmployee.value.last_name) {
+        newEmployee.value.username = `${newEmployee.value.name}.${newEmployee.value.last_name}`;
+      }
+    });
+
+      const fetchNumber = async () => {
+        try {
+          const response = await api.get('/employees/generate_unique_number');
+          generatedNumber.value = response.data;
+          newEmployee.value.number = generatedNumber.value.number; 
+          // console.log(generatedNumber.value);
+          // console.log(generatedNumber)
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
 
       const fetchCategories = async () => {
         try {
@@ -594,6 +614,8 @@
 
       onMounted(() => {
         fetchCategories();
+        fetchNumber();
+        // fetchUsername();
         fetchInstitutions();
         fetchEthnicities();
         fetchMaritalStatusOptions();
@@ -634,6 +656,8 @@
         workExperienceData,
         fetchTitles,
         fetchCategories,
+        fetchNumber,
+        generatedNumber,
         selectedTitle,
         workExperienceData,
         submitWorkExperience,

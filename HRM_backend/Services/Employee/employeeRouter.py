@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Form,Query
 from sqlalchemy.orm import Session
 from .employeeService import EmployeeService
-from Schema.employeeSchema import EmployeeCreate,EmployeeUpdate
+from Schema.employeeSchema import EmployeeCreate,EmployeeUpdate,UsernameRequest,UsernameResponse
 from Config.database import get_db
 from typing import List,Dict
 from Schema.enums.Marital_status import MaritalStatus
@@ -109,3 +109,16 @@ def get_cities(city_name: str):
         raise HTTPException(status_code=404, detail="City not found")
     zip_codes = cities_data[city_name]
     return CityResponse(city_name=city_name, zip_codes=zip_codes)
+
+@router.get("/generate_unique_number")
+def generate_unique_number(db: Session = Depends(get_db)):
+    unique_number = EmployeeService.generate_unique_number(db)
+    return {"number": unique_number}
+
+@router.post("/generate-username", response_model=UsernameResponse)
+def generate_username(request_data: UsernameRequest):
+    if request_data.name and request_data.last_name:
+        username = f"{request_data.name.lower()}.{request_data.last_name.lower()}"
+        return {"username": username}
+    else:
+        return {"username": None}

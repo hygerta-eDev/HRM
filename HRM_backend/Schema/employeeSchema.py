@@ -99,3 +99,10 @@ class EmployeeUpdate(BaseModel):
     deleted_at: Optional[datetime]
     class Config:
         from_attributes = True
+        
+class UsernameRequest(BaseModel):
+    name: str
+    last_name: str
+
+class UsernameResponse(BaseModel):
+    username: str
