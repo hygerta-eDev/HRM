@@ -88,3 +88,11 @@ async def save_uploaded_file(file: UploadFile) -> str:
         await buffer.write(await file.read())  # Write the file contents to the buffer
 
     return str(file_path)
+
+def delete_document(db: Session, documents_id: int):
+        document = db.query(Document).filter(Document.document_id == documents_id).first()
+        if document:
+            db.delete(document)
+            db.commit()
+            return document
+        return None

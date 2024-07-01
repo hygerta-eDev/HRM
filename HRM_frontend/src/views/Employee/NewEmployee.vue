@@ -170,72 +170,82 @@
       </div>
       <div class="container mx-auto p-6">
         <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-          <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-          <form >
-            <div v-for="(doc, index) in metadata" :key="index">
-              <div class="w-full mb-4 ">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="category">Select Category:</label>
-                <select  class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" id="category" v-model="selectedCategory" @change="fetchTitles">
-                  <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
-                    {{ category.category_name }}
-                  </option>
-                </select>
-              </div>
-              <div class="w-full mb-4 ">
-                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
-                <select id="title" v-model="doc.selectedTitle" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                  <option v-for="title in titles" :key="title.title_id" :value="title.title">
-                    {{ title.title }}
-                  </option>
-                </select>
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
-                <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-            </div>
-            <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
-          </form>
+      <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
+      <form @submit.prevent="submitForm">
+        <div v-for="(doc, index) in metadata" :key="index">
+          <div class="w-full mb-4">
+            <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
+            <select
+              class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+              :id="'category-' + index"
+              v-model.number="doc.selectedCategory"
+              @change="fetchTitles(index)"
+            >
+              <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
+                {{ category.category_name }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full mb-4">
+            <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
+            <select
+              :id="'title-' + index"
+              v-model="doc.selectedTitle"
+              class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+            >
+              <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
+                {{ title.title }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+            <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
+            <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
         </div>
-      </div>
-      <div class="container mx-auto p-6">
-        <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-          <h1 class="text-2xl font-bold mb-6">workExperience</h1>
-          <form @submit.prevent="submitForm">
-            <div>
-              <div class="mb-4">
-                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-                <input type="text" id="name" v-model="workExperienceData.name" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-              <div class="mb-4">
-                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
-                <select v-model="workExperienceData.type" id="type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                  <option value="">Select Type</option>
-                  <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
-                    {{ work_experience_type }}
-                  </option>
-                </select>
-              </div>
-              <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-                <label for="start" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
-                <input id="start" v-model="workExperienceData.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-              <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-                <label for="end" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
-                <input id="end" v-model="workExperienceData.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              </div>
-              <div class="mb-4">
-                <label for="days" class="block text-gray-700 text-sm font-bold mb-2">Days:</label>
-                <input type="number" id="days" v-model="workExperienceData.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
-              </div>
-            </div>
-          </form>
+        <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
+      </form>
+    </div>
+  </div>
+  <div class="container mx-auto p-6">
+    <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
+      <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
+      <form @submit.prevent="submitForm">
+        <div v-for="(workExperience, index) in workExperienceList" :key="index">
+          <div class="mb-4">
+            <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+            <input type="text" v-model="workExperience.name" :id="'title-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="mb-4">
+            <label :for="'type-' + index" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+            <select v-model="workExperience.type" :id="'type-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Type</option>
+              <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
+                {{ work_experience_type }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full mb-4 px-2">
+            <label :for="'start-' + index" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+            <input :id="'start-' + index" v-model="workExperience.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full mb-4 px-2">
+            <label :for="'end-' + index" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+            <input :id="'end-' + index" v-model="workExperience.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="mb-4">
+            <label :for="'days-' + index" class="block text-gray-700 text-sm font-bold mb-2">Days:</label>
+            <input type="number" :id="'days-' + index" v-model="workExperience.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
+          </div>
         </div>
-      </div>
+      </form>
+      <button type="button" @click="addWorkExperience" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Work Experience</button>
+    </div>
+  </div>
       <div class="w-full text-right mt-4 px-2">
         <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
         <router-link :to="`/Employee`">
@@ -254,6 +264,7 @@
 
   export default {
     setup() {
+
       const router = useRouter();
       const documentUpload = ref(null); 
       const institutions = ref([]);
@@ -268,14 +279,16 @@
       const cities = ref([]);
       const zipCodes = ref([]);
       const selectedZipCode = ref('');
-      const selectedCategory = ref('');
+      const selectedCategory = ref(null);
       const categories = ref([]);
       const generatedNumber = ref([]);
 
       const titles = ref([]);
       const selectedTitle = ref('');
       const files = ref([])
-      const metadata = ref([{ selectedTitle: '', description: '', category_id: selectedCategory.value }]);
+      const metadata = ref([{ selectedCategory: null, selectedTitle: '', description: '', titles: [] }]);
+
+      // const metadata = ref([{ selectedTitle: '', description: '', category_id: selectedCategory.value }]);
       const newEmployee = ref({
         selectedInstitution: null,
         selectedDepartment: null,
@@ -314,16 +327,20 @@
         the_workouts_selection: 'primar',
         created_at: new Date().toISOString(),
       });
-      const workExperienceData = ref({
-        name: '',
-        start: '',
-        type: '',
-        end: '',
-        days: 0,
-        employee_id: 0,
-        created_at: new Date().toISOString(),
-        user_id: 1, 
-      });
+      const workExperienceList = ref([]);
+
+const addWorkExperience = () => {
+  workExperienceList.value.push({
+    name: '',
+    start: '',
+    type: '',
+    end: '',
+    days: 0,
+    employee_id: 0,
+    created_at: new Date().toISOString(),
+    user_id: 1,
+  });
+};
 
       watch([() => newEmployee.value.name, () => newEmployee.value.last_name], () => {
       if (newEmployee.value.name && newEmployee.value.last_name) {
@@ -344,59 +361,78 @@
       };
 
       const fetchCategories = async () => {
+      try {
+        const response = await api.get('/api/categories');
+        categories.value = response.data;
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    const fetchTitles = async (index) => {
+      const selectedCategory = metadata.value[index].selectedCategory;
+      if (selectedCategory) {
         try {
-          const response = await api.get('/api/categories');
-          categories.value = response.data;
+          const response = await api.get(`/api/titles?category_id=${selectedCategory}`);
+          metadata.value[index].titles = response.data;
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          console.error("Error fetching titles:", error);
         }
-      };
+      }
+    };
 
-      const fetchTitles = async () => {
-        if (selectedCategory.value) {
-          try {
-            const response = await api.get(`/api/titles?category_id=${selectedCategory.value}`);
-            titles.value = response.data;
-          } catch (error) {
-            console.error("Error fetching titles:", error);
-          }
-        }
-      };
-      const fetchWorkExperienceType = async () => {
-        try {
-          const response = await api.get('/workExperience/work_experience/type');
-          workExperienceOptions.value = response.data;
-        } catch (error) {
-          handleApiError(error, 'marital status options');
-        }
-      };
-      const calculateDays = () => {
-        if (workExperienceData.value.start && workExperienceData.value.end) {
-          const startDate = new Date(workExperienceData.value.start);
-          const endDate = new Date(workExperienceData.value.end);
-          const timeDifference = endDate - startDate;
-          const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-          workExperienceData.value.days = daysDifference;
-        } else {
-          workExperienceData.value.days = 0;
-        }
-      };
+    const handleFileChange = (index, event) => {
+      const selectedFiles = event.target.files;
+      if (selectedFiles && selectedFiles.length > 0) {
+        files.value[index] = selectedFiles;
+      }
+    };
 
-      watch(() => [workExperienceData.value.start, workExperienceData.value.end], calculateDays);
+    const addDocument = () => {
+      metadata.value.push({ selectedCategory: null, selectedTitle: '', description: '', titles: [] });
+    };
 
-      const submitWorkExperience = async () => {
-        try {
-          const responseEmployeeId = await api.get('/employees/last_employee_id');
-          const lastEmployeeId = responseEmployeeId.data;
+    
+    const fetchWorkExperienceType = async () => {
+      try {
+        const response = await api.get('/workExperience/work_experience/type');
+        workExperienceOptions.value = response.data;
+      } catch (error) {
+        handleApiError(error, 'marital status options');
+      }
+    };
 
-          workExperienceData.value.employee_id = lastEmployeeId;
+    const calculateDays = (workExperience) => {
+      if (workExperience.start && workExperience.end) {
+        const startDate = new Date(workExperience.start);
+        const endDate = new Date(workExperience.end);
+        const timeDifference = endDate - startDate;
+        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        workExperience.days = daysDifference;
+      } else {
+        workExperience.days = 0;
+      }
+    };
 
-          const response = await api.post('/workExperience/create_WorkExperience', workExperienceData.value);
-          console.log('Success:', response.data);
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      };
+    watch(() => workExperienceList.value, (newVal) => {
+      newVal.forEach(workExperience => calculateDays(workExperience));
+    }, { deep: true });
+
+    const submitWorkExperience = async () => {
+      try {
+        const responseEmployeeId = await api.get('/employees/last_employee_id');
+        const lastEmployeeId = responseEmployeeId.data;
+
+        workExperienceList.value.forEach(workExperience => {
+          workExperience.employee_id = lastEmployeeId;
+        });
+
+        const response = await api.post('/workExperience/create_WorkExperience', workExperienceList.value);
+        console.log('Success:', response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
       const submitForm = async () => {
         try {
           const response = await api.get('/employees/last_employee_id');
@@ -410,13 +446,13 @@
             const formData = new FormData();
 
             const metadataObject = {
-              title: doc.selectedTitle,
-              description: doc.description,
-              category_id: selectedCategory.value,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              employee_id: lastEmployeeId 
-            };
+                title: doc.selectedTitle,
+                description: doc.description,
+                category_id: doc.selectedCategory,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                employee_id: lastEmployeeId 
+              };
 
             formData.append('metadata_json', JSON.stringify([metadataObject]));
 
@@ -444,16 +480,16 @@
   //     files.value[index] = selectedFiles[0];
   //   }
   // };
-      const handleFileChange = (index, event) => {
-        const selectedFiles = event.target.files;
-        if (selectedFiles && selectedFiles.length > 0) {
-          files.value[index] = selectedFiles;
-        }
-      };
+      // const handleFileChange = (index, event) => {
+      //   const selectedFiles = event.target.files;
+      //   if (selectedFiles && selectedFiles.length > 0) {
+      //     files.value[index] = selectedFiles;
+      //   }
+      // };
 
-      const addDocument = () => {
-        metadata.value.push({ selectedTitle: '', description: '', category_id: null });
-      };
+      // const addDocument = () => {
+      //   metadata.value.push({ selectedTitle: '', description: '', category_id: null });
+      // };
 
       const fetchCitiesAndZipCodes = async () => {
         try {
@@ -625,6 +661,8 @@
       });
 
       return {
+        workExperienceList,
+      addWorkExperience,
         institutions,
         departments,
         jobPositions,
@@ -647,19 +685,20 @@
         submitForm,
         handleFileChange,
         addDocument,
+        addWorkExperience,
         files,
         selectedCategory,
         categories,
         titles,
         selectedTitle,
         newEmployee,
-        workExperienceData,
+        // workExperienceData,
         fetchTitles,
         fetchCategories,
         fetchNumber,
         generatedNumber,
         selectedTitle,
-        workExperienceData,
+        // workExperienceData,
         submitWorkExperience,
       };
     },
@@ -671,7 +710,3 @@
     max-width: 1200px;
   }
 </style> 
-
-
-
-

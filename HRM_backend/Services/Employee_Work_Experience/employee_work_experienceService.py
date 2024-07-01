@@ -5,8 +5,8 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.employeeWorkExperienceModel import WorkExperience
-
-from Schema.work_experienceSchema import WorkExperienceCreate,WorkExperienceUpdate
+from typing import List
+from Schema.work_experienceSchema import WorkExperienceCreate,WorkExperienceUpdate,WorkExperienceCreates
 
 
 class WorkExperienceService:
@@ -19,27 +19,30 @@ class WorkExperienceService:
     @staticmethod
     def get_workExperience_by_id(db: Session, workExperience_id: int):
         return db.query(WorkExperience).filter(WorkExperience.id == workExperience_id).first()
-    
-    def create_workExperience(WorkExperiences: WorkExperienceCreate, db: Session = Depends(get_db)):
 
-        db_workexperience = WorkExperience(
-            name=WorkExperiences.name,
-            start = WorkExperiences.start,
-            type = WorkExperiences.type,
-            end = WorkExperiences.end,
-            employee_id = WorkExperiences.employee_id,
-            days = WorkExperiences.days,
-            user_id = WorkExperiences.user_id,
-            created_at = WorkExperiences.created_at
-
-
-        )
-
-        db.add(db_workexperience)
+    def create_work_experience(work_experiences: List[WorkExperienceCreate], db: Session):
+        db_work_experiences = []
+        
+        for work_experience_data in work_experiences:
+            db_work_experience = WorkExperience(
+                name=work_experience_data.name,
+                start=work_experience_data.start,
+                type=work_experience_data.type,
+                end=work_experience_data.end,
+                employee_id=work_experience_data.employee_id,
+                days=work_experience_data.days,
+                user_id=work_experience_data.user_id,
+                created_at=work_experience_data.created_at
+            )
+            db.add(db_work_experience)
+            db_work_experiences.append(db_work_experience)
+        
         db.commit()
-        db.refresh(db_workexperience)
-
-        return db_workexperience
+        
+        for db_work_experience in db_work_experiences:
+            db.refresh(db_work_experience)
+        
+        return db_work_experiences
     @staticmethod
     def update_workExperiences(workExperience_id: int, workExperience: WorkExperienceUpdate, db: Session = Depends(get_db)):
         db_workExperiences = db.query(WorkExperience).filter(WorkExperience.deleted_at == None, WorkExperience.id == workExperience_id).first()

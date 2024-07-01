@@ -4,7 +4,14 @@ from typing import List, Optional
 from fastapi import UploadFile
 from .enums.documents_title import documentsTitle
 
+class DocumentOut(BaseModel):
+    document_id: int
+    title: str
+    description: str
+    file_path: str
 
+    class Config:
+        orm_mode = True
 class DocumentBase(BaseModel):
     title: str
     description: Optional[str] = None

@@ -21,16 +21,16 @@ const router = createRouter({
         },
         {
           path: 'Employee/NewEmployee',
-          name: 'NewEmployee',
+          name: 'NewEmployee', 
           component: () => import('../views/Employee/NewEmployee.vue')
         },
         {
-          path: 'Employee/ViewEmployee',
+          path: 'Employee/ViewEmployee/:id',
           name: 'ViewEmployee',
           component: () => import('../views/Employee/ViewEmployee.vue')
         },
         {
-          path: 'Employee/EditEmployee',
+          path: 'Employee/EditEmployee/:id',
           name: 'EditEmployee',
           component: () => import('../views/Employee/EditEmployee.vue')
         },
@@ -143,6 +143,32 @@ const router = createRouter({
           path: 'Ethnicities/Edit/:id',
           name: 'EditEthnicity',
           component: () => import('../views/Ethnicities/EditEthnicity.vue')
+        },
+        // LeaveTypes
+        {
+          path: 'LeaveTypes',
+          name: 'LeaveTypes',
+          component: () => import('../views/LeaveTypes/LeaveTypes.vue')
+        },
+        {
+          path: 'LeaveTypes/NewLeaveType',
+          name: 'NewLeaveType',
+          component: () => import('../views/LeaveTypes/NewLeaveType.vue')
+        },
+        {
+          path: 'LeaveTypes/:id',
+          name: 'ViewLeaveType',
+          component: () => import('../views/LeaveTypes/ViewLeaveType.vue')
+        },
+        {
+          path: 'LeaveTypes/Edit/:id',
+          name: 'EditLeaveType',
+          component: () => import('../views/LeaveTypes/EditLeaveTypes.vue')
+        },
+        {
+          path: 'test',
+          name: 'test',
+          component: () => import('../views/test/test.vue')
         },
       ]
     }

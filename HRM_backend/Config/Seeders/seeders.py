@@ -66,9 +66,13 @@ def seed_initial_roles(db: Session):
 def seed_initial_leave_types(db: Session):
     if db.query(LeaveType).count() == 0:
         leave_types = [
-            LeaveType(slug='annual', limit=20),
-            LeaveType(slug='sick', limit=10),
-            LeaveType(slug='maternity', limit=15)
+            LeaveType(slug='annual_paid', limit=20),
+            LeaveType(slug='sick', limit=20),
+            LeaveType(slug='maternity', limit=364),
+            LeaveType(slug='marriage', limit=5),
+            LeaveType(slug='grief', limit=5),
+            LeaveType(slug='birth_of_child', limit=3),
+            LeaveType(slug='blood_giving', limit=1)
         ]
         db.add_all(leave_types)
         db.commit()

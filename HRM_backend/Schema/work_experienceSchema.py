@@ -22,3 +22,13 @@ class WorkExperienceUpdate(BaseModel):
     user_id:Optional[int]
     employee_id:Optional[int]
     updated_at: Optional[datetime]
+
+class WorkExperienceCreates(BaseModel):
+    name: str
+    start: datetime
+    type: str
+    end: datetime
+    employee_id: int
+    days: int
+    user_id: int
+    created_at: datetime

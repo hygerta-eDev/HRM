@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from .employee_work_experienceService import WorkExperienceService
-from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate
+from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate,WorkExperienceCreates
 from Config.database import get_db
 from typing import List 
 from Schema.enums.work_experience import Work_experience
@@ -22,10 +22,9 @@ def get_workExperience(workExperience_id: int, db: Session = Depends(get_db)):
     if workExperience is None:
         raise HTTPException(status_code=404, detail="workExperience not found")
     return workExperience
-
-@router.post("/create_WorkExperience")
-def create_workExperience(WorkExperiences: WorkExperienceCreate, db: Session = Depends(get_db)):
-    return WorkExperienceService.create_workExperience(WorkExperiences, db)
+@router.post("/create_WorkExperience", response_model=List[WorkExperienceCreates])
+def create_workExperience(WorkExperiences: List[WorkExperienceCreate], db: Session = Depends(get_db)):
+    return WorkExperienceService.create_work_experience(WorkExperiences, db)
 
 @router.put("/update_workExperiences/{workExperience_id}")
 def update_workExperiences(workExperience_id: int, workExperience: WorkExperienceUpdate, db: Session = Depends(get_db)):
