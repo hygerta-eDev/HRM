@@ -51,15 +51,21 @@ def update_employee(employee_id: int, Employee: EmployeeUpdate, db: Session = De
 def delete_employee(employee_id: int, db: Session = Depends(get_db)):
     return EmployeeService.delete_employee(employee_id=employee_id, db=db)
 
-@router.get("/marital_status", response_model=List[str])
-def get_marital_status_options():
-    marital_status_options = [status.value for status in MaritalStatus]
-    return marital_status_options
+# @router.get("/marital_status", response_model=List[MaritalStatus])
+# async def get_marital_status_options():
+#     return [status.to_dict() for status in MaritalStatus]
+@router.get("/marital_status", response_model=List[MaritalStatus])
+async def read_marital_status():
+    return list(MaritalStatus)
 
-@router.get("/genders", response_model=List[str])
-def get_genders_options():
-    genders_options = [status.value for status in Genders]
-    return genders_options
+# @router.get("/genders", response_model=List[str])
+# def get_genders_options():
+#     genders_options = [status.value for status in Genders]
+#     return genders_options
+
+@router.get("/genders", response_model=List[Genders])
+async def read_genders():
+    return list(Genders)
 
 @router.get("/check-number-exists")
 def check_number_exists(number: str = Query(...), db: Session = Depends(get_db)):

@@ -13,9 +13,9 @@ class EmployeeBase(BaseModel):
     username: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]
-    gender: Genders ='N/A'
-    ethnicity_id: Optional [int]
-    marital_status: Optional[MaritalStatus] = 'Single'
+    gender: Genders 
+    ethnicity_id: Optional[int]
+    marital_status: Optional[MaritalStatus]
     # driving_license: str
     date_of_birth: Optional[date]
     date_hired: Optional[date]

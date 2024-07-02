@@ -12,6 +12,8 @@ class WorkExperienceCreate(BaseModel):
     employee_id:int
     created_at:datetime
     user_id:int
+    # updated_at: Optional[datetime]
+
 
 class WorkExperienceUpdate(BaseModel):
     name: Optional[str]
@@ -32,3 +34,18 @@ class WorkExperienceCreates(BaseModel):
     days: int
     user_id: int
     created_at: datetime
+
+class WorkExperienceTest(BaseModel):
+    id: int
+    name: Optional[str]
+    start: Optional[datetime]
+    type: Optional[Work_experience] 
+    end: Optional[datetime]
+    days: Optional[int]
+    employee_id: Optional[int]
+    created_at: Optional[datetime]
+    user_id: Optional[int]
+    updated_at: Optional[datetime]  
+
+    class Config:
+        orm_mode = True

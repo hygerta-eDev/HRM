@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from .employee_work_experienceService import WorkExperienceService
-from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate,WorkExperienceCreates
+from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate,WorkExperienceCreates,WorkExperienceTest
 from Config.database import get_db
 from typing import List 
 from Schema.enums.work_experience import Work_experience
+from Models.employeeWorkExperienceModel import WorkExperience
 
 router = APIRouter(prefix="/workExperience", tags=["WorkExperience"])
 
@@ -41,3 +42,31 @@ def delete_workExperience(workExperience_id: int, db: Session = Depends(get_db))
 def get_work_experience_type():
     work_experience_type = [status.value for status in Work_experience]
     return work_experience_type
+
+@router.get("/employees/{employee_id}/work_experiences", response_model=List[WorkExperienceTest])
+def get_work_experiences(employee_id: int, db: Session = Depends(get_db)):
+    work_experiences = db.query(WorkExperience).filter(WorkExperience.employee_id == employee_id).all()
+    if not work_experiences:
+        raise HTTPException(status_code=404, detail="Work experiences not found")
+    return work_experiences
+
+
+@router.put("/employees/{employee_id}/work_experiences", response_model=List[WorkExperienceTest])
+def update_work_experiences(
+    employee_id: int,
+    workExperience: List[WorkExperienceTest],
+    db: Session = Depends(get_db)
+):
+    updated_experiences = []
+    for experience in workExperience:
+        updated_experience = WorkExperienceService.update_workExperiences_employee(
+            employee_id=employee_id,
+            workExperience=experience,
+            db=db
+        )
+        if updated_experience:
+            updated_experiences.append(updated_experience)
+        else:
+            raise HTTPException(status_code=404, detail=f"Work Experience not found for ID {experience.id}")
+
+    return updated_experiences

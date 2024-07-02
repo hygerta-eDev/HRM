@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.employeeWorkExperienceModel import WorkExperience
 from typing import List
-from Schema.work_experienceSchema import WorkExperienceCreate,WorkExperienceUpdate,WorkExperienceCreates
+from Schema.work_experienceSchema import WorkExperienceCreate,WorkExperienceUpdate,WorkExperienceCreates,WorkExperienceTest
 
 
 class WorkExperienceService:
@@ -69,7 +69,43 @@ class WorkExperienceService:
 
         return db_workExperiences
 
-    
+    @staticmethod
+    def update_workExperiences_employee(employee_id: int, workExperience: WorkExperienceTest, db: Session = Depends(get_db)):
+        # try:
+            db_workExperience = db.query(WorkExperience).filter(
+                WorkExperience.id == workExperience.id,
+                WorkExperience.employee_id == employee_id,
+                WorkExperience.deleted_at.is_(None)
+            ).first()
+
+            if db_workExperience:
+                if workExperience.name is not None:
+                    db_workExperience.name = workExperience.name
+                if workExperience.start is not None:
+                    db_workExperience.start = workExperience.start
+                if workExperience.type is not None:
+                    db_workExperience.type = workExperience.type
+                if workExperience.end is not None:
+                    db_workExperience.end = workExperience.end
+                if workExperience.days is not None:
+                    db_workExperience.days = workExperience.days
+                if workExperience.employee_id is not None:
+                    db_workExperience.employee_id = workExperience.employee_id
+                if workExperience.user_id is not None:
+                    db_workExperience.user_id = workExperience.user_id
+                db_workExperience.updated_at = datetime.utcnow()  # Set updated_at to current time
+                
+                db.commit()
+                db.refresh(db_workExperience)
+
+                return db_workExperience  # Return the updated work experience
+            else:
+                return None
+
+        # except Exception as e:
+        #     print(f"Error updating work experience: {e}")
+        #     raise HTTPException(status_code=500, detail="Error updating work experience")
+
     @staticmethod
     def delete_workExperience(workExperience_id: int, db: Session):
         db_workExperiences = db.query(WorkExperience).filter(WorkExperience.id == workExperience_id).first()

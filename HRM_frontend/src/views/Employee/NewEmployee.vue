@@ -24,13 +24,13 @@
           <input v-model="newEmployee.last_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-        <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
-        <select v-model="newEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          <option value="">Select Gender</option>
-          <option v-for="genders in genderOptions" :key="genders.id" :value="genders.id">
-            {{ genders }}
-          </option>
-        </select>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+          <select v-model="newEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+        <option value="">Select Gender</option>
+        <option v-for="gender in genderOptions" :key="gender" :value="gender">
+          {{ gender }}
+        </option>
+      </select>
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Ethnicity</label>
@@ -44,11 +44,11 @@
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Marital Status</label>
           <select v-model="newEmployee.marital_status" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select maritalStatus</option>
-            <option v-for="maritalStatus in maritalStatusOptions" :key="maritalStatus.id" :value="maritalStatus.id">
-              {{ maritalStatus }}
-            </option>
-          </select>
+        <option value="">Select Marital Status</option>
+        <option v-for="status in maritalStatusOptions" :key="status" :value="status">
+          {{ status }}
+        </option>
+      </select>
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth</label>
@@ -300,9 +300,9 @@
         username: '',
         middle_name: '',
         last_name: '',
-        gender: 'N/A',
+        gender: '',
         ethnicity_id: 0,
-        marital_status: 'Single',
+        marital_status: '',
         date_of_birth: '',
         date_hired: '',
         contract_end_date: '',
@@ -553,6 +553,9 @@ const addWorkExperience = () => {
         try {
           const response = await api.get('/employees/marital_status');
           maritalStatusOptions.value = response.data;
+        //   const response = await api.get('/employees/marital_status'); // Adjust endpoint based on your API structure
+        // maritalStatusOptions.value = response.data.map(maritalStatus => ({ id: maritalStatus.id, name: maritalStatus.name }));
+        // console.log(maritalStatusOptions)
         } catch (error) {
           handleApiError(error, 'marital status options');
         }
@@ -566,6 +569,16 @@ const addWorkExperience = () => {
           handleApiError(error, 'gender options');
         }
       };
+    //   const fetchGenderOptions = async () => {
+    //   try {
+    //     // Example API call
+    //     const response = await api.get('/employees/genders'); // Adjust endpoint based on your API structure
+    //     genderOptions.value = response.data.map(gender => ({ id: gender.id, name: gender.name }));
+    //     console.log(genderOptions)
+    //   } catch (error) {
+    //     console.error('Error fetching genders:', error);
+    //   }
+    // };
 
       const fetchDepartments = async (institutionId) => {
         try {

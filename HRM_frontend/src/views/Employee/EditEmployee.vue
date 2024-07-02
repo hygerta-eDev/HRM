@@ -27,7 +27,7 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
           <select v-model="editEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
             <option value="">Select Gender</option>
-            <option v-for="genders in genderOptions" :key="genders.id" :value="genders.id">
+            <option v-for="genders in genderOptions" :key="genders" :value="genders">
               {{ genders }}
             </option>
           </select>
@@ -45,7 +45,7 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Marital Status</label>
             <select v-model="editEmployee.marital_status" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               <option value="">Select maritalStatus</option>
-              <option v-for="maritalStatus in maritalStatusOptions" :key="maritalStatus.id" :value="maritalStatus.id">
+              <option v-for="maritalStatus in maritalStatusOptions" :key="maritalStatus" :value="maritalStatus">
                 {{ maritalStatus}}
               </option>
             </select>
@@ -195,113 +195,99 @@
         <div class="container mx-auto p-6">
     <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
       <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-      <form>
-        <div v-for="(doc, index) in metadata" :key="index">
-          <div class="w-full mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="category">Select Category:</label>
-            <select class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" :id="'category-' + index" v-model="doc.selectedCategory" @change="fetchTitles(index)">
-              <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
-                {{ category.category_name }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full mb-4">
-            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
-            <select :id="'title-' + index" v-model="doc.selectedTitle" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
-                {{ title.title }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-            <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
-            <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+      <form @submit.prevent="submitForm">
+        <!-- Conditionally render the document fields when showDocumentFields is true -->
+        <div v-if="showDocumentFields ">
+          <div v-for="(doc, index) in metadata" :key="index">
+            <div class="w-full mb-4">
+              <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
+              <select
+                class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+                :id="'category-' + index"
+                v-model.number="doc.selectedCategory"
+                @change="fetchTitles(index)"
+              >
+                <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
+                  {{ category.category_name }}
+                </option>
+              </select>
+            </div>
+            <div class="w-full mb-4">
+              <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
+              <select
+                :id="'title-' + index"
+                v-model="doc.selectedTitle"
+                class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+              >
+                <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
+                  {{ title.title }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+              <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
+              <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+            </div>
           </div>
         </div>
         <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
       </form>
     </div>
   </div>
-        <!-- <div class="container mx-auto p-6">
-          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-            <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-            <form >
-              <div v-for="(doc, index) in metadata" :key="index">
-                <div class="w-full mb-4 ">
-                  <label class="block text-gray-700 text-sm font-bold mb-2" for="category">Select Category:</label>
-                  <select  class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" id="category" v-model="selectedCategory" @change="fetchTitles">
-                    <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
-                      {{ category.category_name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="w-full mb-4 ">
-                  <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
-                  <select id="title" v-model="doc.selectedTitle" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                    <option v-for="title in titles" :key="title.title_id" :value="title.title">
-                      {{ title.title }}
-                    </option>
-                  </select>
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                  <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
-                  <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                </div>
-              </div>
-              <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
-            </form>
-          </div>
-        </div> -->
-        <div class="container mx-auto p-6">
-          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-            <h1 class="text-2xl font-bold mb-6">workExperience</h1>
-            <form @submit.prevent="submitForm">
+          <div class="container mx-auto p-6">
+
+            <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
               <div>
-                <div class="mb-4">
-                  <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-                  <input type="text" id="name" v-model="workExperienceData.name" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                </div>
-                <div class="mb-4">
-                  <label for="type" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
-                  <select v-model="workExperienceData.type" id="type" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                    <option value="">Select Type</option>
-                    <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
-                      {{ work_experience_type }}
-                    </option>
-                  </select>
-                </div>
-                <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-                  <label for="start" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
-                  <input id="start" v-model="workExperienceData.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                </div>
-                <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-                  <label for="end" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
-                  <input id="end" v-model="workExperienceData.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                </div>
-                <div class="mb-4">
-                  <label for="days" class="block text-gray-700 text-sm font-bold mb-2">Days:</label>
-                  <input type="number" id="days" v-model="workExperienceData.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
-                </div>
-              </div>
-            </form>
+                  </div>
+                      <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
+                      <form @submit.prevent="submitForm">
+                        <div class="flex flex-wrap">
+                        <div v-for="(workExperience, index) in workExperienceList" :key="index" class="w-full sm:w-1/2 md:w-1/3 p-2">
+                          <div class="edit-company p-8 rounded-lg shadow-xl border border-blue-200 bg-gray-100">
+                            <div class="mb-4">
+                              <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                              <input type="text" v-model="workExperience.name" :id="'title-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                            </div>
+                            <div class="mb-4">
+                              <label :for="'type-' + index" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+                              <select v-model="workExperience.type" :id="'type-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                                <option value="">Select Type</option>
+                                <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
+                                  {{ work_experience_type }}
+                                </option>
+                              </select>
+                            </div>
+                            <div class="w-full mb-4 px-2">
+                              <label :for="'start-' + index" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+                              <input :id="'start-' + index" v-model="workExperience.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                            </div>
+                            <div class="w-full mb-4 px-2">
+                              <label :for="'end-' + index" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+                              <input :id="'end-' + index" v-model="workExperience.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                            </div>
+                            <div class="mb-4">
+                              <!-- <label :for="'days-' + index" class="block text-gray-700 text-sm font-bold mb-2">Days:</label> -->
+                              <input type="number" :id="'days-' + index" v-model="workExperience.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly hidden>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </form>
+                      <!-- <button type="button" @click="addWorkExperience" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Work Experience</button> -->
+            </div>
           </div>
-        </div>
-        <div class="w-full text-right mt-4 px-2">
-          <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
-          <router-link :to="`/Employee`">
-            <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
-          </router-link>
+          <div class="w-full text-right mt-4 px-2">
+            <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
+            <router-link :to="`/Employee`">
+              <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
+            </router-link>
+          </div>
         </div>
       </div>
-    </div>
   </template>
 
   <script>
@@ -312,6 +298,8 @@
 
   export default {
     setup() {
+      const showDocumentFields= ref(false);
+      const  workExperiences= ref([]);
       const router = useRouter();
       const route = useRoute();
       const documentUpload = ref(null); 
@@ -374,23 +362,99 @@
         the_workouts_selection: '',
         created_at: new Date().toISOString(),
       });
-      const workExperienceData = ref({
-        name: '',
-        start: '',
-        type: '',
-        end: '',
-        days: 0,
-        employee_id: 0,
-        created_at: new Date().toISOString(),
-        user_id: 1, 
-      });
+      const workExperienceList = ref([]);
 
-    
+      const addWorkExperience = () => {
+          workExperienceList.value.push({
+            id:'',
+            name: '',
+            start: '',
+            type: '',
+            end: '',
+            days: 0,
+            employee_id: 0,
+            created_at: new Date().toISOString(),
+            user_id: 1,
+          });
+        };
+        
       watch([() => editEmployee.value.name, () => editEmployee.value.last_name], () => {
       if (editEmployee.value.name && editEmployee.value.last_name) {
         editEmployee.value.username = `${editEmployee.value.name}.${editEmployee.value.last_name}`;
       }
     });
+    const editExperienceId = ref(null); // Track which experience is being edited
+    const editExperience = ref({
+      name: '',
+      type: '',
+      start: '',
+      end: '',
+      days: 0,
+    });
+    // const idWorkexperience =ref('');
+    const fetchWorkExperiences = async () => {
+      try {
+        const employeeId = route.params.id;
+        const response = await api.get(`/workExperience/employees/${employeeId}/work_experiences`);
+        workExperienceList.value = response.data.map((experience) => ({
+          ...experience,
+          start: experience.start ? new Date(experience.start).toISOString().split('T')[0] : '',
+          end: experience.end ? new Date(experience.end).toISOString().split('T')[0] : '',
+        }));
+        console.log('work', workExperienceList.value);
+      } catch (error) {
+        console.error('Error fetching work experiences:', error);
+      }
+    };
+
+    const startEditing = (experience) => {
+      editExperienceId.value = experience.id;
+      editExperience.value = {
+        name: experience.name,
+        type: experience.type,
+        start: experience.start,
+        end: experience.end,
+        days: experience.days,
+      };
+    };
+
+    const cancelEditing = () => {
+      editExperienceId.value = null;
+      editExperience.value = {
+        name: '',
+        type: '',
+        start: '',
+        end: '',
+        days: 0,
+      };
+    };
+
+    const saveEdit = async () => {
+  try {
+    const employeeId = route.params.id;
+    const currentTime = new Date().toISOString();
+
+    // Prepare data to send
+    const updatedExperiences = workExperienceList.value.map(experience => ({
+      ...experience,
+      updated_at: currentTime // Ensure updated_at is included
+    }));
+
+    // Make API call to update all experiences
+    const response = await api.put(`/workExperience/employees/${employeeId}/work_experiences`, updatedExperiences);
+
+    console.log('Work experiences updated successfully:', response.data);
+    cancelEditing(); // Assuming you have a function to cancel editing
+  } catch (error) {
+    console.error('Error saving work experiences:', error);
+  }
+};
+
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    };
 
       const fetchNumber = async () => {
         try {
@@ -424,18 +488,6 @@
         }
       }
     };
-
-    // const handleFileChange = (index, event) => {
-    //   const selectedFiles = event.target.files;
-    //   if (selectedFiles && selectedFiles.length > 0) {
-    //     files.value[index] = selectedFiles;
-    //   }
-    // };
-
-    // const addDocument = () => {
-    //   metadata.value.push({ selectedCategory: '', selectedTitle: '', description: '', titles: [] });
-    // };
-
       const fetchWorkExperienceType = async () => {
         try {
           const response = await api.get('/workExperience/work_experience/type');
@@ -444,38 +496,28 @@
           handleApiError(error, 'marital status options');
         }
       };
-      const calculateDays = () => {
-        if (workExperienceData.value.start && workExperienceData.value.end) {
-          const startDate = new Date(workExperienceData.value.start);
-          const endDate = new Date(workExperienceData.value.end);
-          const timeDifference = endDate - startDate;
-          const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-          workExperienceData.value.days = daysDifference;
-        } else {
-          workExperienceData.value.days = 0;
-        }
-      };
+      const calculateDays = (workExperience) => {
+      if (workExperience.start && workExperience.end) {
+        const startDate = new Date(workExperience.start);
+        const endDate = new Date(workExperience.end);
+        const timeDifference = endDate - startDate;
+        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        workExperience.days = daysDifference;
+      } else {
+        workExperience.days = 0;
+      }
+    };
 
-      watch(() => [workExperienceData.value.start, workExperienceData.value.end], calculateDays);
+    watch(() => workExperienceList.value, (newVal) => {
+      newVal.forEach(workExperience => calculateDays(workExperience));
+    }, { deep: true });
 
-      const submitWorkExperience = async () => {
+    const submitForm = async () => {
         try {
-          const responseEmployeeId = await api.get('/employees/last_employee_id');
-          const lastEmployeeId = responseEmployeeId.data;
+          // const response = await api.get('/employees/last_employee_id');
+          const lastEmployeeId = route.params.id;
 
-          workExperienceData.value.employee_id = lastEmployeeId;
-
-          const response = await api.post('/workExperience/create_WorkExperience', workExperienceData.value);
-          console.log('Success:', response.data);
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      };
-      const submitForm = async () => {
-        try {
-          const response = await api.get('/employees/last_employee_id');
-
-          const lastEmployeeId = response.data;
+          // const lastEmployeeId = response.data;
 
           for (let i = 0; i < metadata.value.length; i++) {
 
@@ -484,13 +526,13 @@
             const formData = new FormData();
 
             const metadataObject = {
-              title: doc.selectedTitle,
-              description: doc.description,
-              category_id: selectedCategory.value,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              employee_id: lastEmployeeId 
-            };
+                title: doc.selectedTitle,
+                description: doc.description,
+                category_id: doc.selectedCategory,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                employee_id: lastEmployeeId 
+              };
 
             formData.append('metadata_json', JSON.stringify([metadataObject]));
 
@@ -511,6 +553,8 @@
       };
 
 
+
+
   // Define handleFileChange function
   // const handleFileChange = (index, event) => {
   //   const selectedFiles = event.target.files;
@@ -526,7 +570,9 @@
       };
 
       const addDocument = () => {
-        metadata.value.push({ selectedTitle: '', description: '', category_id: null });
+        metadata.value.push({ selectedTitle: '', description: '', category_id: null ,}) ;if (!showDocumentFields.value) {
+        showDocumentFields.value = true; // Show document fields after the first entry is added
+      }
       };
 
       const fetchCitiesAndZipCodes = async () => {
@@ -750,37 +796,6 @@ const downloadDocument = async (doc) => {
     console.error('Error downloading document:', error);
   }
 };
-
-//     const fetchEmployeeDocuments = async (employeeId) => {
-
-// try {
-//   const employeeId = route.params.id;
-
-//   const response = await api.get(`/api/employees/${employeeId}/documents`);
-//   documents.value = response.data;
-//   documents_id =documents.value.document_id
-//   console.log(documents_id)
-// } catch (error) {
-//   console.error('Error fetching employee documents:', error);
-// }
-// };
-
-//     const downloadDocument = async (doc) => {
-//       try {
-//         const response = await api.get(`/download_file/${doc.id}`, {
-//           responseType: 'blob',
-//         });
-//         const url = window.URL.createObjectURL(new Blob([response.data]));
-//         const link = document.createElement('a');
-//         link.href = url;
-//         link.setAttribute('download', doc.title);
-//         document.body.appendChild(link);
-//         link.click();
-//         document.body.removeChild(link);
-//       } catch (error) {
-//         console.error('Error downloading document:', error);
-//       }
-//     };
 const deleteDocument = async (doc) => {
       try {
         const response = await api.delete(`/delete_document/${doc.document_id}`);
@@ -814,14 +829,14 @@ const deleteDocument = async (doc) => {
         editEmployee.value.zipcode=editEmployee.value.selectedZipCode
 
         editEmployee.value.user_id = 1;
-
+        console.log(editEmployee)
         try {
             const employeeId = route.params.id;
 
           const response = await api.put(`/employees/update_employee/${employeeId}`, editEmployee.value);
           // console.log('Employee created successfully:', response.data);
           await submitForm();     
-          await submitWorkExperience();
+          await saveEdit();
           router.push('/Employee');
           setTimeout(() => {
             toast.success('Employee created successfully!', {
@@ -863,9 +878,12 @@ const deleteDocument = async (doc) => {
         fetchGenderOptions();
         fetchCitiesAndZipCodes();
         fetchWorkExperienceType();
+        fetchWorkExperiences();
       });
 
       return {
+        showDocumentFields,
+        workExperienceList,
         institutions,
         departments,
         jobPositions,
@@ -894,7 +912,9 @@ const deleteDocument = async (doc) => {
         titles,
         selectedTitle,
         editEmployee,
-        workExperienceData,
+        // workExperienceData,
+        addWorkExperience,
+        fetchWorkExperiences,
         fetchTitles,
         fetchCategories,
         downloadDocuments,
@@ -907,369 +927,16 @@ const deleteDocument = async (doc) => {
         fetchNumber,
         generatedNumber,
         selectedTitle,
-        workExperienceData,
-        submitWorkExperience,
+        // workExperienceData,
+        addWorkExperience,
+        workExperiences,
+        formatDate,
+        // submitWorkExperience,
+        startEditing,
+      cancelEditing,
+      saveEdit,
+      editExperience
       };
     },
   };
 </script>
-
-
-<!-- 
-<template>
-    <div class="container mx-auto p-6">
-      <div class="create-employee p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-        <h1 class="text-2xl font-bold mb-6">Edit Employee</h1>
-        <div class="employee-details flex flex-wrap">
-          <div
-            class="w-full md:w-1/3 mb-4 md:mb-0 px-2"
-            v-for="(field, index) in employeeFields"
-            :key="index"
-          >
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              {{ field.label }}
-            </label>
-            <component
-              :is="field.component"
-              v-model="editEmployee[field.model]"
-              :type="field.type"
-              :disabled="field.disabled"
-              :class="field.class"
-            >
-              <option
-                v-if="field.options"
-                v-for="option in field.options"
-                :key="option.value"
-                :value="option.value"
-              >
-                {{ option.text }}
-              </option>
-            </component>
-          </div>
-        </div>
-        <div class="container mx-auto p-6">
-          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-            <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-            <form>
-              <div v-for="(doc, index) in metadata" :key="index">
-                <div class="w-full mb-4">
-                  <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
-                    for="category"
-                  >
-                    Select Category:
-                  </label>
-                  <select
-                    class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                    id="category"
-                    v-model="doc.category_id"
-                    @change="fetchTitles"
-                  >
-                    <option
-                      v-for="category in categories"
-                      :key="category.category_id"
-                      :value="category.category_id"
-                    >
-                      {{ category.category_name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="w-full mb-4">
-                  <label
-                    for="title"
-                    class="block text-gray-700 text-sm font-bold mb-2"
-                  >
-                    Select Title:
-                  </label>
-                  <select
-                    id="title"
-                    v-model="doc.selectedTitle"
-                    class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                  >
-                    <option
-                      v-for="title in titles"
-                      :key="title.title_id"
-                      :value="title.title"
-                    >
-                      {{ title.title }}
-                    </option>
-                  </select>
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Description:
-                  </label>
-                  <input
-                    v-model="doc.description"
-                    type="text"
-                    class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                  />
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Select Files:
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    @change="handleFileChange(index, $event)"
-                    class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                  />
-                </div>
-              </div>
-              <button
-                type="button"
-                @click="addDocument"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2"
-              >
-                Add Another Document
-              </button>
-            </form>
-          </div>
-        </div>
-        <div class="w-full text-right mt-4 px-2">
-          <button
-            @click="validateAndRegisterEmployee"
-            type="submit"
-            class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md"
-          >
-            Register
-          </button>
-          <router-link :to="`/Employee`">
-            <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">
-              Cancel
-            </button>
-          </router-link>
-        </div>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  import { ref, onMounted } from "vue";
-  import { useRouter, useRoute } from "vue-router";
-  import { api } from "@/api";
-  import { toast } from "vue3-toastify";
-  
-  export default {
-    setup() {
-      const router = useRouter();
-      const route = useRoute();
-      const institutions = ref([]);
-      const departments = ref([]);
-      const jobPositions = ref([]);
-      const ethnicities = ref([]);
-      const maritalStatusOptions = ref([]);
-      const genderOptions = ref([]);
-      const cityOptions = ref([]);
-      const zipCodeOptions = ref([]);
-      const categories = ref([]);
-      const titles = ref([]);
-      const selectedCategory = ref("");
-      const metadata = ref([
-        { selectedTitle: "", description: "", category_id: selectedCategory.value },
-      ]);
-  
-      const editEmployee = ref({
-        selectedInstitution: null,
-        selectedDepartment: null,
-        selectedJobPosition: null,
-        selectedCity: "",
-        selectedZipCode: "",
-        name: "",
-        number: "",
-        username: "",
-        middle_name: "",
-        last_name: "",
-        gender: "",
-        ethnicity_id: 0,
-        marital_status: "",
-        date_of_birth: "",
-        date_hired: "",
-        contract_end_date: "",
-        personal_number: "",
-        salary: "",
-        addition: 0,
-        street: "",
-        city: "",
-        zipcode: "",
-        country: "",
-        phone_number: "",
-        phone_number_2: "",
-        email: "",
-        email_2: "",
-        days_off: 0,
-        transferred_days_off: 0,
-        earned_days_off: 0,
-        next_year_earned_days_off: 0,
-        active: true,
-        qualification_id: 0,
-        user_id: 0,
-        the_workouts_selection: "",
-        created_at: new Date().toISOString(),
-      });
-  
-      const employeeFields = [
-        { label: "Name", component: "input", type: "text", model: "name", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Number", component: "input", type: "text", model: "number", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", disabled: true },
-        { label: "Username", component: "input", type: "text", model: "username", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Middle Name", component: "input", type: "text", model: "middle_name", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Last Name", component: "input", type: "text", model: "last_name", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Gender", component: "select", model: "gender", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", options: genderOptions.value },
-        { label: "Ethnicity", component: "select", model: "ethnicity_id", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", options: ethnicities.value },
-        { label: "Marital Status", component: "select", model: "marital_status", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", options: maritalStatusOptions.value },
-        { label: "Date of Birth", component: "input", type: "date", model: "date_of_birth", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Date Hired", component: "input", type: "date", model: "date_hired", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Contract End Date", component: "input", type: "date", model: "contract_end_date", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Personal Number", component: "input", type: "text", model: "personal_number", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Salary", component: "input", type: "number", model: "salary", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-        { label: "Addition", component: "input", type: "number", model: "addition", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Street", component: "input", type: "text", model: "street", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "City", component: "select", model: "selectedCity", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", options: cityOptions.value },
-      { label: "Zip Code", component: "select", model: "selectedZipCode", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md", options: zipCodeOptions.value },
-      { label: "Country", component: "input", type: "text", model: "country", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Phone Number", component: "input", type: "text", model: "phone_number", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Secondary Phone Number", component: "input", type: "text", model: "phone_number_2", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Email", component: "input", type: "email", model: "email", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Secondary Email", component: "input", type: "email", model: "email_2", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Days Off", component: "input", type: "number", model: "days_off", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Transferred Days Off", component: "input", type: "number", model: "transferred_days_off", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Earned Days Off", component: "input", type: "number", model: "earned_days_off", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Next Year Earned Days Off", component: "input", type: "number", model: "next_year_earned_days_off", class: "w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" },
-      { label: "Active", component: "input", type: "checkbox", model: "active", class: "mr-2 leading-tight" },
-    ];
-
-    const fetchData = async () => {
-      try {
-        const [
-          institutionsResponse,
-          departmentsResponse,
-          jobPositionsResponse,
-          ethnicitiesResponse,
-          maritalStatusResponse,
-          genderResponse,
-          cityResponse,
-          zipCodeResponse,
-          categoriesResponse,
-        ] = await Promise.all([
-          api.get("/institutions"),
-          api.get("/departments"),
-          api.get("/job_positions"),
-          api.get("/ethnicities"),
-          api.get("/marital_status"),
-          api.get("/genders"),
-          api.get("/cities"),
-          api.get("/zip_codes"),
-          api.get("/categories"),
-        ]);
-
-        institutions.value = institutionsResponse.data;
-        departments.value = departmentsResponse.data;
-        jobPositions.value = jobPositionsResponse.data;
-        ethnicities.value = ethnicitiesResponse.data;
-        maritalStatusOptions.value = maritalStatusResponse.data;
-        genderOptions.value = genderResponse.data;
-        cityOptions.value = cityResponse.data;
-        zipCodeOptions.value = zipCodeResponse.data;
-        categories.value = categoriesResponse.data;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    const fetchEmployeeData = async (id) => {
-      try {
-        const response = await api.get(`/employees/employees/${id}`);
-        const employeeData = response.data;
-
-        // Map fetched data to editEmployee object
-        for (const key in employeeData) {
-          if (editEmployee.value.hasOwnProperty(key)) {
-            editEmployee.value[key] = employeeData[key];
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
-
-    const fetchTitles = async () => {
-      try {
-        const response = await api.get(`/api/titles?category_id=${selectedCategory.value}`);
-        titles.value = response.data;
-      } catch (error) {
-        console.error("Error fetching titles:", error);
-      }
-    };
-
-    const addDocument = () => {
-      metadata.value.push({ selectedTitle: "", description: "", category_id: selectedCategory.value });
-    };
-
-    const handleFileChange = (index, event) => {
-      const files = event.target.files;
-      metadata.value[index].files = files;
-    };
-
-    const validateAndRegisterEmployee = async () => {
-      try {
-        const employeeData = {
-          ...editEmployee.value,
-          selectedInstitution: editEmployee.value.selectedInstitution,
-          selectedDepartment: editEmployee.value.selectedDepartment,
-          selectedJobPosition: editEmployee.value.selectedJobPosition,
-          selectedCity: editEmployee.value.selectedCity,
-          selectedZipCode: editEmployee.value.selectedZipCode,
-        };
-
-        const employeeResponse = await api.put(`/employees/employees/${route.params.id}`, employeeData);
-
-        if (metadata.value.length) {
-          const formData = new FormData();
-          metadata.value.forEach((doc, index) => {
-            formData.append(`metadata[${index}][title]`, doc.selectedTitle);
-            formData.append(`metadata[${index}][description]`, doc.description);
-            Array.from(doc.files).forEach((file, fileIndex) => {
-              formData.append(`files[${index}][${fileIndex}]`, file);
-            });
-          });
-
-          const documentResponse = await api.post(`/api/documents/upload`, formData);
-        }
-
-        toast.success("Employee updated successfully");
-        router.push("/Employee");
-      } catch (error) {
-        toast.error("Failed to update employee");
-        console.error("Error updating employee:", error);
-      }
-    };
-
-    onMounted(() => {
-      fetchData();
-      const id = route.params.id;
-      fetchEmployeeData(id);
-    });
-
-    return {
-      editEmployee,
-      employeeFields,
-      institutions,
-      departments,
-      jobPositions,
-      ethnicities,
-      maritalStatusOptions,
-      genderOptions,
-      cityOptions,
-      zipCodeOptions,
-      categories,
-      titles,
-      selectedCategory,
-      metadata,
-      addDocument,
-      handleFileChange,
-      validateAndRegisterEmployee,
-    };
-  },
-};
-</script> -->
