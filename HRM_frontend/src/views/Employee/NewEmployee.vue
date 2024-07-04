@@ -95,12 +95,13 @@
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Job Position</label>
           <select v-model="newEmployee.selectedJobPosition" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select Job Position</option>
-            <option v-for="position in jobPositions" :key="position.id" :value="position.id">
-              {{ position.name }}
-            </option>
+              <option value="">Select Job Position</option>
+              <option v-for="position in jobPositions" :key="position.id" :value="position">
+                  {{ position.name }}
+              </option>
           </select>
-        </div>
+      </div>
+
         <div class="w-full mb-4 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Street</label>
           <input v-model="newEmployee.street" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
@@ -329,24 +330,41 @@
       });
       const workExperienceList = ref([]);
 
-const addWorkExperience = () => {
-  workExperienceList.value.push({
-    name: '',
-    start: '',
-    type: '',
-    end: '',
-    days: 0,
-    employee_id: 0,
-    created_at: new Date().toISOString(),
-    user_id: 1,
-  });
-};
+      const addWorkExperience = () => {
+        workExperienceList.value.push({
+          name: '',
+          start: '',
+          type: '',
+          end: '',
+          days: 0,
+          employee_id: 0,
+          created_at: new Date().toISOString(),
+          user_id: 1,
+        });
+      };
+const newEmployeeContract = ref({
+  name:'',
+  personal_number:'',
+  date_of_birth:'',
+  city:'',
 
-      watch([() => newEmployee.value.name, () => newEmployee.value.last_name], () => {
-      if (newEmployee.value.name && newEmployee.value.last_name) {
-        newEmployee.value.username = `${newEmployee.value.name}.${newEmployee.value.last_name}`;
-      }
-    });
+  street:'',
+  job_position_id:'',
+  date_hired:'',
+  contract_end_date:'',
+  created_at:'',
+  salary:'',
+  
+  
+});
+    watch(
+        [() => newEmployee.value.name, () => newEmployee.value.last_name],
+        () => {
+          if (newEmployee.value.name && newEmployee.value.last_name) {
+            newEmployee.value.username = `${newEmployee.value.name.toLowerCase()}.${newEmployee.value.last_name.toLowerCase()}`;
+          }
+        }
+      );
 
       const fetchNumber = async () => {
         try {
@@ -620,11 +638,32 @@ const addWorkExperience = () => {
           console.error('Either institutionId or departmentId is null.');
         }
       };
+      const generate_contract = async() => {
+        try {
+          newEmployeeContract.value.name = newEmployee.value.name;
+        newEmployeeContract.value.personal_number = newEmployee.value.personal_number;
+        newEmployeeContract.value.date_of_birth = newEmployee.value.date_of_birth;
+        newEmployeeContract.value.city=newEmployee.value.selectedCity
+        newEmployeeContract.value.street = newEmployee.value.street;
+        newEmployeeContract.value.job_position_id = newEmployee.value.selectedJobPosition.name;
+        console.log(newEmployeeContract.value.job_position_id)
+        newEmployeeContract.value.date_hired = newEmployee.value.date_hired;
+        newEmployeeContract.value.contract_end_date = newEmployee.value.contract_end_date;
+        newEmployeeContract.value.created_at = newEmployee.value.created_at.split('T')[0];
+        newEmployeeContract.value.salary = newEmployee.value.salary;
 
+        const responseEmployeeId = await api.get('/employees/last_employee_id');
+        const employee_id = responseEmployeeId.data;
+        const response = await api.post(`/employees/generate_and_attach_document/${employee_id}`,newEmployeeContract.value);
+          print("test test",newEmployeeContract)
+        } catch (error) {
+          handleApiError(error, 'job positions');
+        }
+      };
       const validateAndRegisterEmployee = async (documentUpload) => {
         newEmployee.value.institucion_id = newEmployee.value.selectedInstitution;
         newEmployee.value.department_id = newEmployee.value.selectedDepartment;
-        newEmployee.value.job_position_id = newEmployee.value.selectedJobPosition;
+        newEmployee.value.job_position_id = newEmployee.value.selectedJobPosition.id;
         newEmployee.value.city=newEmployee.value.selectedCity
 
         newEmployee.value.zipcode=newEmployee.value.selectedZipCode
@@ -633,9 +672,11 @@ const addWorkExperience = () => {
 
         try {
           const response = await api.post('/employees/create_employee', newEmployee.value);
-          // console.log('Employee created successfully:', response.data);
+          console.log('Employee created successfully:', response.data);
           await submitForm();     
           await submitWorkExperience();
+          await generate_contract();
+
           router.push('/Employee');
           setTimeout(() => {
             toast.success('Employee created successfully!', {
@@ -713,6 +754,7 @@ const addWorkExperience = () => {
         selectedTitle,
         // workExperienceData,
         submitWorkExperience,
+        generate_contract,
       };
     },
   };

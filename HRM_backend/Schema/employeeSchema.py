@@ -106,3 +106,15 @@ class UsernameRequest(BaseModel):
 
 class UsernameResponse(BaseModel):
     username: str
+
+class documentEmployee(BaseModel):
+    name: str
+    personal_number: str
+    date_of_birth: date
+    city: str
+    street: str
+    job_position_id: str
+    date_hired: date
+    contract_end_date: Optional[date]
+    created_at: date
+    salary: str

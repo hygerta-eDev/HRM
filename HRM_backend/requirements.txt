@@ -43,3 +43,4 @@ pymysql
 cryptography
 aiofiles
 watchdog
+python-docx
