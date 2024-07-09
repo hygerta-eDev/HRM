@@ -7,13 +7,15 @@ from Config.database import get_db
 from Models.employeeModel import Employees
 from Models.jobPositionModel import JobPosition
 from Models.departmentsModel import Departments
-
+from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
+from Models.leaveTypeModel import LeaveType 
 from Schema.employeeSchema import EmployeeCreate, EmployeeUpdate
 from Services.Register.registerService import UserService
 from Models.registersModel import Users
 from fastapi.responses import FileResponse
 from pathlib import Path
 import os
+from sqlalchemy import func
 import tempfile
 
 
@@ -36,54 +38,70 @@ class EmployeeService:
         return db.query(Employees).filter(Employees.id == employee_id).first()
 
     def create_employee(Employee: EmployeeCreate, db: Session = Depends(get_db)):
-    #    print(current_user)
-    #    current_user: Users = Depends(UserService.get_current_user)
-        db_userCreate = Employees(
-            name=Employee.name,
-            number=Employee.number,
-            username=Employee.username,
-            middle_name=Employee.middle_name,
-            last_name=Employee.last_name,
-            gender=Employee.gender,
-            ethnicity_id=Employee.ethnicity_id,
-            marital_status=Employee.marital_status,
-            date_of_birth=Employee.date_of_birth,
-            date_hired=Employee.date_hired,
-            contract_end_date=Employee.contract_end_date,
-            institucion_id=Employee.institucion_id,
-            department_id=Employee.department_id,
-            personal_number=Employee.personal_number,
-            salary=Employee.salary,
-            addition=Employee.addition,
-            job_position_id=Employee.job_position_id,
-            street=Employee.street,
-            city=Employee.city,
-            zipcode=Employee.zipcode,
-            country=Employee.country,
-            phone_number=Employee.phone_number,
-            email=Employee.email,
-            email_2=Employee.email_2,
-            days_off=Employee.days_off,
-            transferred_days_off=Employee.transferred_days_off,
-            earned_days_off=Employee.earned_days_off,
-            next_year_earned_days_off=Employee.next_year_earned_days_off,
-            # termination_reason_id=Employee.termination_reason_id,
-            # manager_id=Employee.manager_id,
-            active=Employee.active,
-            qualification_id=Employee.qualification_id,
-            user_id=Employee.user_id,
-            # documents=Employee.documents,
-            the_workouts_selection=Employee.the_workouts_selection,
-            created_at = Employee.created_at
-        )
+            # Create the Employees instance
+            db_userCreate = Employees(
+                name=Employee.name,
+                number=Employee.number,
+                username=Employee.username,
+                middle_name=Employee.middle_name,
+                last_name=Employee.last_name,
+                gender=Employee.gender,
+                ethnicity_id=Employee.ethnicity_id,
+                marital_status=Employee.marital_status,
+                date_of_birth=Employee.date_of_birth,
+                date_hired=Employee.date_hired,
+                contract_end_date=Employee.contract_end_date,
+                institucion_id=Employee.institucion_id,
+                department_id=Employee.department_id,
+                personal_number=Employee.personal_number,
+                salary=Employee.salary,
+                addition=Employee.addition,
+                job_position_id=Employee.job_position_id,
+                street=Employee.street,
+                city=Employee.city,
+                zipcode=Employee.zipcode,
+                country=Employee.country,
+                phone_number=Employee.phone_number,
+                email=Employee.email,
+                email_2=Employee.email_2,
+                days_off=Employee.days_off,
+                transferred_days_off=Employee.transferred_days_off,
+                earned_days_off=Employee.earned_days_off,
+                next_year_earned_days_off=Employee.next_year_earned_days_off,
+                active=Employee.active,
+                qualification_id=Employee.qualification_id,
+                user_id=Employee.user_id,
+                the_workouts_selection=Employee.the_workouts_selection,
+                created_at=Employee.created_at
+            )
 
-        db.add(db_userCreate)
-        # db_userCreate.number = db_userCreate.generate_unique_number()
-        # db_userCreate.username = db_userCreate.generate_unique_number()
+            # Add the new employee to the session
+            db.add(db_userCreate)
+            db.commit()
+            db.refresh(db_userCreate)
 
-        db.commit()
-        db.refresh(db_userCreate)
-        return db_userCreate
+            # Query all leave types
+            leave_types = db.query(LeaveType).all()
+
+            # Assign default leave quotas for the new employee
+            for leave_type in leave_types:
+                quota = EmployeeLeaveQuota(
+                    employee_id=db_userCreate.id,
+                    leave_type_id=leave_type.id,
+                    amount=leave_type.limit,
+                    taken=0.0,
+                    available=leave_type.limit,
+                    carried_over=0.0,
+                    additional_approved=0.0,
+                    user_id=Employee.user_id,
+                    created_at=datetime.now(),
+                    updated_at=datetime.now(),
+                    deleted_at=None
+                )
+                db.add(quota)
+
+            db.commit()
+            return db_userCreate
     
     @staticmethod
     def update_employee(employee_id: int, Employee: EmployeeUpdate, db: Session = Depends(get_db)):
@@ -237,7 +255,10 @@ class EmployeeService:
 
         return f"{new_number:06d}"
 
-
+    @staticmethod
+    def get_total_leave_quota_amount(employee_id: int, db: Session = Depends(get_db)):
+        total_amount = db.query(func.sum(EmployeeLeaveQuota.available)).filter(EmployeeLeaveQuota.employee_id == employee_id).scalar()
+        return total_amount or 0.0
     # def download_cv(employee_id: int, db: Session = Depends(get_db)):
     #     # Query the database to check if the employee exists
     #     employee = db.query(Employees).filter(Employees.id == employee_id).first()

@@ -44,3 +44,4 @@ cryptography
 aiofiles
 watchdog
 python-docx
+ldap3

@@ -154,29 +154,29 @@ def seed_document_categories(db: Session):
             db.add(db_category)
         db.commit()
 
-def seed_documents(db: Session):
-    if db.query(Document).count() == 0:
+# def seed_documents(db: Session):
+#     if db.query(Document).count() == 0:
 
-        documents = [
-            {
-                "title": "passport",
-                "description": "Employee passport",
-                "file_path": "/path/to/passport.pdf",
-                "employee_id": 1,
-                "category_id": 1
-            },
-            {
-                "title": "employment_contracts",
-                "description": "Employment contract",
-                "file_path": "/path/to/contract.pdf",
-                "employee_id": 1,
-                "category_id": 2
-            }
-        ]
-        for document in documents:
-            db_document = Document(**document)
-            db.add(db_document)
-        db.commit()
+#         documents = [
+#             {
+#                 "title": "passport",
+#                 "description": "Employee passport",
+#                 "file_path": "/path/to/passport.pdf",
+#                 "employee_id": 1,
+#                 "category_id": 1
+#             },
+#             {
+#                 "title": "employment_contracts",
+#                 "description": "Employment contract",
+#                 "file_path": "/path/to/contract.pdf",
+#                 "employee_id": 1,
+#                 "category_id": 2
+#             }
+#         ]
+#         for document in documents:
+#             db_document = Document(**document)
+#             db.add(db_document)
+#         db.commit()
 
 
 
@@ -191,4 +191,4 @@ def seed_all(db: Session):
     seed_initial_qualifications(db)
     seed_initial_ethnicities(db)
     seed_document_categories(db)
-    seed_documents(db)
+    # seed_documents(db)

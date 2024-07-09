@@ -304,3 +304,10 @@ async def generate_and_attach_document(employee_id: int, employee: documentEmplo
     db.refresh(document)
     
     return document
+
+@router.get("/employee/{employee_id}/total_leave_quota_amount")
+def read_total_leave_quota_amount(employee_id: int, db: Session = Depends(get_db)):
+    total_amount = EmployeeService.get_total_leave_quota_amount(employee_id, db)
+    if total_amount is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"employee_id": employee_id, "total_leave_quota_amount": total_amount}

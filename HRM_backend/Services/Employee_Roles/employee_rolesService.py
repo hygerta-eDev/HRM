@@ -8,6 +8,7 @@ from Models.employeeRolesModels import EmployeeRoles
 from Models.employeeModel import Employees
 from Models.rolesModel import Roles
 from Models.departmentsModel import Departments 
+from sqlalchemy.exc import SQLAlchemyError
 
 from Schema.employee_rolesSchema import EmployeeRolesCreate
 
@@ -97,4 +98,20 @@ class EmployeeRolesService:
     #         db.commit()
 
     #     return db_leaveType
-   
+    @staticmethod
+    def update_employee_role(employee_id: int, role_id: int, db: Session):
+        try:
+            employee_role = db.query(EmployeeRoles).filter_by(employee_id=employee_id).first()
+            if not employee_role:
+                raise HTTPException(status_code=404, detail=f"Employee role with ID {employee_id} not found")
+            
+            employee_role.role_id = role_id
+            employee_role.updated_at = datetime.utcnow()
+            
+            db.commit()
+            db.refresh(employee_role)
+            
+            return employee_role
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")

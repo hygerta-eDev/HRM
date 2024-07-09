@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from .leave_quotaService import LeaveQuoteService
-from Schema.employee_leave_quotaSchema import EmployeeLeaveQuotaCreate, EmployeeLeaveQuotaUpdate
+from Schema.employee_leave_quotaSchema import EmployeeLeaveQuotaCreate, EmployeeLeaveQuotaUpdate,EmployeeLeaveQuotaCall
 from Config.database import get_db
+from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
 
 router = APIRouter(prefix="/leaveQuota", tags=["LeaveQuota"])
 
@@ -36,3 +37,17 @@ def update_leaveQuotes(leaveQuote_id: int, leaveQuote: EmployeeLeaveQuotaUpdate,
 @router.delete("/delete_leaveQuote/{leaveQuote_id}")
 def delete_leaveQuote(leaveQuote_id: int, db: Session = Depends(get_db)):
     return LeaveQuoteService.delete_leaveQuote(leaveQuote_id=leaveQuote_id, db=db)
+
+
+@router.get("/leaveType/leaveTypeInfo/{employee_id}/{leave_type_id}", response_model=EmployeeLeaveQuotaCall)
+def get_leave_type_info(employee_id: int, leave_type_id: int, db: Session = Depends(get_db)):
+    leave_quota = db.query(EmployeeLeaveQuota).filter(
+        EmployeeLeaveQuota.employee_id == employee_id,
+        EmployeeLeaveQuota.leave_type_id == leave_type_id,
+        EmployeeLeaveQuota.deleted_at == None
+    ).first()
+
+    if not leave_quota:
+        raise HTTPException(status_code=404, detail="Leave quota not found")
+
+    return leave_quota

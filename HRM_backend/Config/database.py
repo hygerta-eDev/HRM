@@ -4,7 +4,7 @@ import sqlalchemy.orm as orm
 from fastapi import Body
 
 # DATABASE_URL = "postgresql://postgres:Edev2002+@db/prova1"
-DATABASE_URL = "postgresql://postgres:Edev2002+@db:5432/prova1"
+DATABASE_URL = "postgresql://postgres:Edev2002+@db:5432/prova3"
 
 
 # DATABASE_URL = "postgresql://postgres:Edev2002+@localhost/prova1"

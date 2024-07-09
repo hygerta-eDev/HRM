@@ -16,6 +16,7 @@
     "primeicons": "^7.0.0",
     "primevue": "^3.52.0",
     "vue": "^3.4.21",
+    "vue-cal": "^4.8.1",
     "vue-router": "^4.3.0",
     "vue3-toastify": "^0.2.1"
   },
