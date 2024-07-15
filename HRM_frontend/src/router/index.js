@@ -191,8 +191,8 @@ const routes = [
       },
             // Leaves routes
             {
-              path: 'Leaves',
-              name: 'Leaves',
+              path: 'Leaves/EditLeaves',
+              name: 'EditLeaves',
               component: () => import('../views/Leaves/EditLeave.vue'),
               meta: { requiresAuth: true }
             },
@@ -200,6 +200,18 @@ const routes = [
               path: 'Leaves/NewLeave',
               name: 'NewLeave',
               component: () => import('../views/Leaves/NewLeave.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Leaves',
+              name: 'Leaves',
+              component: () => import('../views/Leaves/Leaves.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Leaves/AllLeaves',
+              name: 'AllLeaves',
+              component: () => import('../views/Leaves/AllLeaves.vue'),
               meta: { requiresAuth: true }
             },
             // {

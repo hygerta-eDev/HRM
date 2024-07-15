@@ -234,6 +234,8 @@ from Models.leavesModel import Leaves
 from Schema.leaveSchema import LeaveUpdate,LeaveCreate
 from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
 from Config.database import get_db
+from sqlalchemy import func
+
 
 class LeaveService:
     @staticmethod
@@ -243,6 +245,9 @@ class LeaveService:
     @staticmethod
     def get_all_active_leaves(db: Session = Depends(get_db)):
         return db.query(Leaves).filter(Leaves.deleted_at == None).all()
+    @staticmethod
+    def get_all_active_leaves_aproved(db: Session = Depends(get_db)):
+        return db.query(Leaves).filter(Leaves.status == "Approved").all()
     
     @staticmethod
     def get_leave_by_id(db: Session, leave_id: int):
@@ -250,6 +255,17 @@ class LeaveService:
     
     @staticmethod
     def create_leaves(leave_data: LeaveCreate, db: Session = Depends(get_db)):
+        # Check for pending leave requests of the same type for the employee
+        pending_leave = db.query(Leaves).filter(
+            Leaves.employee_id == leave_data.employee_id,
+            Leaves.leave_type_id == leave_data.leave_type_id,
+            Leaves.status == "Pending",
+            Leaves.deleted_at == None
+        ).first()
+
+        if pending_leave:
+            raise HTTPException(status_code=400, detail="There is already a pending leave request for this leave type.")
+
         leave_quota = db.query(EmployeeLeaveQuota).filter(
             EmployeeLeaveQuota.employee_id == leave_data.employee_id,
             EmployeeLeaveQuota.leave_type_id == leave_data.leave_type_id,
@@ -278,14 +294,21 @@ class LeaveService:
         db.refresh(db_leave)
 
         # Update leave quota
-        leave_quota.available -= leave_data.days
-        leave_quota.taken += leave_data.days
+        # leave_quota.available -= leave_data.days
+        # leave_quota.taken += leave_data.days
 
         db.commit()
         db.refresh(leave_quota)
 
         return db_leave
-    
+    @staticmethod
+    def count_leaves_for_employee(employee_id: int, db: Session = Depends(get_db)):
+        total_leaves = db.query(func.count(Leaves.id)).filter(
+            Leaves.employee_id == employee_id,
+            Leaves.deleted_at == None  # Assuming soft delete uses `deleted_at` column
+        ).scalar()
+
+        return total_leaves or 0
     @staticmethod
     def update_leaves(leave_id: int, leave_update: LeaveUpdate, db: Session = Depends(get_db)):
         db_leave = db.query(Leaves).filter(Leaves.deleted_at == None, Leaves.id == leave_id).first()
@@ -368,3 +391,5 @@ def revert_leave_quota(leave: Leaves, db: Session):
 
     db.commit()
     db.refresh(leave_quota)
+
+    

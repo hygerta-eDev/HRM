@@ -815,8 +815,70 @@ export default {
 <style scoped>
 /* Add any scoped styles if necessary */
 </style> -->
+<!-- 
+<script setup>
+import { onMounted, ref } from 'vue'
+import { ScheduleXCalendar } from '@schedule-x/vue'
+import {
+  createCalendar,
+  viewDay,
+  viewWeek,
+  viewMonthGrid,
+  viewMonthAgenda,
+} from '@schedule-x/calendar'
+import '@schedule-x/theme-default/dist/index.css'
+import { api } from '@/api'
+
+// Initialize the calendar with reactive properties
+const calendarApp = ref(null)
+
+const initializeCalendar = () => {
+  calendarApp.value = createCalendar({
+    selectedDate: '2024-12-19',
+    views: [viewDay, viewWeek, viewMonthGrid, viewMonthAgenda],
+    defaultView: viewWeek.name,
+    events: [], // Initially no events
+  })
+}
+
+// Fetch events from API and update the calendar
+const fetchEvents = async () => {
+  try {
+    const response = await api.get('/holidays/active_holidays') // Replace with your API endpoint
+    const events = response.data.map(holiday => ({
+      id: holiday.id,
+      title: holiday.description,
+      start: new Date(holiday.date).toISOString(), // Convert to ISO string
+      end: new Date(holiday.date).toISOString(),   // Convert to ISO string
+    }))
+    console.log('Fetched events:', events)
+    if (calendarApp.value) {
+      calendarApp.value.events = events
+      console.log('Calendar events set:', calendarApp.value.events)
+    }
+  } catch (error) {
+    console.error('Error fetching events:', error)
+  }
+}
+
+// Initialize the calendar and fetch events when the component is mounted
+onMounted(() => {
+  initializeCalendar()
+  fetchEvents()
+})
+</script>
+
 <template>
-  <div>
+  <div class="ml-10 h-96">
+    <ScheduleXCalendar v-if="calendarApp" :calendar-app="calendarApp" />
+  </div>
+</template>
+ -->
+
+
+<!-- 
+<template>
+  <div class="ml-10 h-[700px]">
     <vue-cal
       v-model="selectedDate"
       :events="holidayEvents"
@@ -864,8 +926,176 @@ export default {
     },
   },
 };
+</script> -->
+
+<template>
+  <div class="flex justify-end p-4">
+    <router-link to="Leaves/NewLeave">
+      <button class="bg-sky-600 text-white px-4 py-2 rounded-lg">New Leave</button>
+    </router-link>
+  </div>
+  <div class="ml-10 p-10 h-[1100px] is-light-mode calendar-container">
+    <Qalendar 
+      :events="events"
+      :config="config"
+    />
+  </div>
+</template>
+
+<script>
+import { Qalendar } from "qalendar";
+import { onMounted } from "vue"; // Import onMounted for lifecycle hook
+import { api } from '@/api'; // Import your API module (adjust the path as per your project structure)
+
+export default {
+  components: {
+    Qalendar,
+  },
+  data() {
+    return {
+      events: [],
+      config: {
+        week: {
+          startsOn: 'monday', // Start the week on Monday
+          nDays: 7,           // Show 7 days in a week view
+          scrollToHour: 5,    // Scroll to 5 AM by default
+        },
+        style: {
+          backgroundColor: "#F0F0F0", // Set background color for the calendar
+          colorSchemes: {
+            red: {
+              backgroundColor: "#FF5733", // Example red color scheme
+            },
+            blue: {
+              backgroundColor: "#337DFF", // Example blue color scheme
+            },
+            green: {
+              backgroundColor: "#33FF57", // Example green color scheme
+            },
+            yellow: {
+              backgroundColor: "#FFFF33", // Example yellow color scheme
+            },
+            orange: {
+              backgroundColor: "#FFA533", // Example orange color scheme
+            },
+            purple: {
+              backgroundColor: "#9333FF", // Example purple color scheme
+            },
+          },
+        },
+        dayStyle: {
+          // Customize styles for individual days
+          isWeekend: {
+            backgroundColor: "#FF5733", // Red color for weekends
+          },
+          isToday: {
+            backgroundColor: "#337DFF", // Blue color for today
+          },
+          // Customize weekdays color
+          isWeekday: {
+            backgroundColor: "#33FF57", // Green color for weekdays
+          },
+        },
+      },
+    };
+  },
+  methods: {
+    async fetchEvents() {
+      try {
+        const response = await api.get('/holidays/active_holidays'); // Replace with your API endpoint for events
+        this.events = response.data.map((event, index) => ({
+          id: event.id,
+          title: event.description,
+          with: event.with,
+          time: {
+            start: event.date,
+            end: event.date,
+          },
+          color: this.getEventColor(index), // Assign color based on index or event properties
+          isEditable: true,
+        }));
+        console.log('Fetched events:', this.events);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    },
+    
+    getEventColor(index) {
+      // Example function to return different colors based on index or event properties
+      const colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple']; // Define your color palette
+      return colors[index % colors.length]; // Cycle through colors based on index
+    },
+  },
+  mounted() {
+    this.fetchEvents(); // Fetch events when the component is mounted
+  },
+};
 </script>
 
-<style scoped>
-/* Add custom styles if needed */
+<style>
+@import "qalendar/dist/style.css";
+
+.calendar-container {
+  background-color: #f4efefd1 !important;
+  /* border-color: black; Set background color for the entire calendar */
+}
+/* .calendar-month .calendar-month__week-day-names, */
+/* .calendar-month__day-date, */
+.calendar-month__weekday:nth-child(6),
+.calendar-month__weekday:nth-child(7){
+  background-color: #ffffffb6;
+  color: #FF5733 ;
+  
+}
+/* .calendar-month__day-date, */
+.calendar-month__day-name:nth-child(6),
+.calendar-month__day-name:nth-child(7) {
+  color: #FF5733 !important; /* Red color for Saturday (6th day in a week starting from Monday) */
+}
+/* class="calendar-month__day-name calendar-month__week-day-name" */
+.calendar-month__weekday:nth-child(6) .calendar-month__day-date { /* Saturday */
+    color: #FF5733; /* Red text color for Saturdays */
+}
+
+.calendar-month__weekday:nth-child(7) .calendar-month__day-date { /* Sunday */
+    color: #FF5733; /* Red text color for Sundays */
+}
+
+
+/* .calendar-week__day:nth-child(6),
+
+.calendar-week__day:nth-child(5), */
+/* .week-timeline__day-name:nth-child(6) .week-timeline__day-name, */
+.week-timeline__day:nth-child(6),
+.week-timeline__day:nth-child(7){
+  /* background-color: #ffffff; */
+  color: #FF5733 ;
+}
+/* .week-timeline,
+.calendar-root-wrapper .calendar-root, 
+.week-timeline {
+  border-color: black !important;
+}
+.day-timeline:not(:last-child),
+.calendar-week__day:not(:last-child) {
+    border-right: 1px dashed rgb(2, 2, 2) !important;
+
+}
+.day-timeline:not(:last-child) {
+    border-right: 1px dashed rgb(2, 2, 2) !important;
+    border-top: 1px dashed rgb(2, 2, 2) !important;
+
+} */
+
+
+
 </style>
+
+
+
+
+
+
+<!-- npm install @schedule-x/vue @schedule-x/theme-default -->
+
+

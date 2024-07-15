@@ -38,3 +38,5 @@ class Leave(LeaveInDBBase):
 class LeaveStatusUpdate(BaseModel):
     status: str
 
+# class LeaveById(LeaveBase):
+#     id:int

@@ -5,6 +5,9 @@ from Schema.leaveSchema import LeaveCreate,LeaveUpdate,LeaveStatusUpdate,LeaveIn
 from Config.database import get_db
 from typing import List
 from Models.leavesModel import Leaves
+from Models.employeeModel import Employees
+from fastapi.responses import JSONResponse
+
 from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
 from datetime import datetime
 
@@ -16,6 +19,9 @@ def get_all_leaves(db: Session = Depends(get_db)):
 @router.get("/active_leaves")
 def get_all_active_leaves(db: Session = Depends(get_db)):
     return LeaveService.get_all_active_leaves(db=db)
+@router.get("/active_leaves/aproved")
+def get_all_active_leaves_aproved(db: Session = Depends(get_db)):
+    return LeaveService.get_all_active_leaves_aproved(db=db)
 
 @router.get("/{leaves_id}")
 def get_leaves_by_id(leaves_id: int, db: Session = Depends(get_db)):
@@ -47,6 +53,20 @@ def get_pending_leaves(db: Session = Depends(get_db)):
     if not pending_leaves:
         raise HTTPException(status_code=404, detail="No pending leave requests found.")
     return pending_leaves
+
+@router.get("/leave/status_leave/{status_leave}", response_model=List[LeaveInDBBase])
+def get_pending_leaves(status_leave: str, db: Session = Depends(get_db)):
+    leave_records = db.query(Leaves).filter(Leaves.status == status_leave).all()
+    if not leave_records:
+        raise HTTPException(status_code=404, detail="No leave requests found for the given status.")
+    return leave_records
+
+@router.get("/leaves/user/{user_id}", response_model=List[LeaveInDBBase])
+def read_user_leaves(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(Employees).filter(Employees.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.leaves
 
 @router.patch("/leave/{leave_id}/status")
 def update_leave_status(leave_id: int, leave_status: LeaveUpdate, db: Session = Depends(get_db)):
@@ -87,3 +107,18 @@ def update_leave_status(leave_id: int, leave_status: LeaveUpdate, db: Session = 
     db.refresh(leave)
     
     return {"detail": f"Leave request has been {leave_status.status.lower()}ed successfully."}
+
+# @router.get("/total_leaves/{employee_id}")
+# async def total_leaves(employee_id: int, db: Session = Depends(get_db)):
+#     try:
+#         total_leaves = LeaveService.sum_leaves_for_employee(employee_id, db)
+#         return JSONResponse(content={"total_leaves": total_leaves})
+#     except HTTPException as e:
+#         return JSONResponse(status_code=e.status_code, content={"error": e.detail})
+@router.get("/count_leaves/{employee_id}", response_model=int)
+def count_leaves(employee_id: int, db: Session = Depends(get_db)):
+    try:
+        total_leaves = LeaveService.count_leaves_for_employee(employee_id, db)
+        return total_leaves
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))

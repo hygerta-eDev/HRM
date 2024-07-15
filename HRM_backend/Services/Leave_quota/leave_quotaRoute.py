@@ -4,7 +4,7 @@ from .leave_quotaService import LeaveQuoteService
 from Schema.employee_leave_quotaSchema import EmployeeLeaveQuotaCreate, EmployeeLeaveQuotaUpdate,EmployeeLeaveQuotaCall
 from Config.database import get_db
 from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
-
+from typing import List 
 router = APIRouter(prefix="/leaveQuota", tags=["LeaveQuota"])
 
 @router.get("/")
@@ -51,3 +51,10 @@ def get_leave_type_info(employee_id: int, leave_type_id: int, db: Session = Depe
         raise HTTPException(status_code=404, detail="Leave quota not found")
 
     return leave_quota
+
+@router.get("/employee_leave_quotes/{employee_id}", response_model=List[EmployeeLeaveQuotaCall])
+def get_employee_leave_quotes(employee_id: int, db: Session = Depends(get_db)):
+    leave_quotes = LeaveQuoteService.get_leave_quotes_by_employee_id(db=db, employee_id=employee_id)
+    if not leave_quotes:
+        raise HTTPException(status_code=404, detail=f"No leave quotes found for employee_id: {employee_id}")
+    return leave_quotes

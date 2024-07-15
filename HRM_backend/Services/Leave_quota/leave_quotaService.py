@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.employeeLeaveQuotaModel import EmployeeLeaveQuota
 from Schema.employee_leave_quotaSchema import EmployeeLeaveQuotaCreate, EmployeeLeaveQuotaUpdate
+from typing import List
 
 class LeaveQuoteService:
     @staticmethod
@@ -80,4 +81,9 @@ class LeaveQuoteService:
             db.commit()
 
         return db_leaveQuote
-       
+    @staticmethod
+    def get_leave_quotes_by_employee_id(db: Session, employee_id: int) -> List[EmployeeLeaveQuota]:
+        return db.query(EmployeeLeaveQuota).filter(
+            EmployeeLeaveQuota.employee_id == employee_id,
+            EmployeeLeaveQuota.deleted_at.is_(None)  # Assuming soft delete with deleted_at field
+        ).all()
