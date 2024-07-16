@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-4" >
         <h2 class="text-3xl font-semibold">Companies</h2>
         <router-link to="/Companies/NewCompany">
-          <button class="bg-sky-600 text-white px-4 py-2 rounded-lg">New Company</button>
+          <button class="bg-sky-600 text-white px-4 py-2 rounded-lg">{{ $t('new_company') }}</button>
         </router-link>
       </div>
       <div class="overflow-x-auto">
@@ -13,7 +13,7 @@
           <thead>
             <tr class="bg-sky-600">
               <th class="px-4 py-4 text-left text-base border-r border-black-900">No</th>
-              <th class="px-4 py-4 text-left w-1/4 text-base">Name</th>
+              <th class="px-4 py-4 text-left w-1/4 text-base">{{ $t('name') }}</th>
               <th class="px-4 py-4 text-left w-1/4 text-base">Descriptions</th>
               <th class="px-4 py-4 text-left w-1/4 text-base">Active</th>
               <th class="px-4 py-4 text-left w-1/4 text-base">Actions</th>

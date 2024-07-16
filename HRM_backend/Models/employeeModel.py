@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime,LargeBinary,ARRAY
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, DateTime,LargeBinary,ARRAY,func
 from sqlalchemy.orm import relationship
 from Config.database import Base
 from .departmentsModel import Departments
@@ -77,6 +77,11 @@ class Employees(Base):
     document_audits = relationship("DocumentAudit", back_populates="employee", foreign_keys="[DocumentAudit.employee_id]")
     granted_access = relationship("DocumentAccess", back_populates="granter", foreign_keys="[DocumentAccess.granted_by]")
 
+    def soft_delete(self):
+        self.deleted_at = func.now()
+
+    def is_deleted(self):
+        return self.deleted_at is not None
     # def __init__(self, **kwargs):
     #     super().__init__(**kwargs)
     #     self.number = self.generate_unique_number()

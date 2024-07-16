@@ -46,6 +46,19 @@
               class="block px-4 py-2 text-gray-800 hover:bg-gray-200 transition duration-150 ease-in-out"
               >Logout</a
             >
+            <div class="block px-4 py-2 text-gray-800">Language</div>
+            <a
+              href="#"
+              @click.prevent="changeLanguage('en')"
+              class="block px-4 py-2 text-gray-800 hover:bg-gray-200 transition duration-150 ease-in-out"
+              >English</a
+            >
+            <a
+              href="#"
+              @click.prevent="changeLanguage('al')"
+              class="block px-4 py-2 text-gray-800 hover:bg-gray-200 transition duration-150 ease-in-out"
+              >Albanian</a
+            >
           </div>
         </transition>
       </div>
@@ -55,7 +68,7 @@
     <transition name="slide">
       <div
         v-if="isSidebarOpen"
-        class=" fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white shadow-lg"
+        class="fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white shadow-lg"
       >
         <div
           class="relative flex-1 flex flex-col max-w-xs w-full bg-gray-900 text-white shadow-lg"
@@ -81,7 +94,7 @@
               </svg>
             </button>
           </div>
-          <div class="mt-16 flex-1 h-10 ">
+          <div class="mt-16 flex-1 h-10">
             <div class="w-6/12 mb-16 ml-14">
               <img src="../assets/img/logo-etech.png" alt="" />
             </div>
@@ -202,52 +215,48 @@
         class="fixed inset-y-0 left-0 z-40 w-14 bg-gray-900 text-white shadow-lg mt-14"
       >
         <div class="relative flex-1 flex flex-col items-center py-4">
-
-
           <RouterLink
             to="/Dashboard"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Dashboard'"
           >
-          <i class="pi pi-home mr-1 text-2xl"></i>
+            <i class="pi pi-home mr-1 text-2xl"></i>
           </RouterLink>
           <RouterLink
             to="/Employee"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Employee'"
           >
-          <i class="pi pi-users mr-1 text-2xl"></i>
+            <i class="pi pi-users mr-1 text-2xl"></i>
           </RouterLink>
           <RouterLink
             to="/Assessments"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Assessments'"
           >
-          <i class="pi pi-th-large mr-1 text-2xl"></i>
+            <i class="pi pi-th-large mr-1 text-2xl"></i>
           </RouterLink>
           <RouterLink
-            to="/Training"
+            to="/Trainings"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Trainings'"
           >
-          <i class="pi pi-book mr-1 text-2xl"></i>
+            <i class="pi pi-book mr-1 text-2xl"></i>
           </RouterLink>
           <RouterLink
             to="/Leaves"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Leaves'"
           >
-          <i class="pi pi-calendar-minus mr-1 text-2xl"></i>
+            <i class="pi pi-calendar-minus mr-1 text-2xl"></i>
           </RouterLink>
           <RouterLink
             to="/Documents"
             class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
             v-tooltip="'Documents'"
           >
-          <i class="pi pi-file mr-1 text-2xl"></i>
+            <i class="pi pi-file mr-1 text-2xl"></i>
           </RouterLink>
-
-
         </div>
       </div>
     </transition>
@@ -255,11 +264,14 @@
 </template>
 
 <script>
+import { useI18n } from "vue-i18n";
+
 export default {
   data() {
     return {
       isSidebarOpen: true,
       isAdminDropdownOpen: false,
+      isDropdownOpen: false,
     };
   },
   methods: {
@@ -269,6 +281,13 @@ export default {
     toggleAdminDropdown() {
       this.isAdminDropdownOpen = !this.isAdminDropdownOpen;
     },
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    changeLanguage(lang) {
+      // Update the language using i18n instance from Vue
+      this.$i18n.locale = lang;
+    }
   },
 };
 </script>

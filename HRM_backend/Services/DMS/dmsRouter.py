@@ -15,6 +15,9 @@ from tempfile import NamedTemporaryFile
 import json
 from typing import Optional,Annotated,Dict,Union
 from pydantic import BaseModel,Field
+from fastapi.responses import FileResponse
+from starlette.requests import Request
+import os
 
 router = APIRouter()
 
@@ -257,3 +260,15 @@ def delete_document(document_id: int, db: Session = Depends(get_db)):
     if db_document is None:
         raise HTTPException(status_code=404, detail="Document not found")
     return db_document
+@router.get("/download/work_contract")
+async def download_work_contract(request: Request):
+    template_path = "./DMS/F-057 Kontrata e punes E-Tech.docx"
+    
+    # Debugging: Print the resolved path
+    print(f"Resolved path: {os.path.abspath(template_path)}")
+
+    if not os.path.exists(template_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Send the file as a response
+    return FileResponse(template_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')

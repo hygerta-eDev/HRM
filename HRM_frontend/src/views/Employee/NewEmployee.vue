@@ -1,67 +1,167 @@
 <template>
   <div class="container mx-auto p-6">
-    <div  class="create-employee p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100 ">
+    <div class="create-employee p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
       <h1 class="text-2xl font-bold mb-6">Register New Employee</h1>
-      <div class="employee-details flex flex-wrap">
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-          <input v-model="newEmployee.name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+      <div class="flex justify-center mb-6">
+        <div v-for="(step, index) in steps" :key="index" class="flex items-center">
+          <div class="relative">
+            <!-- Step Circle -->
+            <div class="flex items-center justify-center w-12 h-12 rounded-full"
+                :class="{'bg-blue-500': currentStep >= index, 'bg-gray-200': currentStep < index}">
+              <span class="text-lg font-bold text-white">{{ index + 1 }}</span>
+            </div>
+            <!-- Step Name -->
+            <div class="mt-2 flex items-center justify-center wrap">
+              <span class="block text-center w-12"
+                    :class="{'font-bold': currentStep >= index, 'text-gray-400': currentStep < index}">
+                {{ step }}
+              </span>
+            </div>
+          </div>
+          <!-- Connector -->
+          <div v-if="index !== steps.length - 1"
+              class="w-24 mb-16 h-1"
+              :class="{'bg-blue-500': currentStep > index, 'bg-gray-200': currentStep <= index}"></div>
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Number</label>
-          <input v-model="newEmployee.number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" disabled>
+      </div>
+      <!-- Personal Information Section -->
+      <div v-show="currentStep === 0" class="employee-details mb-6">
+        <div class="flex items-center  mt-10 mb-10">
+          <hr class="flex-grow border-gray-400">
+          <h2 class="mx-4 text-xl font-semibold text-center">Personal Information</h2>
+          <hr class="flex-grow border-gray-400">
+        </div>  
+        <div class="flex flex-wrap -mx-2 p-10 bg-gray-200">
+          <div class="w-full md:w-1/3 mb-4 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Number</label>
+            <input v-model="newEmployee.number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" disabled>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+            <input v-model="newEmployee.name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Middle Name</label>
+            <input v-model="newEmployee.middle_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+            <input v-model="newEmployee.last_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+            <input v-model="newEmployee.username" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Personal Number</label>
+            <input v-model="newEmployee.personal_number" type="text"  pattern="^\d{10}$" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" maxlength="10">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Ethnicity</label>
+            <select v-model="newEmployee.ethnicity_id" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Ethnicity</option>
+              <option v-for="ethnicity in ethnicities" :key="ethnicity.id" :value="ethnicity.id">
+                {{ ethnicity.name }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+            <select v-model="newEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Gender</option>
+              <option v-for="gender in genderOptions" :key="gender" :value="gender">
+                {{ gender }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Marital Status</label>
+            <select v-model="newEmployee.marital_status" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Marital Status</option>
+              <option v-for="status in maritalStatusOptions" :key="status" :value="status">
+                {{ status }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth</label>
+            <VueDatePicker placeholder="Select a date"  v-model="newEmployee.date_of_birth" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
+          </div>
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
-          <input v-model="newEmployee.username" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+      </div>
+      
+      <div v-show="currentStep === 1" class="employee-details mb-6">
+        <div class="flex items-center mb-10 mt-10">
+          <hr class="flex-grow border-gray-400">
+          <h2 class="mx-4 text-xl font-semibold text-center">Contact Details</h2>
+          <hr class="flex-grow border-gray-400">
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Middle Name</label>
-          <input v-model="newEmployee.middle_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+        <div class="flex flex-wrap -mx-2 p-10 bg-gray-200">
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Street</label>
+            <input v-model="newEmployee.street" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">City</label>
+            <select v-model="newEmployee.selectedCity" @change="onCityChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select City</option>
+              <option v-for="city in cities" :key="city.city_name" :value="city.city_name">
+                {{ city.city_name }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Zip Code</label>
+            <select v-model="newEmployee.selectedZipCode" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Zip Code</option>
+              <option v-for="zip in zipCodes" :key="zip" :value="zip">
+                {{ zip }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Country</label>
+            <input v-model="newEmployee.country" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+            <input v-model="newEmployee.phone_number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number 2</label>
+            <input v-model="newEmployee.phone_number_2" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+            <input v-model="newEmployee.email" type="email" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Email 2</label>
+            <input v-model="newEmployee.email_2" type="email" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
-          <input v-model="newEmployee.last_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+      </div>
+
+      <div v-show="currentStep === 2" class="employee-details mb-6">
+        <div class="flex items-center mb-10 mt-10 ">
+          <hr class="flex-grow border-gray-400">
+          <h2 class="mx-4 text-xl font-semibold text-center">Employeement Details</h2>
+          <hr class="flex-grow border-gray-400">
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
-          <select v-model="newEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        <option value="">Select Gender</option>
-        <option v-for="gender in genderOptions" :key="gender" :value="gender">
-          {{ gender }}
-        </option>
-      </select>
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Ethnicity</label>
-          <select v-model="newEmployee.ethnicity_id" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select Ethnicity</option>
-            <option v-for="ethnicity in ethnicities" :key="ethnicity.id" :value="ethnicity.id">
-              {{ ethnicity.name }}
-            </option>
-          </select>
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Marital Status</label>
-          <select v-model="newEmployee.marital_status" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        <option value="">Select Marital Status</option>
-        <option v-for="status in maritalStatusOptions" :key="status" :value="status">
-          {{ status }}
-        </option>
-      </select>
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth</label>
-          <input v-model="newEmployee.date_of_birth" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
+        <div class="flex flex-wrap -mx-2 p-10">
+          
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Date Hired</label>
-          <input v-model="newEmployee.date_hired" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          <VueDatePicker placeholder="Select a date" v-model="newEmployee.date_hired" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Contract End Date</label>
-          <input v-model="newEmployee.contract_end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          <VueDatePicker placeholder="Select a date" v-model="newEmployee.contract_end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
         </div>
+        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">The Workouts Selection</label>
+            <input v-model="newEmployee.the_workouts_selection" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Institution</label>
           <select v-model="newEmployee.selectedInstitution" @change="onInstitutionChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
@@ -81,18 +181,6 @@
           </select>
         </div>
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Personal Number</label>
-          <input v-model="newEmployee.personal_number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Salary</label>
-          <input v-model="newEmployee.salary" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Addition</label>
-          <input v-model="newEmployee.addition" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Job Position</label>
           <select v-model="newEmployee.selectedJobPosition" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               <option value="">Select Job Position</option>
@@ -101,156 +189,145 @@
               </option>
           </select>
       </div>
+        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Salary</label>
+          <input v-model="newEmployee.salary" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+        </div>
+        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Addition</label>
+          <input v-model="newEmployee.addition" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+        </div>
 
-        <div class="w-full mb-4 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Street</label>
-          <input v-model="newEmployee.street" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full mb-4 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">City</label>
-          <select v-model="newEmployee.selectedCity" @change="onCityChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select City</option>
-            <option v-for="city in cities" :key="city.city_name" :value="city.city_name">
-              {{ city.city_name }}
-            </option>
-          </select>
-        </div>
-        <div class="w-full mb-4 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Zip Code</label>
-          <select v-model="newEmployee.selectedZipCode" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select Zip Code</option>
-            <option v-for="zip in zipCodes" :key="zip" :value="zip">
-              {{ zip }}
-            </option>
-          </select>
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Country</label>
-          <input v-model="newEmployee.country" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
-          <input v-model="newEmployee.phone_number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number 2</label>
-          <input v-model="newEmployee.phone_number_2" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-          <input v-model="newEmployee.email" type="email" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Email 2</label>
-          <input v-model="newEmployee.email_2" type="email" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Days Off</label>
-          <input v-model="newEmployee.days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Transferred Days Off</label>
-          <input v-model="newEmployee.transferred_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Earned Days Off</label>
-          <input v-model="newEmployee.earned_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
+
+
+
+        <!-- <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Days Off</label> -->
+          <input v-model="newEmployee.days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" hidden>
+        <!-- </div> -->
+        <!-- <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Transferred Days Off</label> -->
+          <input v-model="newEmployee.transferred_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" hidden>
+        <!-- </div> -->
+        <!-- <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Earned Days Off</label> -->
+          <input v-model="newEmployee.earned_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" hidden>
+        <!-- </div> -->
         <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
           <label class="block text-gray-700 text-sm font-bold mb-2">Next Year Earned Days Off</label>
-          <input v-model="newEmployee.next_year_earned_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          <input v-model="newEmployee.next_year_earned_days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" >
         </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">CV</label>
-          <input v-model="newEmployee.cv" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-        </div>
-        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">The Workouts Selection</label>
-          <input v-model="newEmployee.the_workouts_selection" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+        <!-- <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">CV</label> -->
+          <input v-model="newEmployee.cv" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" hidden>
+        <!-- </div> -->
+
         </div>
       </div>
-      <div class="container mx-auto p-6">
-        <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-      <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-      <form @submit.prevent="submitForm">
-        <div v-for="(doc, index) in metadata" :key="index">
-          <div class="w-full mb-4">
-            <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
-            <select
-              class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-              :id="'category-' + index"
-              v-model.number="doc.selectedCategory"
-              @change="fetchTitles(index)"
-            >
-              <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
-                {{ category.category_name }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full mb-4">
-            <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
-            <select
-              :id="'title-' + index"
-              v-model="doc.selectedTitle"
-              class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-            >
-              <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
-                {{ title.title }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-            <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
-            <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
+
+      <div v-show="currentStep === 3" class="container mx-auto p-6">
+      <div class="flex items-center mb-10 mt-10">
+        <hr class="flex-grow border-gray-400">
+        <h2 class="mx-4 text-xl font-semibold text-center">Upload Documents</h2>
+        <hr class="flex-grow border-gray-400">
+      </div>
+      <div class="flex flex-wrap -mx-2 ">
+        <!-- Document Fields -->
+        <div class="w-full  mb-4 px-2">
+          <form @submit.prevent="submitForm">
+            <div v-for="(doc, index) in metadata" :key="index" class="flex mb-4">
+              <div class="w-full md:w-1/2 mb-4 px-2">
+                <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
+                <select
+                  class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+                  :id="'category-' + index"
+                  v-model.number="doc.selectedCategory"
+                  @change="fetchTitles(index)"
+                >
+                  <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
+                    {{ category.category_name }}
+                  </option>
+                </select>
+              </div>
+              <div class="w-full md:w-1/2 mb-4 px-2">
+                <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
+                <select
+                  :id="'title-' + index"
+                  v-model="doc.selectedTitle"
+                  class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+                >
+                  <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
+                    {{ title.title }}
+                  </option>
+                </select>
+              </div>
+              <div class="w-full md:w-1/2 mb-4 px-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              </div>
+              <div class="w-full md:w-1/2 mb-4 px-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
+                <input type="file" multiple @change="handleFileChange(index, $event)" class="block w-full text-sm text-gray-900 border border-blue-500 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+              </div>
+            </div>
+            <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
+          </form>
         </div>
-        <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
-      </form>
-    </div>
+      </div>
+      </div>
+
+      <div v-show="currentStep === 4" class="container mx-auto p-6">
+  <div class="flex items-center mb-10 mt-10">
+    <hr class="flex-grow border-gray-400">
+    <h2 class="mx-4 text-xl font-semibold text-center">Work Experience</h2>
+    <hr class="flex-grow border-gray-400">
   </div>
-  <div class="container mx-auto p-6">
-    <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-      <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
-      <form @submit.prevent="submitForm">
-        <div v-for="(workExperience, index) in workExperienceList" :key="index">
-          <div class="mb-4">
-            <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-            <input type="text" v-model="workExperience.name" :id="'title-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="mb-4">
-            <label :for="'type-' + index" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
-            <select v-model="workExperience.type" :id="'type-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option value="">Select Type</option>
-              <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
-                {{ work_experience_type }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full mb-4 px-2">
-            <label :for="'start-' + index" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
-            <input :id="'start-' + index" v-model="workExperience.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full mb-4 px-2">
-            <label :for="'end-' + index" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
-            <input :id="'end-' + index" v-model="workExperience.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="mb-4">
-            <label :for="'days-' + index" class="block text-gray-700 text-sm font-bold mb-2">Days:</label>
-            <input type="number" :id="'days-' + index" v-model="workExperience.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly>
-          </div>
+  <div class="flex flex-wrap -mx-2 justify-center items-center">
+    <form @submit.prevent="submitForm">
+      <div v-for="(workExperience, index) in workExperienceList" :key="index" class="flex bg-gray-200 flex-wrap mb-6 border border-blue-500 rounded-md shadow-md p-4 relative">
+        <h6 class="absolute top-0 left-0 bg-blue-500 text-white px-2 py-1 rounded-br-md">Work Experience {{ index + 1 }}</h6>
+        <div class="w-full md:w-1/2 px-2 mb-4 mt-8">
+          <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+          <input type="text" v-model="workExperience.name" :id="'title-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
         </div>
-      </form>
-      <button type="button" @click="addWorkExperience" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Work Experience</button>
-    </div>
+        <div class="w-full md:w-1/2 px-2 mb-4 mt-8">
+          <label :for="'type-' + index" class="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+          <select v-model="workExperience.type" :id="'type-' + index" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+            <option value="">Select Type</option>
+            <option v-for="work_experience_type in workExperienceOptions" :key="work_experience_type" :value="work_experience_type">
+              {{ work_experience_type }}
+            </option>
+          </select>
+        </div>
+        <div class="w-full md:w-1/2 mb-4 px-2">
+          <label :for="'start-' + index" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+          <VueDatePicker :id="'start-' + index" v-model="workExperience.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
+        </div>
+        <div class="w-full md:w-1/2 mb-4 px-2">
+          <label :for="'end-' + index" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+          <VueDatePicker :id="'end-' + index" v-model="workExperience.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
+        </div>
+        <input type="number" :id="'days-' + index" v-model="workExperience.days" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" readonly hidden>
+      </div>
+      <button type="button" @click="addWorkExperience" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add  Work Experience</button>
+    </form>
   </div>
+</div>
+
+
       <div class="w-full text-right mt-4 px-2">
-        <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
+        <!-- Previous Button -->
+        <button v-if="currentStep > 0" @click="currentStep--" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Previous</button>
+        
+        <!-- Next Button -->
+        <button v-if="currentStep < steps.length - 1" @click="currentStep++" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md">Next</button>
+        
+        <!-- Register Button -->
+        <button v-if="currentStep === steps.length - 1" @click="validateAndRegisterEmployee" type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
+        
+        <!-- Cancel Button -->
         <router-link :to="`/Employee`">
-          <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
+          <button class="ml-2 bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
         </router-link>
       </div>
     </div>
@@ -262,10 +339,14 @@
   import { useRouter } from 'vue-router';
   import { api } from '@/api';
   import { toast } from 'vue3-toastify';
+  import VueDatePicker from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css'
+
 
   export default {
     setup() {
 
+      const currentStep =ref(0);
       const router = useRouter();
       const documentUpload = ref(null); 
       const institutions = ref([]);
@@ -357,11 +438,11 @@ const newEmployeeContract = ref({
   
   
 });
-    watch(
+      watch(
         [() => newEmployee.value.name, () => newEmployee.value.last_name],
         () => {
           if (newEmployee.value.name && newEmployee.value.last_name) {
-            newEmployee.value.username = `${newEmployee.value.name.toLowerCase()}.${newEmployee.value.last_name.toLowerCase()}`;
+            newEmployee.value.username = `${newEmployee.value.name.toLowerCase().replace(/\s+/g, '')}.${newEmployee.value.last_name.toLowerCase().replace(/\s+/g, '')}`;
           }
         }
       );
@@ -655,7 +736,7 @@ const newEmployeeContract = ref({
         const responseEmployeeId = await api.get('/employees/last_employee_id');
         const employee_id = responseEmployeeId.data;
         const response = await api.post(`/employees/generate_and_attach_document/${employee_id}`,newEmployeeContract.value);
-          print("test test",newEmployeeContract)
+          // print("test test",newEmployeeContract)
         } catch (error) {
           handleApiError(error, 'job positions');
         }
@@ -665,7 +746,10 @@ const newEmployeeContract = ref({
         newEmployee.value.department_id = newEmployee.value.selectedDepartment;
         newEmployee.value.job_position_id = newEmployee.value.selectedJobPosition.id;
         newEmployee.value.city=newEmployee.value.selectedCity
-
+        newEmployee.value.date_hired = new Date(newEmployee.value.date_hired).toISOString().split('T')[0];
+        newEmployee.value.date_of_birth = new Date(newEmployee.value.date_of_birth).toISOString().split('T')[0];
+        newEmployee.value.contract_end_date = new Date(newEmployee.value.contract_end_date).toISOString().split('T')[0];
+  
         newEmployee.value.zipcode=newEmployee.value.selectedZipCode
 
         newEmployee.value.user_id = 1;
@@ -715,6 +799,9 @@ const newEmployeeContract = ref({
       });
 
       return {
+        currentStep,
+      steps: ['Personal Information', 'Contact Details', 'Employment Details', 'Upload Documents', 'Work Experience'],
+   
         workExperienceList,
       addWorkExperience,
         institutions,
@@ -764,4 +851,6 @@ const newEmployeeContract = ref({
   .container {
     max-width: 1200px;
   }
+
+
 </style> 

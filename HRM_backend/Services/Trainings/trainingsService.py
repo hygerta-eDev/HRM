@@ -6,7 +6,10 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.trainingsModel import Training
 from Models.employeeTrainingModel import EmployeeTraining
-from Schema.trainingSchema import TrainingCreate,EmployeeTrainingCreate,TrainingUpdate,EmployeeTrainingUpdate
+from Models.employeeModel import Employees
+from sqlalchemy.orm import joinedload
+
+from Schema.trainingSchema import TrainingCreate,EmployeeTrainingCreate,TrainingUpdate,EmployeeTrainingUpdate,AssignEmployeeTraining
 
 
 class TrainingService:
@@ -125,4 +128,32 @@ class TrainingService:
             db.commit()
 
         return db_employeeTraining
-    
+    # @staticmethod
+    # def get_assigned_employees(training_id: int, db: Session = Depends(get_db)):
+    #     employees= db.query(EmployeeTraining).filter(EmployeeTraining.training_id == training_id).all()
+    #     for employee in employees:
+    #         employees_name = db.query(Employees.name).filter(Employees.id == employee.employee_id).scalar()
+    #         employees_last_name = db.query(Employees.last_name).filter(Employees.id == employee.employee_id).scalar()
+
+    #         employee.employee_id = employees_name
+    #         employee.employee_last_name = employees_last_name
+
+    #     return employees
+    @staticmethod
+    def get_assigned_employees(training_id: int, db: Session = Depends(get_db)):
+        employee_trainings = db.query(EmployeeTraining).filter(EmployeeTraining.training_id == training_id).options(joinedload(EmployeeTraining.employee)).all()
+
+        assigned_employees = []
+        for employee_training in employee_trainings:
+            employee = db.query(Employees).filter(Employees.id == employee_training.employee_id).first()
+            if employee:
+                assigned_employees.append({
+                    "employee_id": employee.id,
+                    "name": employee.name,
+                    "last_name": employee.last_name,
+                    "training_id": employee_training.training_id,
+                    "created_at": employee_training.created_at,
+                    "user_id": employee_training.user_id,
+                })
+
+        return assigned_employees

@@ -226,6 +226,60 @@ const routes = [
             //   component: () => import('../views/Leaves/EditLeaves.vue'),
             //   meta: { requiresAuth: true }
             // },
+            {
+              path: 'Documents',
+              name: 'Documents',
+              component: () => import('../views/Documents/Documents.vue'),
+              meta: { requiresAuth: true }
+            },
+            // {
+            //   path: 'Ethnicities/NewEthnicity',
+            //   name: 'NewEthnicity',
+            //   component: () => import('../views/Ethnicities/NewEthnicity.vue'),
+            //   meta: { requiresAuth: true }
+            // },
+            // {
+            //   path: 'Ethnicities/:id',
+            //   name: 'ViewEthnicity',
+            //   component: () => import('../views/Ethnicities/ViewEthnicity.vue'),
+            //   meta: { requiresAuth: true }
+            // },
+            // {
+            //   path: 'Ethnicities/Edit/:id',
+            //   name: 'EditEthnicity',
+            //   component: () => import('../views/Ethnicities/EditEthnicity.vue'),
+            //   meta: { requiresAuth: true }
+            // },
+            {
+              path: 'Trainings',
+              name: 'Trainings',
+              component: () => import('../views/Trainings/Trainings.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Trainings/NewTraining',
+              name: 'NewTraining',
+              component: () => import('../views/Trainings/NewTraining.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Trainings/:id',
+              name: 'ViewTraining',
+              component: () => import('../views/Trainings/ViewTraining.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Trainings/Edit/:id',
+              name: 'EditTraining',
+              component: () => import('../views/Trainings/EditTraining.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Trainings/AddEmployeeToTraining',
+              name: 'AddEmployeeToTraining',
+              component: () => import('../views/Trainings/AddEmployeeToTraining.vue'),
+              meta: { requiresAuth: true }
+            },
       
       {
         path: '/Login',

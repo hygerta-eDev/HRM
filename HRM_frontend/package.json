@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@schedule-x/theme-default": "^1.50.0",
     "@schedule-x/vue": "^1.46.0",
+    "@vuepic/vue-datepicker": "^9.0.0",
     "axios": "^1.7.2",
     "flowbite": "^2.3.0",
     "pinia": "^2.1.7",
@@ -20,6 +21,7 @@
     "qalendar": "^3.8.1",
     "vue": "^3.4.21",
     "vue-cal": "^4.8.1",
+    "vue-i18n": "^9.13.1",
     "vue-router": "^4.3.0",
     "vue3-toastify": "^0.2.1"
   },

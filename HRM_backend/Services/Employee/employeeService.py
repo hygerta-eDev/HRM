@@ -17,7 +17,12 @@ from pathlib import Path
 import os
 from sqlalchemy import func
 import tempfile
-
+from threading import Timer
+from typing import List 
+from Models.employeeWorkExperienceModel import WorkExperience
+from Schema.work_experienceSchema import WorkExperienceCreate, WorkExperienceUpdate,WorkExperienceCreates,WorkExperienceTest
+from decimal import Decimal
+from Config.logging_utils import log_function_call
 
 
 class EmployeeService:
@@ -32,77 +37,128 @@ class EmployeeService:
             employee.job_position_id = job_position_name
             employee.department_id = department_name
         return employees
+    @staticmethod
+    @log_function_call(entity_name="Employees")
+    def get_all_Employees(db: Session = Depends(get_db)):
+        return db.query(Employees).all()
     
+    @staticmethod
+    @log_function_call(entity_name="Employees")
+    def get_all_active_Employeess(db: Session = Depends(get_db)):
+        employees =db.query(Employees).filter(Employees.deleted_at == None).all()
+        for employee in employees:
+            job_position_name = db.query(JobPosition.name).filter(JobPosition.id == employee.job_position_id).scalar()
+            department_name = db.query(Departments.name).filter(Departments.id == employee.department_id).scalar()
+            employee.job_position_id = job_position_name
+            employee.department_id = department_name
+        return employees
     @staticmethod
     def get_employee_by_id(db: Session, employee_id: int):
         return db.query(Employees).filter(Employees.id == employee_id).first()
 
+    @staticmethod
     def create_employee(Employee: EmployeeCreate, db: Session = Depends(get_db)):
-            # Create the Employees instance
-            db_userCreate = Employees(
-                name=Employee.name,
-                number=Employee.number,
-                username=Employee.username,
-                middle_name=Employee.middle_name,
-                last_name=Employee.last_name,
-                gender=Employee.gender,
-                ethnicity_id=Employee.ethnicity_id,
-                marital_status=Employee.marital_status,
-                date_of_birth=Employee.date_of_birth,
-                date_hired=Employee.date_hired,
-                contract_end_date=Employee.contract_end_date,
-                institucion_id=Employee.institucion_id,
-                department_id=Employee.department_id,
-                personal_number=Employee.personal_number,
-                salary=Employee.salary,
-                addition=Employee.addition,
-                job_position_id=Employee.job_position_id,
-                street=Employee.street,
-                city=Employee.city,
-                zipcode=Employee.zipcode,
-                country=Employee.country,
-                phone_number=Employee.phone_number,
-                email=Employee.email,
-                email_2=Employee.email_2,
-                days_off=Employee.days_off,
-                transferred_days_off=Employee.transferred_days_off,
-                earned_days_off=Employee.earned_days_off,
-                next_year_earned_days_off=Employee.next_year_earned_days_off,
-                active=Employee.active,
-                qualification_id=Employee.qualification_id,
+        # Create the Employees instance
+        db_userCreate = Employees(
+            name=Employee.name,
+            number=Employee.number,
+            username=Employee.username,
+            middle_name=Employee.middle_name,
+            last_name=Employee.last_name,
+            gender=Employee.gender,
+            ethnicity_id=Employee.ethnicity_id,
+            marital_status=Employee.marital_status,
+            date_of_birth=Employee.date_of_birth,
+            date_hired=Employee.date_hired,
+            contract_end_date=Employee.contract_end_date,
+            institucion_id=Employee.institucion_id,
+            department_id=Employee.department_id,
+            personal_number=Employee.personal_number,
+            salary=Employee.salary,
+            addition=Employee.addition,
+            job_position_id=Employee.job_position_id,
+            street=Employee.street,
+            city=Employee.city,
+            zipcode=Employee.zipcode,
+            country=Employee.country,
+            phone_number=Employee.phone_number,
+            email=Employee.email,
+            email_2=Employee.email_2,
+            days_off=Employee.days_off,
+            transferred_days_off=Employee.transferred_days_off,
+            earned_days_off=Employee.earned_days_off,
+            next_year_earned_days_off=Employee.next_year_earned_days_off,
+            active=Employee.active,
+            qualification_id=Employee.qualification_id,
+            user_id=Employee.user_id,
+            the_workouts_selection=Employee.the_workouts_selection,
+            created_at=Employee.created_at
+        )
+
+        # Add the new employee to the session
+        db.add(db_userCreate)
+        db.commit()
+        db.refresh(db_userCreate)
+
+        # Query all leave types
+        leave_types = db.query(LeaveType).all()
+
+        # Assign default leave quotas for the new employee
+        for leave_type in leave_types:
+            quota = EmployeeLeaveQuota(
+                employee_id=db_userCreate.id,
+                leave_type_id=leave_type.id,
+                amount=leave_type.limit,
+                taken=0.0,
+                available=leave_type.limit,
+                carried_over=0.0,
+                additional_approved=0.0,
                 user_id=Employee.user_id,
-                the_workouts_selection=Employee.the_workouts_selection,
-                created_at=Employee.created_at
+                created_at=datetime.now(),
+                updated_at=datetime.now(),
+                deleted_at=None
             )
+            db.add(quota)
 
-            # Add the new employee to the session
-            db.add(db_userCreate)
-            db.commit()
-            db.refresh(db_userCreate)
+        db.commit()
+        Timer(1, EmployeeService.assign_carried_over_days, args=(db_userCreate.id, db)).start()
 
-            # Query all leave types
-            leave_types = db.query(LeaveType).all()
+        # Assign carried over days based on work experience
+        EmployeeService.assign_carried_over_days(db_userCreate.id, db)
 
-            # Assign default leave quotas for the new employee
-            for leave_type in leave_types:
-                quota = EmployeeLeaveQuota(
-                    employee_id=db_userCreate.id,
-                    leave_type_id=leave_type.id,
-                    amount=leave_type.limit,
-                    taken=0.0,
-                    available=leave_type.limit,
-                    carried_over=0.0,
-                    additional_approved=0.0,
-                    user_id=Employee.user_id,
-                    created_at=datetime.now(),
-                    updated_at=datetime.now(),
-                    deleted_at=None
-                )
-                db.add(quota)
+        return db_userCreate
 
-            db.commit()
-            return db_userCreate
-    
+    @staticmethod
+    def assign_carried_over_days(employee_id: int, db: Session):
+        # Fetch the employee from the database
+        employee = db.query(Employees).filter(Employees.id == employee_id).first()
+        if not employee:
+            return
+
+        # Retrieve the work experience days for the employee
+        work_experiences = db.query(WorkExperience).filter( WorkExperience.employee_id == employee_id).all()
+        work_experience_days = sum([experience.days for experience in work_experiences])
+
+        # Determine carried over days based on work experience
+        carried_over_days = Decimal('0.0')
+        if work_experience_days >= 1826:
+            # Calculate additional carried over days for every 1826 days
+            carried_over_days = Decimal(work_experience_days // 1826)
+
+        # Update carried over days in leave type 1 quota
+        leave_type_1 = db.query(LeaveType).filter(LeaveType.id == 1).first()
+        if leave_type_1:
+            quota = db.query(EmployeeLeaveQuota).filter(
+                EmployeeLeaveQuota.employee_id == employee_id,
+                EmployeeLeaveQuota.leave_type_id == leave_type_1.id
+            ).first()
+            if quota:
+                # Update both carried_over and amount fields
+                quota.carried_over = carried_over_days
+                quota.amount += carried_over_days  # Add to existing amount if needed
+                
+                db.commit()
+
     @staticmethod
     def update_employee(employee_id: int, Employee: EmployeeUpdate, db: Session = Depends(get_db)):
         db_updateEmployee = db.query(Employees).filter(Employees.id == employee_id).first()
@@ -259,6 +315,17 @@ class EmployeeService:
     def get_total_leave_quota_amount(employee_id: int, db: Session = Depends(get_db)):
         total_amount = db.query(func.sum(EmployeeLeaveQuota.available)).filter(EmployeeLeaveQuota.employee_id == employee_id).scalar()
         return total_amount or 0.0
+    
+    @staticmethod
+    @log_function_call(entity_name="employee")
+    def delete_employee(entity_id: int, db: Session):
+        db_employee = db.query(Employees).filter(Employees.id == entity_id).first()
+
+        if db_employee:
+            db_employee.soft_delete()  
+            db.commit()
+
+        return db_employee
     # def download_cv(employee_id: int, db: Session = Depends(get_db)):
     #     # Query the database to check if the employee exists
     #     employee = db.query(Employees).filter(Employees.id == employee_id).first()

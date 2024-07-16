@@ -50,11 +50,22 @@ def get_leave_type_info(employee_id: int, leave_type_id: int, db: Session = Depe
     if not leave_quota:
         raise HTTPException(status_code=404, detail="Leave quota not found")
 
+    # Ensure user_id is not None, set a default value if necessary
+    if leave_quota.user_id is None:
+        leave_quota.user_id = 0  # or any default integer value that makes sense
+
     return leave_quota
+
 
 @router.get("/employee_leave_quotes/{employee_id}", response_model=List[EmployeeLeaveQuotaCall])
 def get_employee_leave_quotes(employee_id: int, db: Session = Depends(get_db)):
     leave_quotes = LeaveQuoteService.get_leave_quotes_by_employee_id(db=db, employee_id=employee_id)
     if not leave_quotes:
         raise HTTPException(status_code=404, detail=f"No leave quotes found for employee_id: {employee_id}")
+
+    # Ensure user_id is not None for each leave_quote
+    for leave_quote in leave_quotes:
+        if leave_quote.user_id is None:
+            leave_quote.user_id = 0  # or any default integer value that makes sense
+
     return leave_quotes

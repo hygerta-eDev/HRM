@@ -4,6 +4,8 @@
     <h1>Welcome, {{ name }}</h1>
     <p>Your role: {{ role }}</p>
     <button @click="logout">Logout</button>
+    <h1>{{ $t('hello') }}</h1>
+
   </div>
 </template>
 

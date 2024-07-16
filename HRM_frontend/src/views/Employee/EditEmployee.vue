@@ -2,18 +2,20 @@
     <div class="container mx-auto p-6">
       <div  class="create-employee p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100 ">
         <h1 class="text-2xl font-bold mb-6">Edit New Employee</h1>
-        <div class="employee-details flex flex-wrap">
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-            <input v-model="editEmployee.name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
+        <div class="employee-details mb-6">
+        <div class="flex items-center mb-4 mt-10">
+          <hr class="flex-grow border-gray-400">
+          <h2 class="mx-4 text-xl font-semibold text-center">Personal Information</h2>
+          <hr class="flex-grow border-gray-400">
+        </div>
+        <div class="flex flex-wrap -mx-2 bg-gray-200">
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Number</label>
             <input v-model="editEmployee.number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" disabled>
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
-            <input v-model="editEmployee.username" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+            <input v-model="editEmployee.name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Middle Name</label>
@@ -24,13 +26,12 @@
             <input v-model="editEmployee.last_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
-          <select v-model="editEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-            <option value="">Select Gender</option>
-            <option v-for="genders in genderOptions" :key="genders" :value="genders">
-              {{ genders }}
-            </option>
-          </select>
+            <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+            <input v-model="editEmployee.username" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Personal Number</label>
+            <input v-model="editEmployee.personal_number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Ethnicity</label>
@@ -40,6 +41,15 @@
                 {{ ethnicity.name }}
               </option>
             </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+          <select v-model="editEmployee.gender" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+            <option value="">Select Gender</option>
+            <option v-for="genders in genderOptions" :key="genders" :value="genders">
+              {{ genders }}
+            </option>
+          </select>
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Marital Status</label>
@@ -54,58 +64,19 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth</label>
             <input v-model="editEmployee.date_of_birth" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Date Hired</label>
-            <input v-model="editEmployee.date_hired" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Contract End Date</label>
-            <input v-model="editEmployee.contract_end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Institution</label>
-            <select v-model="editEmployee.selectedInstitution" @change="onInstitutionChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option value="">Select Institution</option>
-              <option v-for="institution in institutions" :key="institution.id" :value="institution.id">
-                {{ institution.name }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
-            <select v-model="editEmployee.selectedDepartment" @change="onDepartmentChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option value="">Select Department</option>
-              <option v-for="department in departments" :key="department.id" :value="department.id">
-                {{ department.name }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Personal Number</label>
-            <input v-model="editEmployee.personal_number" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Salary</label>
-            <input v-model="editEmployee.salary" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Addition</label>
-            <input v-model="editEmployee.addition" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-          </div>
-          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Job Position</label>
-            <select v-model="editEmployee.selectedJobPosition" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-              <option value="">Select Job Position</option>
-              <option v-for="position in jobPositions" :key="position.id" :value="position.id">
-                {{ position.name }}
-              </option>
-            </select>
-          </div>
-          <div class="w-full mb-4 px-2">
+        </div>
+        <div  class="employee-details mb-6">      
+  <div class="flex items-center mb-4 mt-10">
+          <hr class="flex-grow border-gray-400">
+          <h2 class="mx-4 text-xl font-semibold text-center">Contact Details</h2>
+          <hr class="flex-grow border-gray-400">
+        </div>
+        <div  class="flex flex-wrap -mx-2 bg-gray-200">
+        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Street</label>
             <input v-model="editEmployee.street" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
-          <div class="w-full mb-4 px-2">
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">City</label>
             <select v-model="editEmployee.selectedCity" @change="onCityChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               <option value="">Select City</option>
@@ -114,7 +85,7 @@
               </option>
             </select>
           </div>
-          <div class="w-full mb-4 px-2">
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Zip Code</label>
             <select v-model="editEmployee.selectedZipCode" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
               <option value="">Select Zip Code</option>
@@ -143,6 +114,58 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Email 2</label>
             <input v-model="editEmployee.email_2" type="email" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
+          </div>
+
+<div class="container mx-auto p-6">
+      <div class="flex items-center mb-4 mt-10">
+        <hr class="flex-grow border-gray-400">
+        <h2 class="mx-4 text-xl font-semibold text-center">Employeement Details</h2>
+        <hr class="flex-grow border-gray-400">
+      </div>
+      <div class="flex flex-wrap -mx-2 bg-gray-200">
+        <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Date Hired</label>
+            <input v-model="editEmployee.date_hired" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Contract End Date</label>
+            <input v-model="editEmployee.contract_end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Institution</label>
+            <select v-model="editEmployee.selectedInstitution" @change="onInstitutionChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Institution</option>
+              <option v-for="institution in institutions" :key="institution.id" :value="institution.id">
+                {{ institution.name }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
+            <select v-model="editEmployee.selectedDepartment" @change="onDepartmentChange" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Department</option>
+              <option v-for="department in departments" :key="department.id" :value="department.id">
+                {{ department.name }}
+              </option>
+            </select>
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Salary</label>
+            <input v-model="editEmployee.salary" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Addition</label>
+            <input v-model="editEmployee.addition" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          </div>
+          <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Job Position</label>
+            <select v-model="editEmployee.selectedJobPosition" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+              <option value="">Select Job Position</option>
+              <option v-for="position in jobPositions" :key="position.id" :value="position.id">
+                {{ position.name }}
+              </option>
+            </select>
+          </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Days Off</label>
             <input v-model="editEmployee.days_off" type="number" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
@@ -167,6 +190,10 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">The Workouts Selection</label>
             <input v-model="editEmployee.the_workouts_selection" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
           </div>
+</div>
+          
+        </div>
+        </div>
         </div>
         <div class="container mx-auto p-6">
             <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
@@ -192,48 +219,59 @@
             </div>
         </div>
         <div class="container mx-auto p-6">
-          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
-            <h1 class="text-2xl font-bold mb-6">Upload Documents</h1>
-            <form @submit.prevent="submitForm">
-              <div v-if="showDocumentFields ">
-                <div v-for="(doc, index) in metadata" :key="index">
-                  <div class="w-full mb-4">
-                    <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
-                    <select
-                      class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                      :id="'category-' + index"
-                      v-model.number="doc.selectedCategory"
-                      @change="fetchTitles(index)"
-                    >
-                      <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
-                        {{ category.category_name }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="w-full mb-4">
-                    <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
-                    <select
-                      :id="'title-' + index"
-                      v-model="doc.selectedTitle"
-                      class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
-                    >
-                      <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
-                        {{ title.title }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                    <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
-                  </div>
-                  <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
-                    <input type="file" multiple @change="handleFileChange(index, $event)" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+          <div class="flex items-center mb-4 mt-10">
+            <hr class="flex-grow border-gray-400">
+            <h2 class="mx-4 text-xl font-semibold text-center">Upload Documents</h2>
+            <hr class="flex-grow border-gray-400">
+          </div>
+
+          <div class="flex flex-wrap -mx-2 bg-gray-200">
+            <div class="w-full mb-4 px-2">
+              <form @submit.prevent="submitForm">
+                <div v-if="showDocumentFields">
+                  <div v-for="(doc, index) in metadata" :key="index" class="flex flex-wrap">
+                    <!-- Select Category -->
+                    <div class="w-full md:w-1/4 mb-4 px-2">
+                      <label :for="'category-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Category:</label>
+                      <select
+                        :id="'category-' + index"
+                        v-model.number="doc.selectedCategory"
+                        @change="fetchTitles(index)"
+                        class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+                      >
+                        <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
+                          {{ category.category_name }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Select Title -->
+                    <div class="w-full md:w-1/4 mb-4 px-2">
+                      <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Select Title:</label>
+                      <select
+                        :id="'title-' + index"
+                        v-model="doc.selectedTitle"
+                        class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"
+                      >
+                        <option v-for="title in doc.titles" :key="title.title_id" :value="title.title">
+                          {{ title.title }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Description -->
+                    <div class="w-full md:w-1/4 mb-4 px-2">
+                      <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                      <input v-model="doc.description" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                    </div>
+                    <!-- Select Files -->
+                    <div class="w-full md:w-1/4 mb-4 px-2">
+                      <label class="block text-gray-700 text-sm font-bold mb-2">Select Files:</label>
+                      <input type="file" multiple @change="handleFileChange(index, $event)" class="block w-full text-sm text-gray-900 border border-blue-500 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                    </div>
                   </div>
                 </div>
-              </div>
-              <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
-            </form>
+                <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
+              </form>
+            </div>
           </div>
         </div>
         <div class="container mx-auto p-6">
@@ -241,7 +279,7 @@
               <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
               <form @submit.prevent="submitForm">
                 <div class="flex flex-wrap">
-                <div v-for="(workExperience, index) in workExperienceList" :key="index" class="w-full sm:w-1/2 md:w-1/3 p-2">
+                <div v-for="(workExperience, index) in workExperienceList" :key="index" class="w-full sm:w-1/4 md:w-1/3 p-2">
                   <div class="edit-company p-8 rounded-lg shadow-xl border border-blue-200 bg-gray-100">
                     <div class="mb-4">
                       <label :for="'title-' + index" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>

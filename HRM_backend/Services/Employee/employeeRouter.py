@@ -23,6 +23,13 @@ router = APIRouter(prefix="/employees", tags=["Employee"])
 @router.get("/")
 def get_all_employees(db: Session = Depends(get_db)):
     return EmployeeService.get_all_employees(db=db)
+@router.get("/allEmeployees", response_model=List[EmployeeCreate])
+def get_all_Employees(db: Session = Depends(get_db)):
+    return EmployeeService.get_all_Employees(db=db)
+
+@router.get("/active_Employeess")
+def get_all_active_Employeess(db: Session = Depends(get_db),):
+    return EmployeeService.get_all_active_Employeess(db=db)
 
 @router.get("/employees/{employee_id}")
 def get_employee(employee_id: int, db: Session = Depends(get_db)):
@@ -57,9 +64,9 @@ def create_employee(Employee: EmployeeCreate, db: Session = Depends(get_db)):
 @router.put("/update_employee/{employee_id}")
 def update_employee(employee_id: int, Employee: EmployeeUpdate, db: Session = Depends(get_db)):
     return EmployeeService.update_employee(employee_id=employee_id, Employee=Employee, db=db)
-@router.delete("/delete_employee/{employee_id}")
-def delete_employee(employee_id: int, db: Session = Depends(get_db)):
-    return EmployeeService.delete_employee(employee_id=employee_id, db=db)
+# @router.delete("/delete_employee/{employee_id}")
+# def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+#     return EmployeeService.delete_employee(employee_id=employee_id, db=db)
 
 # @router.get("/marital_status", response_model=List[MaritalStatus])
 # async def get_marital_status_options():
@@ -311,3 +318,7 @@ def read_total_leave_quota_amount(employee_id: int, db: Session = Depends(get_db
     if total_amount is None:
         raise HTTPException(status_code=404, detail="Employee not found")
     return {"employee_id": employee_id, "total_leave_quota_amount": total_amount}
+
+@router.delete("/delete_employee/{employee_id}",response_model=EmployeeCreate)
+def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+    return EmployeeService.delete_employee(entity_id=employee_id, db=db)

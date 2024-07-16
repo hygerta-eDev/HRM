@@ -42,3 +42,11 @@ class EmployeeTrainingUpdate(BaseModel):
     training_id: int
     updated_at: Optional[datetime]
     user_id:int
+    
+class AssignEmployeeTraining(BaseModel):
+    employee_id: int
+    name: str
+    last_name: str
+    training_id: int
+    created_at:datetime
+    user_id:int
