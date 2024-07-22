@@ -8,6 +8,7 @@ from Models.trainingsModel import Training
 from Models.employeeTrainingModel import EmployeeTraining
 from Models.employeeModel import Employees
 from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import IntegrityError
 
 from Schema.trainingSchema import TrainingCreate,EmployeeTrainingCreate,TrainingUpdate,EmployeeTrainingUpdate,AssignEmployeeTraining
 
@@ -23,18 +24,39 @@ class TrainingService:
     def get_training_by_id(db: Session, training_id: int):
         return db.query(Training).filter(Training.id == training_id).first()
     
+    # def create_training(Trainings: TrainingCreate, db: Session = Depends(get_db)):
+
+    #     db_assessment = Training(
+    #         title=Trainings.title,
+    #         start_date = Trainings.start_date,
+    #         end_date = Trainings.end_date,
+    #         description = Trainings.description,
+    #         outcome = Trainings.outcome,
+    #         user_id = Trainings.user_id,
+    #         active = Trainings.active,
+    #         completed_at = Trainings.completed_at,
+    #         created_at = Trainings.created_at,
+    #     )
+
+    #     db.add(db_assessment)
+    #     db.commit()
+    #     db.refresh(db_assessment)
+
+    #     return db_assessment
     def create_training(Trainings: TrainingCreate, db: Session = Depends(get_db)):
+        # Determine active status based on completed_at field
+        is_active = not bool(Trainings.completed_at)
 
         db_assessment = Training(
             title=Trainings.title,
-            start_date = Trainings.start_date,
-            end_date = Trainings.end_date,
-            description = Trainings.description,
-            outcome = Trainings.outcome,
-            user_id = Trainings.user_id,
-            active = Trainings.active,
-            completed_at = Trainings.completed_at,
-            created_at = Trainings.created_at,
+            start_date=Trainings.start_date,
+            end_date=Trainings.end_date,
+            description=Trainings.description,
+            # outcome=Trainings.outcome,
+            user_id=Trainings.user_id,
+            active=is_active,  # Use the determined active status
+            completed_at=Trainings.completed_at,
+            created_at=Trainings.created_at,
         )
 
         db.add(db_assessment)
@@ -42,7 +64,6 @@ class TrainingService:
         db.refresh(db_assessment)
 
         return db_assessment
-
     @staticmethod
     def update_trainings(training_id: int, training: TrainingUpdate, db: Session = Depends(get_db)):
         db_trainings = db.query(Training).filter(Training.deleted_at == None, Training.id == training_id).first()
@@ -86,19 +107,23 @@ class TrainingService:
         return db.query(EmployeeTraining).all()
     
     def create_get_all_employeeTraining(EmployeeTrainings: EmployeeTrainingCreate, db: Session = Depends(get_db)):
+        try:
 
-        db_employeeTraining = EmployeeTraining(
-            employee_id=EmployeeTrainings.employee_id,
-            training_id = EmployeeTrainings.training_id,
-            user_id = EmployeeTrainings.user_id,
-            created_at=EmployeeTrainings.created_at
-        )
+            db_employeeTraining = EmployeeTraining(
+                employee_id=EmployeeTrainings.employee_id,
+                training_id = EmployeeTrainings.training_id,
+                user_id = EmployeeTrainings.user_id,
+                created_at=EmployeeTrainings.created_at
+            )
 
-        db.add(db_employeeTraining)
-        db.commit()
-        db.refresh(db_employeeTraining)
+            db.add(db_employeeTraining)
+            db.commit()
+            db.refresh(db_employeeTraining)
 
-        return db_employeeTraining
+            return db_employeeTraining
+        except IntegrityError as e:
+                db.rollback()
+                raise HTTPException(status_code=400, detail="Employee is already assigned to this training")
     
     @staticmethod
     def update_employeeTraining(employeeTraining_id: int, employeeTraining: EmployeeTrainingUpdate, db: Session = Depends(get_db)):
@@ -139,6 +164,20 @@ class TrainingService:
     #         employee.employee_last_name = employees_last_name
 
     #     return employees
+    @staticmethod
+    def delete_employee_from_training(training_id: int, employee_id: int, db: Session):
+        # Query the EmployeeTraining entry to be deleted
+        db_employeeTraining = db.query(EmployeeTraining).filter(
+            EmployeeTraining.training_id == training_id,
+            EmployeeTraining.employee_id == employee_id
+        ).first()
+
+        # If the entry exists, delete it
+        if db_employeeTraining:
+            db.delete(db_employeeTraining)
+            db.commit()
+
+        return db_employeeTraining
     @staticmethod
     def get_assigned_employees(training_id: int, db: Session = Depends(get_db)):
         employee_trainings = db.query(EmployeeTraining).filter(EmployeeTraining.training_id == training_id).options(joinedload(EmployeeTraining.employee)).all()
