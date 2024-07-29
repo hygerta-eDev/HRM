@@ -306,7 +306,7 @@ class Session(Base):
     session_timeout = Column(DateTime, nullable=True)
 
 # Create the tables in the database
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/ldap", tags=["ldaptest"])
 

@@ -1,37 +1,54 @@
 <template>
-  <div class="main">
-    <h1 class="">Innovation is the Key</h1>
-    <h1>Welcome, {{ name }}</h1>
-    <p>Your role: {{ role }}</p>
-    <button @click="logout">Logout</button>
-    <h1>{{ $t('hello') }}</h1>
+  <div>
+    <!-- Content visible to admin users -->
+    <div v-if="isAdmin">
+      <p>Welcome, Admin!</p>
+      <!-- Admin-specific content -->
+    </div>
 
+    <!-- Content visible to regular users -->
+    <div v-else-if="isUser">
+      <p>Welcome, User {{ name }}!</p>
+      <!-- Regular user content -->
+    </div>
+
+    <!-- Content visible to all logged-in users -->
+    <div v-if="isLoggedIn">
+      <p>Welcome back!</p>
+    </div>
+
+    <!-- Content for everyone -->
+    <div>
+      <p>This is available to everyone.</p>
+    </div>
+    <button @click="logout">Logout</button>
   </div>
 </template>
 
 <script>
-import { api } from '@/api';
-import { useRouter } from 'vue-router';
-
 export default {
   data() {
     return {
-      name: localStorage.getItem('name'),
-      role: localStorage.getItem('role'),
+      name: localStorage.getItem('name') || '', // Get user's name from local storage
+      roles: JSON.parse(localStorage.getItem('roles')) || [], // Parse roles from local storage
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return !!localStorage.getItem('token'); // Check if user is logged in
+    },
+    isAdmin() {
+      return this.roles.includes(1); // Check if user has admin role (assuming 1 is the admin role ID)
+    },
+    isUser() {
+      return this.roles.includes(3); // Check if user has regular user role (assuming 3 is the user role ID)
+    },
   },
   methods: {
     logout() {
-      localStorage.clear();
-      this.$router.push('/Login'); // Redirect to the login page
+      localStorage.clear(); // Clear all local storage items
+      this.$router.push('/login'); // Redirect to the login page
     },
   },
 };
 </script>
-
-<style scoped>
-.main {
-  margin-left: -200px;
-  padding: 20px; /* Added padding for better layout */
-}
-</style>

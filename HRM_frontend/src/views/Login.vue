@@ -78,7 +78,6 @@
   }
   </style> -->
 
-
   <template>
     <div class="flex justify-center items-center font-sans h-full min-h-screen p-4">
       <div class="absolute inset-0 z-0"
@@ -176,27 +175,43 @@
             username: this.username,
             password: this.password,
           });
-          const { access_token, user_id, role, name } = response.data;
-          localStorage.setItem('token', access_token);
-          localStorage.setItem('user_id', user_id);
-          localStorage.setItem('role', role);
-          localStorage.setItem('name', name);
   
-          if (this.rememberMe) {
-            localStorage.setItem('rememberedUsername', this.username);
+          if (response && response.data) {
+            const { access_token, user_id, employee_id, roles, permissions, name } = response.data;
+            localStorage.setItem('token', access_token);
+            localStorage.setItem('user_id', user_id);
+            localStorage.setItem('employee_id', employee_id);
+            localStorage.setItem('roles', JSON.stringify(roles));
+            localStorage.setItem('permissions', JSON.stringify(permissions));
+            localStorage.setItem('name', name);
+  
+            if (this.rememberMe) {
+              localStorage.setItem('rememberedUsername', this.username);
+            } else {
+              localStorage.removeItem('rememberedUsername');
+            }
+  
+            this.$router.push('/Employee'); // Redirect to the dashboard
           } else {
-            localStorage.removeItem('rememberedUsername');
+            // Handle unexpected response structure
+            throw new Error('Unexpected response structure');
           }
-  
-          this.$router.push('/dashboard'); // Redirect to the dashboard
         } catch (error) {
-          this.error = error.response ? error.response.data.detail : 'An error occurred';
+          // Check if error.response and error.response.data exist
+          if (error.response && error.response.data) {
+            this.error = error.response.data.detail || 'An error occurred';
+          } else {
+            this.error = error.message || 'An error occurred';
+          }
+          console.error('Error logging in:', error);
         }
       },
       logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
-        localStorage.removeItem('role');
+        localStorage.removeItem('employee_id');
+        localStorage.removeItem('roles');
+        localStorage.removeItem('permissions');
         localStorage.removeItem('name');
         // Optionally clear remembered username on logout
         localStorage.removeItem('rememberedUsername');
@@ -209,5 +224,4 @@
   <style scoped>
   /* Add any scoped styles if necessary */
   </style>
-  
   

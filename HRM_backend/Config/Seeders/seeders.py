@@ -10,16 +10,18 @@ from Models.holidayModel import Holiday
 from Models.employeeQualificationModel import Qualification
 from Models.ethnicitiesModel import Ethnicities
 from Models.DMS import DocumentCategory,Document
+from Models.assessmentQuestionsModel import AssessmentQuestion  # Adjust import as needed
+from Schema.enums.assessment_options import STANDARD_OPTIONS
 from datetime import datetime
-
+import json
 
 
 def seed_initial_users(db: Session):
     if db.query(Users).count() == 0:
         users = [
-            Users(name='Admin User', username='admin', email='admin@edev-rks.com', password='hashed_passworD123', password_confirmation='hashed_password', active=True),
-            Users(name='User One', username='user1', email='user1@edev-rks.com', password='hashed_passworD123', password_confirmation='hashed_password', active=True),
-            Users(name='User Two', username='user2', email='user2@edev-rks.com', password='hashed_passworD123', password_confirmation='hashed_password', active=True)
+            Users(name='Admin User', username='hg.admin', email='hg.admin@edev-rks.com', password='Password123', password_confirmation='Password123', active=True),
+            # Users(name='User One', username='hg.user01', email='hg.user01@edev-rks.com', password='Password123', password_confirmation='Password123', active=True),
+            # Users(name='User Two', username='hg.user02', email='hg.user02@edev-rks.com', password='Password123', password_confirmation='Password123', active=True)
         ]
         db.add_all(users)
         db.commit()
@@ -27,9 +29,9 @@ def seed_initial_users(db: Session):
 def seed_initial_institutions(db: Session):
     if db.query(Institution).count() == 0:
         institutions = [
-            Institution(name='Institution A', slug='institution-a', active=True, user_id=1),
-            Institution(name='Institution B', slug='institution-b', active=True, user_id=1),
-            Institution(name='Institution C', slug='institution-c', active=True, user_id=1)
+            Institution(name='ETECH', slug='eTech', active=True, user_id=1),
+            Institution(name='EDEV', slug='eDev', active=True, user_id=1),
+            Institution(name='CYBERONE', slug='CyberOne', active=True, user_id=1)
         ]
         db.add_all(institutions)
         db.commit()
@@ -37,9 +39,14 @@ def seed_initial_institutions(db: Session):
 def seed_initial_departments(db: Session):
     if db.query(Departments).count() == 0:
         departments = [
-            Departments(name='Department 1', slug='department-1', active=True, institution_id=1, user_id=1),
-            Departments(name='Department 2', slug='department-2', active=True, institution_id=1, user_id=1),
-            Departments(name='Department 3', slug='department-3', active=True, institution_id=1, user_id=1)
+            Departments(name='Systems', slug='Systems', active=True, institution_id=1, user_id=1),
+            Departments(name='Network', slug='Network', active=True, institution_id=1, user_id=1),
+            Departments(name='CyberSecurity', slug='CyberSecurity', active=True, institution_id=3, user_id=1),
+            Departments(name='Department-edev-1', slug='Department-edev-1', active=True, institution_id=2, user_id=1),
+            Departments(name='Department-edev-2', slug='Department-edev-2', active=True, institution_id=2, user_id=1),
+            Departments(name='Department-edev-3', slug='Department-edev-3', active=True, institution_id=2, user_id=1)
+
+
         ]
         db.add_all(departments)
         db.commit()
@@ -47,9 +54,11 @@ def seed_initial_departments(db: Session):
 def seed_initial_job_positions(db: Session):
     if db.query(JobPosition).count() == 0:
         job_positions = [
-            JobPosition(name='Position 1', slug='position-1',active=True, department_id=1, user_id=1),
-            JobPosition(name='Position 2', slug='position-2',active=True, department_id=2, user_id=1),
-            JobPosition(name='Position 3', slug='position-3',active=True, department_id=3, user_id=1)
+            JobPosition(name='System Engineering', slug='position-1',active=True, department_id=1, user_id=1),
+            JobPosition(name='Network Engineering', slug='position-2',active=True, department_id=2, user_id=1),
+            JobPosition(name='CyberSecurity', slug='position-3',active=True, department_id=3, user_id=1),
+            JobPosition(name='Full Stack', slug='position-4',active=True, department_id=4, user_id=1)
+
         ]
         db.add_all(job_positions)
         db.commit()
@@ -89,9 +98,9 @@ def seed_initial_holidays(db: Session):
 def seed_initial_qualifications(db: Session):  # Added seed function for Qualifications
     if db.query(Qualification).count() == 0:
         qualifications = [
-            Qualification(name='Qualification 1', slug='qualification-1', user_id=1),
-            Qualification(name='Qualification 2', slug='qualification-2', user_id=1),
-            Qualification(name='Qualification 3', slug='qualification-3', user_id=1)
+            Qualification(name='Bachelor', slug='qualification-1', user_id=1),
+            Qualification(name='Master', slug='qualification-2', user_id=1),
+            Qualification(name='Doktor Shkence ', slug='qualification-3', user_id=1)
         ]
         db.add_all(qualifications)
         db.commit()
@@ -100,8 +109,8 @@ def seed_initial_qualifications(db: Session):  # Added seed function for Qualifi
 def seed_initial_ethnicities(db: Session):
     if db.query(Ethnicities).count() == 0:
         ethnicities = [
-            Ethnicities(name='Ethnicity A', user_id=1),
-            Ethnicities(name='Ethnicity B', user_id=1),
+            Ethnicities(name='Shqiptar', user_id=1),
+            Ethnicities(name='Boshnjak', user_id=1),
             Ethnicities(name='Ethnicity C', user_id=1)
         ]
         db.add_all(ethnicities)
@@ -153,7 +162,69 @@ def seed_document_categories(db: Session):
             db_category = DocumentCategory(**category)
             db.add(db_category)
         db.commit()
+def seed_initial_assessment_questions(db: Session):
+    if db.query(AssessmentQuestion).count() == 0:
+        questions = [
+            AssessmentQuestion(
+                title="Cilësia e punës",
+                description="Puna është përfunduar me saktësi (me pak ose aspak gabime), në mënyrë efikase dhe brenda afateve me mbikëqyrje minimale.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Besueshmëria",
+                description="Në vazhdimësi përformon në nivel të lartë, menaxhon kohën dhe ngarkesën e punës në mënyrë efektive duke i përmbushur përgjegjësitë.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Gjykimi dhe vendimarrja",
+                description="Merr vendime të menduara, të arsyetuara mire, ushtron gjykim të mire, shkathtësi dhe kreativitet në zgjidhjen e problemeve.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Aftësitë komunikuese",
+                description="Komunikimet me shkrim dhe me gojë janë te qarta, të organizuara dhe efektive. I dëgjon mire dhe kupton mire natyrën e problemeve.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Iniciativa dhe fleksibiliteti",
+                description="Demostron iniciativë, shpesh duke kërkuar përgjegjësi shtesë, identifikon probemet dhe zgjidhjet. Përshtatet me sfidat e reja dhe ndryshimet e papritura.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Bashkëpunimi dhe puna ekipore",
+                description="Merr vendime të menduara, të arsyetuara mire, ushtron gjykim të mire, shkathtësi dhe kreativitet në zgjidhjen e problemeve.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Njohuritë për pozitën e punës:",
+                description="Merr vendime të menduara, të arsyetuara mire, ushtron gjykim të mire, shkathtësi dhe kreativitet në zgjidhjen e problemeve.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
+            AssessmentQuestion(
+                title="Trajnimi dhe zhvillimi",
+                description="Vazhdimisht kërkon mënyra për të forcuar performancën dhe monitoron rregullisht zhvillimet e reja në fushën e punës.",
+                # weight=1,
+                notes="null",
+                options=json.dumps(STANDARD_OPTIONS) 
+            ),
 
+        ]
+        db.add_all(questions)
+        db.commit()
 # def seed_documents(db: Session):
 #     if db.query(Document).count() == 0:
 
@@ -191,4 +262,6 @@ def seed_all(db: Session):
     seed_initial_qualifications(db)
     seed_initial_ethnicities(db)
     seed_document_categories(db)
+    seed_initial_assessment_questions(db)
+
     # seed_documents(db)

@@ -82,6 +82,7 @@ class EmployeeService:
             zipcode=Employee.zipcode,
             country=Employee.country,
             phone_number=Employee.phone_number,
+            phone_number_2=Employee.phone_number_2,
             email=Employee.email,
             email_2=Employee.email_2,
             days_off=Employee.days_off,

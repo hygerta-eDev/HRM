@@ -44,150 +44,174 @@ const routes = [
         path: 'Companies',
         name: 'Companies',
         component: () => import('../views/Companies/Companies.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true}
+
       },
       {
         path: 'Companies/NewCompany',
         name: 'NewCompany',
         component: () => import('../views/Companies/NewCompany.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Companies/:id',
         name: 'ViewCompany',
         component: () => import('../views/Companies/ViewCompany.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Companies/Edit/:id',
         name: 'EditCompany',
         component: () => import('../views/Companies/EditCompany.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       // Departments routes
       {
         path: 'Departments',
         name: 'Departments',
         component: () => import('../views/Departments/Departments.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Departments/NewDepartment',
         name: 'NewDepartment',
         component: () => import('../views/Departments/NewDepartment.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Departments/:id',
         name: 'ViewDepartment',
         component: () => import('../views/Departments/ViewDepartment.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Departments/Edit/:id',
         name: 'EditDepartment',
         component: () => import('../views/Departments/EditDepartment.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       // JobPositions routes
       {
         path: 'JobPositions',
         name: 'JobPositions',
         component: () => import('../views/JobPositions/JobPositions.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'JobPositions/NewJobPosition',
         name: 'NewJobPosition',
         component: () => import('../views/JobPositions/NewJobPosition.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'JobPositions/:id',
         name: 'ViewJobPosition',
         component: () => import('../views/JobPositions/ViewJobPosition.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'JobPositions/Edit/:id',
         name: 'EditJobPosition',
         component: () => import('../views/JobPositions/EditJobPosition.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       // Qualifications routes
       {
         path: 'Qualifications',
         name: 'Qualifications',
         component: () => import('../views/Qualifications/Qualifications.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Qualifications/NewQualifications',
         name: 'NewQualifications',
         component: () => import('../views/Qualifications/NewQualifications.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Qualifications/:id',
         name: 'ViewQualifications',
         component: () => import('../views/Qualifications/ViewQualifications.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Qualifications/Edit/:id',
         name: 'EditQualifications',
         component: () => import('../views/Qualifications/EditQualifications.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       // Ethnicities routes
       {
         path: 'Ethnicities',
         name: 'Ethnicities',
         component: () => import('../views/Ethnicities/Ethnicities.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Ethnicities/NewEthnicity',
         name: 'NewEthnicity',
         component: () => import('../views/Ethnicities/NewEthnicity.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Ethnicities/:id',
         name: 'ViewEthnicity',
         component: () => import('../views/Ethnicities/ViewEthnicity.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'Ethnicities/Edit/:id',
         name: 'EditEthnicity',
         component: () => import('../views/Ethnicities/EditEthnicity.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       // LeaveTypes routes
       {
         path: 'LeaveTypes',
         name: 'LeaveTypes',
         component: () => import('../views/LeaveTypes/LeaveTypes.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'LeaveTypes/NewLeaveType',
         name: 'NewLeaveType',
         component: () => import('../views/LeaveTypes/NewLeaveType.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'LeaveTypes/:id',
         name: 'ViewLeaveType',
         component: () => import('../views/LeaveTypes/ViewLeaveType.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
       {
         path: 'LeaveTypes/Edit/:id',
         name: 'EditLeaveType',
         component: () => import('../views/LeaveTypes/EditLeaveTypes.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles:[1]}
+
       },
             // Leaves routes
             {
@@ -275,11 +299,30 @@ const routes = [
               meta: { requiresAuth: true }
             },
             {
-              path: 'Trainings/AddEmployeeToTraining',
-              name: 'AddEmployeeToTraining',
-              component: () => import('../views/Trainings/AddEmployeeToTraining.vue'),
+              path: 'Assessments',
+              name: 'Assessments',
+              component: () => import('../views/Assessments/Assessments.vue'),
               meta: { requiresAuth: true }
             },
+            {
+              path: 'Assessments/NewAssessment/:id',
+              name: 'NewAssessment',
+              component: () => import('../views/Assessments/NewAssessment.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Assessments/:id',
+              name: 'ViewAssessment',
+              component: () => import('../views/Assessments/ViewAssessment.vue'),
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'Assessments/Edit/:id',
+              name: 'EditAssessment',
+              component: () => import('../views/Assessments/EditAssessment.vue'),
+              meta: { requiresAuth: true }
+            },
+            
       
       {
         path: '/Login',
@@ -290,7 +333,7 @@ const routes = [
         path: 'test',
         name: 'test',
         component: () => import('../views/test/test.vue'),
-        meta: { requiresAuth: true }
+        // meta: { requiresAuth: true }
 
       },
     ]
@@ -306,17 +349,32 @@ const routes = [
   }
 ];
 
-// Create the router instance
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 });
 
-// Navigation guard
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = !!localStorage.getItem('token');
-  if (to.matched.some(record => record.meta.requiresAuth) && !isLoggedIn) {
-    next('/login');
+  const isAuthenticated = !!localStorage.getItem('token');
+  const userRoles = JSON.parse(localStorage.getItem('roles') || '[]').map(Number);
+
+  // console.log('isAuthenticated:', isAuthenticated);
+  // console.log('userRoles:', userRoles);
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      // console.log('Not authenticated, redirecting to login');
+      next('/login');
+    } else {
+      const requiredRoles = to.meta.roles || [];
+      if (requiredRoles.length === 0 || requiredRoles.some(role => userRoles.includes(role))) {
+        // console.log('Permission granted, proceeding to route');
+        next();
+      } else {
+        // console.log('No permission, redirecting to unauthorized');
+        next('/unauthorized');
+      }
+    }
   } else {
     next();
   }

@@ -66,88 +66,100 @@
 </template>
 
 <script setup>
-  import Dialog from 'primevue/dialog';
-  import Button from 'primevue/button';
-  import { ref, onMounted, computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { api } from '@/api';
-  import Paginator from 'primevue/paginator';
-  import { toast } from 'vue3-toastify';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { api } from '@/api';
+import Paginator from 'primevue/paginator';
+import { toast } from 'vue3-toastify';
 
+const router = useRouter();
+const companies = ref([]);
+const totalRecords = ref(0);
+const currentPage = ref(0);
+const rowsPerPage = ref(10); // Adjust based on your preference
+const deleteDialogVisible = ref(false);
+const companyToDeleteName = ref('');
+let companyToDelete = null;
 
-  const router = useRouter();
-  const companies = ref([]);
-  const totalRecords = ref(0);
-  const currentPage = ref(0);
-  const rowsPerPage = ref(100);
-  const deleteDialogVisible = ref(false);
-  const companyToDeleteName = ref('');
-  let companyToDelete = null;
+const getUserIdFromLocalStorage = () => {
+  const user = localStorage.getItem('user_id');
+  return user; // Adjust according to your local storage structure
+};
 
-  const getAllCompanies = () => {
-    api.get('/institutions/active_institutions')
-      .then(response => {
-        console.log('All companies:', response.data);
-        companies.value = response.data;
-        totalRecords.value = response.data.length;
+const getAllCompanies = () => {
+  const userId = getUserIdFromLocalStorage();
+  // const yourAuthToken = 'your-auth-token'; // Replace with your actual token
+
+  api.get('/institutions/active_institutions', {
+    // headers: {
+    //   // 'Authorization': `Bearer ${yourAuthToken}`,
+    //   'x-user-id': userId // Custom header to pass user_id
+    // }
+  })
+  .then(response => {
+    console.log('All companies:', response.data);
+    companies.value = response.data;
+    totalRecords.value = response.data.length;
+  })
+  .catch(error => {
+    console.error('Error fetching companies:', error);
+  });
+};
+
+onMounted(getAllCompanies);
+
+const onPageChange = (event) => {
+  currentPage.value = event.page;
+};
+
+const paginatedCompanies = computed(() => {
+  const startIndex = currentPage.value * rowsPerPage.value;
+  const endIndex = Math.min(startIndex + rowsPerPage.value, companies.value.length);
+  return companies.value.slice(startIndex, endIndex);
+});
+
+const viewCompany = (companyId) => {
+  router.push(`/Companies/${companyId}`);
+};
+
+const editCompany = (companyId) => {
+  router.push(`/Companies/Edit/${companyId}`);
+};
+
+const confirmDelete = (companyId, companyName) => {
+  companyToDelete = companyId;
+  companyToDeleteName.value = companyName;
+  deleteDialogVisible.value = true;
+};
+
+const cancelDelete = () => {
+  companyToDelete = null;
+  companyToDeleteName.value = '';
+  deleteDialogVisible.value = false;
+};
+
+const performDelete = () => {
+  if (companyToDelete) {
+    api.delete(`/institutions/delete_institution/${companyToDelete}`)
+      .then(() => {
+        deleteDialogVisible.value = false;
+        getAllCompanies();
+        toast.success("Company deleted successfully!", {
+          autoClose: 3000,
+          position: toast.POSITION.TOP_RIGHT,
+        });
       })
       .catch(error => {
-        console.error('Error fetching companies:', error);
-      });
-  };
-  onMounted(getAllCompanies);
-
-  const onPageChange = (event) => {
-    currentPage.value = event.page;
-  };
-
-  const paginatedCompanies = computed(() => {
-    const startIndex = currentPage.value * rowsPerPage.value;
-    const endIndex = Math.min(startIndex + rowsPerPage.value, companies.value.length);
-    return companies.value.slice(startIndex, endIndex);
-  });
-
-  const viewCompany = (companyId) => {
-    router.push(`/Companies/${companyId}`);
-  };
-
-  const editCompany = (companyId) => {
-    router.push(`/Companies/Edit/${companyId}`);
-  };
-
-  const confirmDelete = (companyId, companyName) => {
-    companyToDelete = companyId;
-    companyToDeleteName.value = companyName;
-    deleteDialogVisible.value = true;
-  };
-
-  const cancelDelete = () => {
-    companyToDelete = null;
-    companyToDeleteName.value = '';
-    deleteDialogVisible.value = false;
-  };
-  const performDelete = () => {
-    if (companyToDelete) {
-      api.delete(`/institutions/delete_institution/${companyToDelete}`)
-        .then(() => {
-          deleteDialogVisible.value = false;
-          getAllCompanies();
-          toast.success("Company deleted successfully!", {
-            autoClose: 3000,
-            position: toast.POSITION.TOP_RIGHT,
-          });
-        })
-        .catch(error => {
-          console.error('Error deleting company:', error);
-          toast.error("Failed to delete company!", {
-            autoClose: 3000,
-            position: toast.POSITION.TOP_RIGHT,
-          });
+        console.error('Error deleting company:', error);
+        toast.error("Failed to delete company!", {
+          autoClose: 3000,
+          position: toast.POSITION.TOP_RIGHT,
         });
-    }
-  };
-
-
+      });
+  }
+};
 </script>
 
 <style scoped>
@@ -155,7 +167,4 @@
   filter: blur(5px);
   pointer-events: none;
 }
-
 </style>
-
-

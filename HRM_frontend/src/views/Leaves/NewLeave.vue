@@ -225,8 +225,10 @@
       async createLeave() {
         try {
           const userId = localStorage.getItem('user_id');
+          const employeeId = localStorage.getItem('employee_id');
+
           this.leaveData.user_id = userId;
-          this.leaveData.employee_id = userId;
+          this.leaveData.employee_id = employeeId;
           this.leaveData.leave_type_id = this.selectedLeaveType;
           const response = await api.post('/leaves/create_leaves', this.leaveData);
           alert('Leave created successfully');
@@ -254,7 +256,7 @@
       },
       async fetchLeaveTypeInfo() {
         try {
-          const userId = localStorage.getItem('user_id');
+          const userId = localStorage.getItem('employee_id');
           const response = await api.get(`/leaveQuota/leaveType/leaveTypeInfo/${userId}/${this.selectedLeaveType}`);
           this.leaveTypeInfo[this.selectedLeaveType] = response.data; // Update leaveTypeInfo for the selected type
           console.log(this.leaveTypeInfo[this.selectedLeaveType].amount); // Check the amount after updating
@@ -314,7 +316,7 @@
 
       async fetchUserLeaveDetails() {
         try {
-          const userId = localStorage.getItem('user_id');
+          const userId = localStorage.getItem('employee_id');
           const response = await api.get(`/leaves/leaves/user/${userId}`);
           this.leaveDetails = response.data;
         } catch (error) {

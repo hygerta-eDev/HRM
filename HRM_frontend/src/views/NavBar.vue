@@ -143,6 +143,7 @@
               </RouterLink>
               <!-- Administrator Dropdown -->
               <div
+                v-if="isAdmin"
                 @click="toggleAdminDropdown"
                 class="group flex items-center px-2 py-2 text-xl leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150 cursor-pointer"
               >
@@ -272,7 +273,17 @@ export default {
       isSidebarOpen: true,
       isAdminDropdownOpen: false,
       isDropdownOpen: false,
+      userRole: JSON.parse(localStorage.getItem('roles') || '[]'), // Ensure role is an array
     };
+  },
+  computed: {
+    isAdmin() {
+      console.log(this.userRole);
+      return this.userRole.includes(1); // Ensure role ID is correctly compared
+    },
+    isUser() {
+      return this.userRole.includes(3); // Ensure role ID is correctly compared
+    },
   },
   methods: {
     toggleSidebar() {
@@ -288,6 +299,7 @@ export default {
       // Update the language using i18n instance from Vue
       this.$i18n.locale = lang;
     }
+    
   },
 };
 </script>

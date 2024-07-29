@@ -345,6 +345,7 @@
 
   export default {
     setup() {
+      const userId = ref(parseInt(localStorage.getItem('user_id'), 10) || null);
 
       const currentStep =ref(0);
       const router = useRouter();
@@ -405,7 +406,7 @@
         next_year_earned_days_off: 2028,
         active: true,
         qualification_id: 1,
-        user_id: 0,
+        user_id: userId.value,
         the_workouts_selection: 'primar',
         created_at: new Date().toISOString(),
       });
@@ -420,24 +421,23 @@
           days: 0,
           employee_id: 0,
           created_at: new Date().toISOString(),
-          user_id: 1,
+          user_id: userId.value,
         });
       };
-const newEmployeeContract = ref({
-  name:'',
-  personal_number:'',
-  date_of_birth:'',
-  city:'',
-
-  street:'',
-  job_position_id:'',
-  date_hired:'',
-  contract_end_date:'',
-  created_at:'',
-  salary:'',
-  
-  
-});
+      const newEmployeeContract = ref({
+        name:'',
+        personal_number:'',
+        date_of_birth:'',
+        city:'',
+        street:'',
+        job_position_id:'',
+        date_hired:'',
+        contract_end_date:'',
+        created_at:'',
+        salary:'',
+        
+        
+      });
       watch(
         [() => newEmployee.value.name, () => newEmployee.value.last_name],
         () => {
@@ -751,8 +751,6 @@ const newEmployeeContract = ref({
         newEmployee.value.contract_end_date = new Date(newEmployee.value.contract_end_date).toISOString().split('T')[0];
   
         newEmployee.value.zipcode=newEmployee.value.selectedZipCode
-
-        newEmployee.value.user_id = 1;
 
         try {
           const response = await api.post('/employees/create_employee', newEmployee.value);

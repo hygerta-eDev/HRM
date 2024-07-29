@@ -275,20 +275,20 @@
               <div class="flex flex-wrap">
                 <div v-for="(workExperience, index) in workExperienceList" :key="index" class="w-full sm:w-1/4 md:w-1/3 p-2">
                   <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Company Name</label>
-                    <input v-model="workExperience.company_name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                    <label class="block text-gray-700 text-sm font-bold mb-2"> Name</label>
+                    <input v-model="workExperience.name" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
                   </div>
                   <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Position</label>
-                    <input v-model="workExperience.position" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Type</label>
+                    <input v-model="workExperience.type" type="text" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
                   </div>
                   <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
-                    <input v-model="workExperience.start_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                    <input v-model="workExperience.start" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
                   </div>
                   <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
-                    <input v-model="workExperience.end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
+                    <input v-model="workExperience.end" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">
                   </div>
                 </div>
               </div>

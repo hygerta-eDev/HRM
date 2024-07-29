@@ -180,9 +180,9 @@ export default {
     <div class="container mx-auto" :class="{ 'blurred': deleteDialogVisible }">
       <!-- Filter Buttons -->
       <div class="filter-buttons flex justify-center space-x-4 mb-6">
-        <button @click="selectedCompany = 'Institution A'" :class="{'bg-blue-500 text-white': selectedCompany === 'Institution A', 'bg-gray-300': selectedCompany !== 'Institution A'}" class="px-4 py-2 rounded-lg">Institution A</button>
-        <button @click="selectedCompany = 'CyberOne'" :class="{'bg-blue-500 text-white': selectedCompany === 'CyberOne', 'bg-gray-300': selectedCompany !== 'CyberOne'}" class="px-4 py-2 rounded-lg">CyberOne</button>
-        <button @click="selectedCompany = 'eDev'" :class="{'bg-blue-500 text-white': selectedCompany === 'eDev', 'bg-gray-300': selectedCompany !== 'eDev'}" class="px-4 py-2 rounded-lg">eDev</button>
+        <button @click="selectedCompany = 'ETECH'" :class="{'bg-blue-500 text-white': selectedCompany === 'ETECH', 'bg-gray-300': selectedCompany !== 'ETECH'}" class="px-4 py-2 rounded-lg">ETECH</button>
+        <button @click="selectedCompany = 'EDEV'" :class="{'bg-blue-500 text-white': selectedCompany === 'EDEV', 'bg-gray-300': selectedCompany !== 'EDEV'}" class="px-4 py-2 rounded-lg">EDEV</button>
+        <button @click="selectedCompany = 'CYBERONE'" :class="{'bg-blue-500 text-white': selectedCompany === 'CYBERONE', 'bg-gray-300': selectedCompany !== 'CYBERONE'}" class="px-4 py-2 rounded-lg">CYBERONE</button>
         <button @click="selectedCompany = 'All'" :class="{'bg-blue-500 text-white': selectedCompany === 'All', 'bg-gray-300': selectedCompany !== 'All'}" class="px-4 py-2 rounded-lg">All</button>
       </div>
       

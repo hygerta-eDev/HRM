@@ -1,10 +1,13 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException,status,Header
 from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.registersModel import Users
+from Models.employeeModel import Employees
+from typing import Any, Callable, Optional
+
 from Models.employeeRolesModels import EmployeeRoles
 from Config.ldap_router import check_ldap_auth
 from Schema.registerSchema import UserCreate
@@ -18,10 +21,56 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = secrets.token_hex(32)  
 ALGORITHM = "HS256"
+ROLE_PERMISSIONS = {
+    1: ['view_dashboard', 'edit_profile'],  # Role 1 permissions
+    2: ['view_reports'],                    # Role 2 permissions
+    3: ['manage_users', 'view_dashboard'],  # Role 3 permissions
+    # Add other roles and permissions as needed
+}
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Role Permissions
+ROLE_PERMISSIONS = {
+    1: ['view_dashboard', 'edit_profile'],  # Role 1 permissions
+    2: ['view_reports'],                    # Role 2 permissions
+    3: ['manage_users', 'view_dashboard'],  # Role 3 permissions
+    # Add other roles and permissions as needed
+}
+
+# JWT Decoding
+@staticmethod
+def decode_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int = payload.get("user_id")
+        if user_id is None:
+            raise credentials_exception
+        return payload
+    except JWTError:
+        raise credentials_exception
+credentials_exception = HTTPException(
+    status_code=401,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
+# Get Current User
 
 class UserService:
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
+    def get_current_user(token: str = Depends(oauth2_scheme)) -> Any:
+        user = decode_token(token)
+        return user
+    @staticmethod
+    def get_user_id_from_header(x_user_id: str = Header(None)) -> int:
+        if x_user_id is None:
+            raise HTTPException(status_code=400, detail="User ID header missing")
+        try:
+            return int(x_user_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid User ID header format")
     @staticmethod
     def get_all_users(db: Session = Depends(get_db)):
         return db.query(Users).all()
@@ -102,16 +151,29 @@ class UserService:
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
     
-    def get_user_role(user_id: int, db: Session):
-        user_role = (
+    def get_user_roles(user_id: int, db: Session):
+        user_roles = (
             db.query(EmployeeRoles.role_id)
             .filter(EmployeeRoles.user_id == user_id)
-            .first()
+            .all()
         )
-        if not user_role:
-            return None
-        return user_role[0]
+        if not user_roles:
+            return []
+        return [role.role_id for role in user_roles]
     
+    def get_user_permissions(user_roles):
+        permissions = set()
+        for role in user_roles:
+            permissions.update(ROLE_PERMISSIONS.get(role, []))
+        return permissions
+
+    @staticmethod
+    def assign_default_role(user_id: int, employee_id: int, db: Session):
+        default_role_id = 3  # Assuming 3 is the role ID for Employee
+        new_role = EmployeeRoles(user_id=user_id, employee_id=employee_id, role_id=default_role_id)
+        db.add(new_role)
+        db.commit()
+
     @staticmethod
     def login_for_access_token(username: str, password: str, db: Session):
         try:
@@ -131,25 +193,46 @@ class UserService:
                                          username, password):
                 raise HTTPException(status_code=401, detail="Invalid username or password")
 
-            # Fetch user details including user_id and name
+            # Fetch user details
             user_details = db.query(Users).filter(Users.username == username).first()
-            if not user_details:
-                raise HTTPException(status_code=404, detail="User not found")
 
-            user_id = user_details.user_id
-            name = user_details.name
+            # Check if user exists in the employee table
+            employee_details = db.query(Employees).filter(Employees.username == username).first()
 
-            # Get the user's role
-            role = UserService.get_user_role(user_id, db)
+            if user_details:
+                # Update user details if they exist
+                user_details.email_verified_at = datetime.utcnow()
+            else:
+                # Create new user record
+                new_user = Users(username=username, email_verified_at=datetime.utcnow())
+                db.add(new_user)
+                db.commit()
+                db.refresh(new_user)  # Get the new user ID
+                user_details = new_user
 
-            # Generate the access token
-            access_token_expires = timedelta(minutes=30)
-            access_token = UserService.create_access_token(
-                data={"sub": username, "user_id": user_id, "role": role}, expires_delta=access_token_expires
-            )
+            # If employee details exist, assign role and log in
+            if employee_details:
+                user_id = user_details.user_id
+                name = f"{employee_details.name} {employee_details.last_name}" if employee_details.name and employee_details.last_name else employee_details.name
+                employee_id = employee_details.id
 
-            # Return access token, user ID, role, and name
-            return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "role": role, "name": name}
+                # Assign the default role to the new user if no role is assigned yet
+                if not UserService.get_user_roles(user_id, db):
+                    UserService.assign_default_role(user_id, employee_id, db)
+
+                roles = UserService.get_user_roles(user_id, db)
+                permissions = UserService.get_user_permissions(roles)
+
+                # Generate the access token
+                access_token_expires = timedelta(minutes=30)
+                access_token = UserService.create_access_token(
+                    data={"sub": username, "user_id": user_id, "employee_id": employee_id, "roles": roles, "permissions": list(permissions)}, expires_delta=access_token_expires
+                )
+
+                # Return access token, user ID, roles, permissions, and name
+                return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "employee_id": employee_id, "roles": roles, "permissions": list(permissions), "name": name}
+            else:
+                raise HTTPException(status_code=404, detail="Employee not found")
 
         except HTTPException as http_err:
             raise http_err
@@ -188,7 +271,6 @@ class UserService:
                 conn.unbind()
             except Exception as e:
                 print(f"Error while unbinding LDAP connection: {str(e)}")
-
 
     # @staticmethod
     # def login_for_access_token(username: str = Depends(check_ldap_auth), password: str, db: Session):

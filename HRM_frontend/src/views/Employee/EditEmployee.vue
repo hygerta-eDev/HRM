@@ -314,7 +314,7 @@
             </div>
         </div>
         <div class="w-full text-right mt-4 px-2">
-          <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Register</button>
+          <button @click="validateAndRegisterEmployee(); " type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 shadow-md">Edit</button>
           <router-link :to="`/Employee`">
             <button class="bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md">Cancel</button>
           </router-link>
