@@ -37,6 +37,22 @@
       "back": "Back",
       "select_employees": "Select employees",
       "assigned_employees": "Assigned employees",
-      "add_employees":"Add employees"
+      "add_employees":"Add employees",
+      "language":"Language",
+      "english":"English",
+      "albanian":"Albanian",
+        "home": "Home",
+        "administrator": "Administrator",
+        "companies": "Companies",
+        "all_companies": "All Companies",
+      
+      
+        "name": "Name",
+        "descriptions": "Descriptions",
+        "view": "View",
+        "confirm": "Confirm",
+        "confirm_delete": "Are you sure you want to delete the company \"{{ companyName }}\"?"
+
+      
     }
   

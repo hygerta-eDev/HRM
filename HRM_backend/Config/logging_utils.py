@@ -343,7 +343,7 @@ def log_function_call(entity_name: str = None):
             #     user_id = 1  # default user_id if none is provided
 
 
-            user_id = kwargs.get('user_id')
+            user_id = kwargs.get('user_id',1)
             entity_id = kwargs.get('entity_id')
             entity_type = kwargs.get('entity_type')
             changes = kwargs.get('changes', {})

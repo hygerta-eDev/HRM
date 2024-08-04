@@ -15,6 +15,8 @@ import router from './router';
 import { createI18n } from 'vue-i18n';
 import en from '@/locales/en.json';
 import al from '@/locales/al.json';
+import VTooltip from 'v-tooltip';
+
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'al',
@@ -34,6 +36,8 @@ app.directive('tooltip', Tooltip);
 
 app.use(createPinia());
 app.use(router);
+// app.use(VTooltip);
+
 app.use(Vue3Toasity, {
     autoClose: 3000,
 })

@@ -9,11 +9,11 @@
           </div>
           <div class="w-full md:w-1/2 mb-4 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">{{ $t('start_date') }}</label>
-            <VueDatePicker :placeholder="$t('select_a_date')" v-model="newTraining.start_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">Select a date</VueDatePicker>
+            <VueDatePicker  v-model="newTraining.start_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md">Select a date</VueDatePicker>
           </div>
           <div class="w-full md:w-1/2 mb-4 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">{{ $t('end_date') }}</label>
-            <VueDatePicker  :placeholder="$t('select_a_date')" v-model="newTraining.end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
+            <VueDatePicker   v-model="newTraining.end_date" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md"></VueDatePicker>
           </div>
           <input v-model="newTraining.completed_at" type="date" class="w-full px-3 py-2 border border-blue-500 rounded-md shadow-md" hidden>
           <div class="w-full h-36 mb-4 px-2">
@@ -78,19 +78,19 @@
         console.log('Training created successfully:', response.data);
   
         router.push('/Trainings');
-        setTimeout(() => {
-          toast.success(this.$t('training_created_successfully'), {
-            autoClose: 3000,
-            position: toast.POSITION.TOP_RIGHT,
-          });
-        }, 250);
+        // setTimeout(() => {
+        //   // toast.success(this.$t('training_created_successfully'), {
+        //   //   autoClose: 3000,
+        //   //   position: toast.POSITION.TOP_RIGHT,
+        //   // });
+        // }, 250);
       })
       .catch(error => {
         console.error('Error creating Training:', error);
-        toast.error(this.$t('failed_to_create_training'), {
-          autoClose: 3000,
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        // toast.error(this.$t('failed_to_create_training'), {
+        //   autoClose: 3000,
+        //   position: toast.POSITION.TOP_RIGHT,
+        // });
       });
   };
   </script>

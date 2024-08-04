@@ -36,6 +36,20 @@
     "back": "Prapa",
     "select_employees": "Zgjidh Punonjës",
     "assigned_employees": "Punonjësit e Caktuar",
-    "add_employees":"Shto Punonjës"
+    "add_employees":"Shto Punonjës",
+    "language":"Gjuhët",
+    "english":"Anglisht",
+    "albanian":"Shqip",
+        "home": "Kryefaqja",
+        "administrator": "Administratori",
+        "companies": "Kompanitë",
+        "all_companies": "Të gjitha kompanitë",
+        "name": "Emri",
+        "descriptions": "Përshkrimet",
+        "view": "Shiko",
+        "confirm": "Konfirmo",
+        "confirm_delete": "A jeni të sigurt që dëshironi të fshini kompaninë \"{{ companyName }}\"?"
+        
+      
 }
   

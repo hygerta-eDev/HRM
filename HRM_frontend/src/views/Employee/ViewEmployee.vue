@@ -55,7 +55,7 @@
               <label class="block text-gray-700 text-sm font-bold mb-2">Ethnicity</label>              
               <div class="input-container" >
                     <div class="input-content">                  
-                        {{ editEmployee.ethnicity_id}}
+                        {{ selectedEthnicityName}}
                     </div>
                 </div>
             </div>
@@ -171,14 +171,14 @@
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Institution</label>              
             <div class="input-container">
-                    <div class="input-content">{{editEmployee.selectedInstitution }}</div>
+                    <div class="input-content">{{selectedInstitutionName  }}</div>
                 </div>
 
           </div>
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>              
             <div class="input-container">
-                    <div class="input-content">{{editEmployee.selectedDepartment }}</div>
+                    <div class="input-content">{{selectedDepartmentName }}</div>
                 </div>
 
           </div>
@@ -199,7 +199,7 @@
           <div class="w-full md:w-1/3 mb-4 md:mb-0 px-2">
             <label class="block text-gray-700 text-sm font-bold mb-2">Job Position</label>              
             <div class="input-container">
-                    <div class="input-content">{{editEmployee.selectedJobPosition }}</div>
+                    <div class="input-content">{{selectedJobPositionName }}</div>
                 </div>
 
           </div>
@@ -269,9 +269,9 @@
         
         <!-- Work Experience -->
         <div class="container mx-auto p-6">
-          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
+          <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 ">
             <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
-            <form @submit.prevent="submitForm">
+            <form v-if="workExperienceList.length"  @submit.prevent="submitForm">
               <div class="flex flex-wrap">
                 <div v-for="(workExperience, index) in workExperienceList" :key="index" class="w-full sm:w-1/4 md:w-1/3 p-2">
                   <div class="mb-4">
@@ -293,6 +293,9 @@
                 </div>
               </div>
             </form>
+            <div v-else>
+                  <p>No work_experience available.</p>
+              </div>
           </div>
         </div>
         
@@ -306,7 +309,7 @@
     </div>
   </template>
 <script>
-import { ref, onMounted,watch } from 'vue';
+import { ref, onMounted,watch,computed } from 'vue';
 import { useRouter,useRoute } from 'vue-router';
 import { api } from '@/api';
 import { toast } from 'vue3-toastify';
@@ -622,6 +625,7 @@ export default {
         try {
           const response = await api.get('/ethnicities/active_ethnicities');
           ethnicities.value = response.data;
+          console.log(ethnicities)
         } catch (error) {
           handleApiError(error, 'ethnicities');
         }
@@ -708,8 +712,7 @@ export default {
             const id = Number(route.params.id);
             const response = await api.get(`/employees/employees/${id}`);
             const employeeData = response.data;
-
-            editEmployee.value.user_id = 1;
+            console.log(employeeData);
 
             // editEmployee.value.gender = employeeData.genders;
 
@@ -717,10 +720,13 @@ export default {
             editEmployee.value.genders = employeeData.gender;
             editEmployee.value.maritalStatus = employeeData.marital_status;
             editEmployee.value.selectedInstitution = employeeData.institucion_id;
+            console.log("editemployee",editEmployee.value.selectedInstitution)
+            console.log("employeeData",employeeData.institucion_id)
+
             editEmployee.value.selectedDepartment = employeeData.department_id;
             editEmployee.value.selectedJobPosition = employeeData.job_position_id;
-            editEmployee.value.selectedCity=employeeData.city
-            editEmployee.value.selectedZipCode =employeeData.zipcode
+            editEmployee.value.selectedCity=employeeData.city;
+            editEmployee.value.selectedZipCode =employeeData.zipcode;
             onInstitutionChange();
             // onCityChange();
             for (const key in employeeData) {
@@ -865,7 +871,23 @@ export default {
           };
 
 
+          const selectedInstitutionName = computed(() => {
+              const institution = institutions.value.find(inst => inst.id === editEmployee.value.selectedInstitution);
+              return institution ? institution.name : 'Unknown Institution';
+            });
+            const selectedDepartmentName = computed(() => {
+              const department = departments.value.find(inst => inst.id === editEmployee.value.selectedDepartment);
+              return department ? department.name : 'Unknown Department';
+            });
+            const selectedJobPositionName = computed(() => {
+      const jobPosition = jobPositions.value.find(job => job.id === editEmployee.value.selectedJobPosition);
+      return jobPosition ? jobPosition.name : 'Unknown Job Position';
+    });
 
+    const selectedEthnicityName = computed(() => {
+      const ethnicity = ethnicities.value.find(eth => eth.id === editEmployee.value.ethnicity_id);
+      return ethnicity ? ethnicity.name : 'Unknown Ethnicity';
+    });
     onMounted(() => {
       const employeeId = route.params.id;
       fetchEmployeeDocuments(employeeId);
@@ -883,9 +905,14 @@ export default {
       fetchCitiesAndZipCodes();
       fetchWorkExperienceType();
       fetchWorkExperiences();
+
     });
 
     return {
+      selectedInstitutionName,
+      selectedDepartmentName,
+      selectedJobPositionName,
+      selectedEthnicityName,
       showDocumentFields,
       workExperienceList,
       institutions,

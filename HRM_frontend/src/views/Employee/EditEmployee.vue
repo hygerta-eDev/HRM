@@ -225,7 +225,7 @@
             <hr class="flex-grow border-gray-400">
           </div>
 
-          <div class="flex flex-wrap -mx-2 bg-gray-200">
+          <div class="flex flex-wrap -mx-2 ">
             <div class="w-full mb-4 px-2">
               <form @submit.prevent="submitForm">
                 <div v-if="showDocumentFields">
@@ -269,13 +269,13 @@
                     </div>
                   </div>
                 </div>
-                <button type="button" @click="addDocument" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
+                <button type="button" @click="addDocument" class="bg-blue-500 text-white mt-5 px-4 py-2 rounded-lg shadow-md mr-2">Add Another Document</button>
               </form>
             </div>
           </div>
         </div>
         <div class="container mx-auto p-6">
-            <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 bg-gray-100">
+            <div class="create-company p-8 rounded-lg shadow-lg border border-blue-500 ">
               <h1 class="text-2xl font-bold mb-6">Work Experience</h1>
               <form @submit.prevent="submitForm">
                 <div class="flex flex-wrap">
