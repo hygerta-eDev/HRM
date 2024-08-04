@@ -11,6 +11,7 @@ from Models.jobPositionModel import JobPosition
 from Models.registersModel import Log
 from Schema.institutionsSchema import InstitutionCreate, InstitutionUpdate,InstitutionResponse
 from Config.logging_utils import log_function_call
+from ..Register.registerService import UserService
 from typing import Any, Optional
 from sqlalchemy import func
 
@@ -18,12 +19,14 @@ class InstitutionService:
 
     @staticmethod
     @log_function_call(entity_name="Institution")
-    def get_all_institutions(db: Session = Depends(get_db)):
+    def get_all_institutions(db: Session, user_id: int):
+        # You can use user_id for additional logic if needed
         return db.query(Institution).all()
     
     @staticmethod
     @log_function_call(entity_name="Institution")
-    def get_all_active_institutions(db: Session = Depends(get_db)):
+    def get_all_active_institutions(db: Session, user_id: int):
+        # Here we use user_id in the logic if needed, e.g., logging or permissions
         return db.query(Institution).filter(Institution.deleted_at == None).all()
     
     @staticmethod

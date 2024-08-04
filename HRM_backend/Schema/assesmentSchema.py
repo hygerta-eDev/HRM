@@ -14,13 +14,14 @@ class AssessmentBase(BaseModel):
     status: str = 'created'
     performance_objectives: Optional[str] = None
     general_evaluation: Optional[str] = None
-    employee_notes: Optional[str] = None
-    employee_notes_date: Optional[str] = None
+
 
 class AssessmentCreate(AssessmentBase):
     created_at: Optional[datetime]
 
 class AssessmentUpdate(AssessmentBase):
+    employee_notes: Optional[str] = None
+    employee_notes_date: Optional[str] = None
     updated_at: Optional[datetime]
 
 # class Assessment(AssessmentBase):

@@ -5,6 +5,7 @@ from Schema.departmentsSchema import DepartmentCreate,DepartmentUpdate,Departmen
 from Models.departmentsModel import Departments
 from Config.database import get_db
 from typing import List
+from ..Register.registerService import UserService
 
 router = APIRouter(prefix="/departments", tags=["Departments"])
 
@@ -19,9 +20,12 @@ def get_all_departments(db: Session = Depends(get_db),user_id: int = None):
         raise HTTPException(status_code=404, detail="No departments found")
     return departments
 
-@router.get("/active_departments",  response_model=List[Department])
-def get_all_active_departments(db: Session = Depends(get_db)):
-    return DepartmentService.get_all_active_departments(db=db)
+@router.get("/active_departments", response_model=List[Department])
+def get_all_active_departments(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(UserService.get_user_id_from_header)  # Use dependency to get user_id
+):
+    return DepartmentService.get_all_active_departments(db=db, user_id=user_id)
 
 
 # @router.get("/{department_id}", response_model=Department)

@@ -41,3 +41,14 @@ def create_employeeRoles(EmployeeRoles: EmployeeRolesCreate, db: Session = Depen
 # @router.delete("/delete_department/{leaveType_id}")
 # def delete_department(leaveType_id: int, db: Session = Depends(get_db)):
 #     return LeaveTypeService.delete_department(leaveType_id=leaveType_id, db=db)
+
+
+@router.put("/update_employee_role/{employee_id}")
+def update_employee_role(employee_id: int, role_name: str, db: Session = Depends(get_db)):
+    try:
+        employee_updated = EmployeeRolesService.update_employee_role(employee_id, role_name, db)
+        if not employee_updated:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        return {"message": f"Employee with ID {employee_id} role updated to {role_name}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

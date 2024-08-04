@@ -21,8 +21,8 @@ class DepartmentService:
     
     @staticmethod
     @log_function_call(entity_name="Department")
-    # @log_function_call
-    def get_all_active_departments(db: Session = Depends(get_db)):
+    def get_all_active_departments(db: Session, user_id: int):
+        # Log or use user_id as needed
         return db.query(Departments).filter(Departments.deleted_at == None).all()
 
     @staticmethod

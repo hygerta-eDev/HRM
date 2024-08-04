@@ -4,7 +4,7 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from typing import List
 from Config.database import Base,get_db
-from Schema.DMS import DocumentBase, DocumentCreate,DocumentI,DocumentVersionCreate,DocumentVersion,DocumentCategorys,Documentss,TitleResponse
+from Schema.DMS import DocumentBase, DocumentCreate,DocumentI,DocumentVersionCreate,DocumentVersion,DocumentCategorys,Documentss,DocumentOut,TitleResponse
 from .dmsService import DMSService,save_uploaded_file
 from Schema.enums.documents_title import CATEGORY_TITLE_MAPPING
 import aiofiles
@@ -15,6 +15,9 @@ from tempfile import NamedTemporaryFile
 import json
 from typing import Optional,Annotated,Dict,Union
 from pydantic import BaseModel,Field
+from fastapi.responses import FileResponse
+from starlette.requests import Request
+import os
 
 router = APIRouter()
 
@@ -146,6 +149,58 @@ async def download_all_files(employees_id: int, db: Session = Depends(get_db)):
     return FileResponse(path=tmp_file_path, filename=f"employee_{employees_id}_documents.zip", media_type='application/zip')
 
 
+# @router.get("/download_file/{documents_id}")
+# async def download_file(documents_id: int, db: Session = Depends(get_db)):
+#     # Query the database to get the document
+#     document = db.query(Document).filter(Document.document_id == documents_id).first()
+
+#     # If the document does not exist in the database, raise a 404 error
+#     if not document:
+#         raise HTTPException(status_code=404, detail="Document not found")
+
+#     # Get the file path from the document
+#     file_path = Path(document.file_path)
+
+#     # If the file does not exist at the specified path, raise a 404 error
+#     if not file_path.exists():
+#         raise HTTPException(status_code=404, detail="File not found on the server")
+
+#     # Return the file as a response
+#     return FileResponse(path=file_path, filename=file_path.name, media_type='application/octet-stream')
+
+import mimetypes
+
+@router.get("/download_file/{document_id}")
+async def download_file(document_id: int, db: Session = Depends(get_db)):
+    # Query the database to get the document
+    document = db.query(Document).filter(Document.document_id == document_id).first()
+
+    # If the document does not exist in the database, raise a 404 error
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    # Get the file path from the document
+    file_path = Path(document.file_path)
+
+    # If the file does not exist at the specified path, raise a 404 error
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found on the server")
+
+    # Determine the media type based on the file extension
+    media_type = mimetypes.guess_type(file_path.as_posix())[0] or "application/octet-stream"
+
+    # Return the file as a response with the correct media type
+    return FileResponse(path=file_path, filename=file_path.name, media_type=media_type)
+
+
+@router.get("/api/employees/{employee_id}/documents", response_model=List[DocumentOut])
+async def get_employee_documents(employee_id: int, db: Session = Depends(get_db)):
+    documents = db.query(Document).filter(Document.employee_id == employee_id).all()
+    print(documents)  # Debugging line
+    if not documents:
+        raise HTTPException(status_code=404, detail="Documents not found for the given employee ID")
+    return documents
+
 
 @router.get("/employee_documents_by_title/{employees_id}")
 async def get_employee_documents(employees_id: int, db: Session = Depends(get_db)):
@@ -197,3 +252,23 @@ def get_categories(db: Session = Depends(get_db)):
         
 #     return JSONResponse(content={"uploaded_files": file_names})
 
+
+
+@router.delete("/delete_document/{document_id}", response_model=DocumentI)
+def delete_document(document_id: int, db: Session = Depends(get_db)):
+    db_document = DMSService.delete_document(db=db, document_id=document_id)
+    if db_document is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return db_document
+@router.get("/download/work_contract")
+async def download_work_contract(request: Request):
+    template_path = "./DMS/F-057 Kontrata e punes E-Tech.docx"
+    
+    # Debugging: Print the resolved path
+    print(f"Resolved path: {os.path.abspath(template_path)}")
+
+    if not os.path.exists(template_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Send the file as a response
+    return FileResponse(template_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')

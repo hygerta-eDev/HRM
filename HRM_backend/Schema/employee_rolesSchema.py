@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class EmployeeRolesBase(BaseModel):
-    employee_id: Optional[int]
+    employee_id: Optional[str]
     role_id: Optional[int]
     expires_at: Optional[datetime] 
     user_id: int

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  hrms:
+    image: hrms:latest
+    container_name: hrms
+    build:
+      context: .
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Edev2002+
+      POSTGRES_DB: prova4
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:

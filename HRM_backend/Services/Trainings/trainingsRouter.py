@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from .trainingsService import TrainingService
-from Schema.trainingSchema import TrainingCreate,EmployeeTrainingCreate,TrainingUpdate, EmployeeTrainingUpdate
+from Schema.trainingSchema import TrainingCreate,EmployeeTrainingCreate,TrainingUpdate, EmployeeTrainingUpdate,AssignEmployeeTraining
 from Config.database import get_db
-
+from typing import List
 router = APIRouter(prefix="/training", tags=["Training"])
 
 @router.get("/")
@@ -58,3 +58,13 @@ def update_employeeTraining(employeeTraining_id: int, employeeTraining: Employee
 def delete_employeeTraining(employeeTraining_id: int, db: Session = Depends(get_db)):
     return TrainingService.delete_employeeTraining(employeeTraining_id=employeeTraining_id, db=db)
 
+@router.get("/{training_id}/assigned_employees", response_model=List[AssignEmployeeTraining])
+def get_assigned_employees(training_id: int, db: Session = Depends(get_db)):
+    return TrainingService.get_assigned_employees(training_id, db)
+
+@router.delete("/training/{training_id}/employee/{employee_id}")
+def remove_employee_from_training(training_id: int, employee_id: int, db: Session = Depends(get_db)):
+    deleted_employee_training = TrainingService.delete_employee_from_training(training_id, employee_id, db)
+    if not deleted_employee_training:
+        raise HTTPException(status_code=404, detail="Employee or Training not found")
+    return deleted_employee_training

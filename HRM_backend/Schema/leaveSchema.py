@@ -9,17 +9,22 @@ class LeaveBase(BaseModel):
     leave_type_id: int
     user_id: int
     employee_id: int
-    approved_by_id: Optional[int] = None
-    approved_at: Optional[datetime] = None
-    rejected_by_id: Optional[int] = None
-    rejected_at: Optional[datetime] = None
-    rejected_comment: Optional[str] = None
+    # approved_by_id: Optional[int] = None
+    # approved_at: Optional[datetime] = None
+    # rejected_by_id: Optional[int] = None
+    # rejected_at: Optional[datetime] = None
+    # rejected_comment: Optional[str] = None
     status: Optional[str] = 'Inactive'
 
 class LeaveCreate(LeaveBase):
     created_at: Optional[datetime]
 
 class LeaveUpdate(LeaveBase):
+    approved_by_id: Optional[int] = None
+    approved_at: Optional[datetime] = None
+    rejected_by_id: Optional[int] = None
+    rejected_at: Optional[datetime] = None
+    rejected_comment: Optional[str] = None
     updated_at: Optional[datetime]
 
 class LeaveInDBBase(LeaveBase):
@@ -30,3 +35,8 @@ class LeaveInDBBase(LeaveBase):
 
 class Leave(LeaveInDBBase):
     pass
+class LeaveStatusUpdate(BaseModel):
+    status: str
+
+# class LeaveById(LeaveBase):
+#     id:int

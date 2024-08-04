@@ -28,6 +28,8 @@ from Services.Institucions import institutionsRouter
 from Services.DMS import dmsRouter
 from Models.registersModel import Log
 from Config.Seeders.seeders import seed_all
+from Config import ldap_router
+
 
 # from sqlalchemy import event
 # from Models.leaveTypeModel import LeaveType
@@ -150,6 +152,8 @@ app.include_router(rolesRouter.router)
 app.include_router(employee_rolesRouter.router)
 app.include_router(institutionsRouter.router)
 app.include_router(dmsRouter.router)
+app.include_router(ldap_router.router)
+
 
 
 def create_tables_and_seed():

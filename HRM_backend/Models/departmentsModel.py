@@ -15,9 +15,10 @@ class Departments(Base):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime, nullable=True)
+
     employees = relationship("Employees", back_populates="departments")
     job_positions = relationship("JobPosition", back_populates="department")
-    institucion = relationship("Institution", back_populates="departments")  # Fixed relationship definition
+    institucion = relationship("Institution", back_populates="departments")
 
 
     def soft_delete(self):

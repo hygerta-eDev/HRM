@@ -7,7 +7,6 @@ class TrainingBase(BaseModel):
     start_date: date
     end_date: date
     description: str
-    outcome: str
     user_id: int
     active: bool
     completed_at: Optional[datetime]
@@ -19,6 +18,7 @@ class TrainingCreate(TrainingBase):
 
 
 class TrainingUpdate(TrainingBase):
+    outcome: str
     updated_at: Optional[datetime]
     
 
@@ -41,4 +41,12 @@ class EmployeeTrainingUpdate(BaseModel):
     employee_id: int
     training_id: int
     updated_at: Optional[datetime]
+    user_id:int
+    
+class AssignEmployeeTraining(BaseModel):
+    employee_id: int
+    name: str
+    last_name: str
+    training_id: int
+    created_at:datetime
     user_id:int

@@ -180,9 +180,9 @@ export default {
     <div class="container mx-auto" :class="{ 'blurred': deleteDialogVisible }">
       <!-- Filter Buttons -->
       <div class="filter-buttons flex justify-center space-x-4 mb-6">
-        <button @click="selectedCompany = 'Institution A'" :class="{'bg-blue-500 text-white': selectedCompany === 'Institution A', 'bg-gray-300': selectedCompany !== 'Institution A'}" class="px-4 py-2 rounded-lg">Institution A</button>
-        <button @click="selectedCompany = 'CyberOne'" :class="{'bg-blue-500 text-white': selectedCompany === 'CyberOne', 'bg-gray-300': selectedCompany !== 'CyberOne'}" class="px-4 py-2 rounded-lg">CyberOne</button>
-        <button @click="selectedCompany = 'eDev'" :class="{'bg-blue-500 text-white': selectedCompany === 'eDev', 'bg-gray-300': selectedCompany !== 'eDev'}" class="px-4 py-2 rounded-lg">eDev</button>
+        <button @click="selectedCompany = 'ETECH'" :class="{'bg-blue-500 text-white': selectedCompany === 'ETECH', 'bg-gray-300': selectedCompany !== 'ETECH'}" class="px-4 py-2 rounded-lg">ETECH</button>
+        <button @click="selectedCompany = 'EDEV'" :class="{'bg-blue-500 text-white': selectedCompany === 'EDEV', 'bg-gray-300': selectedCompany !== 'EDEV'}" class="px-4 py-2 rounded-lg">EDEV</button>
+        <button @click="selectedCompany = 'CYBERONE'" :class="{'bg-blue-500 text-white': selectedCompany === 'CYBERONE', 'bg-gray-300': selectedCompany !== 'CYBERONE'}" class="px-4 py-2 rounded-lg">CYBERONE</button>
         <button @click="selectedCompany = 'All'" :class="{'bg-blue-500 text-white': selectedCompany === 'All', 'bg-gray-300': selectedCompany !== 'All'}" class="px-4 py-2 rounded-lg">All</button>
       </div>
       
@@ -197,52 +197,63 @@ export default {
           <thead>
             <tr class="bg-sky-600">
               <th class="px-4 py-4 text-left text-base border-r border-black-900">No</th>
-              <th class="px-4 py-4  w-1/8 text-left">First Name</th>
-              <th class="px-4 py-4  w-1/8 text-left">Last Name</th>
-              <th class="px-4 py-4  w-1/8 text-left">Company</th>
-              <th class="px-4 py-4  w-1/8 text-left">Position</th>
-              <th class="px-4 py-4  w-1/8 text-left">Position</th>
-              <th class="px-4 py-4  w-1/8 text-left">Position</th>
-              <th class="px-4 py-4  w-1/8 text-left">Position</th>
-              <th class="px-4 py-4  w-1/8 text-left">Position</th>
-
-              <th class="px-4 py-4  w-1/8 text-left">Actions</th>
+              <th class="px-4 py-4 w-1/9 text-left">Number</th>
+              <th class="px-4 py-4 w-1/9 text-left">First Name</th>
+              <th class="px-4 py-4 w-1/9 text-left">Last Name</th>
+              <th class="px-4 py-4 w-1/9 text-left">Username</th>
+              <th class="px-4 py-4 w-1/9 text-left">Company</th>
+              <th class="px-4 py-4 w-1/9 text-left">Department</th>
+              <th class="px-4 py-4 w-1/9 text-left">Position</th>
+              <th class="px-4 py-4 w-1/9 text-left">Active</th>
+              <th class="px-4 py-4 w-1/9 text-left">Email</th>
+              <th class="px-4 py-4 w-1/9 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(employee, index) in displayedEmployees" :key="employee.id"
                 :class="{ 'bg-white-100': index % 2 === 0, 'bg-gray-300': index % 2 !== 0 }"
                 class="border-b border-gray-300 hover:bg-blue-100">
-              <td class="px-4 py-4 text-left border-r border-black-900">{{ index + 1 }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.name }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.last_name }}</td>
-              <td class="px-4 py-4 text-left">{{ getInstitutionName(employee.institucion_id) }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.job_position_id }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.job_position_id }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.job_position_id }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.job_position_id }}</td>
-              <td class="px-4 py-4 text-left">{{ employee.job_position_id }}</td>
+              <td class="w-1/9 px-4 py-4 text-left border-r border-black-900">{{ index + 1 }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.number }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.name }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.last_name }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.username }}</td>
 
+              <td class="w-1/9 px-4 py-4 text-left">{{ getInstitutionName(employee.institucion_id) }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.department_id }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.job_position_id }}</td>
+              <td class="w-1/9 px-4 py-4 text-left">
+                  <span v-if="employee.active" class="text-green-500">
+                    <i class="fas fa-check-circle fa-lg"></i>
+                  </span>
+                  <span v-else class="text-red-500">
+                    <i class="fas fa-times-circle fa-lg"></i>
+                  </span>
+                </td>
+              <td class="w-1/9 px-4 py-4 text-left">{{ employee.email }}</td>
 
-              <td class="px-4 py-4 text-left">
+              <td class="w-1/9 px-4 py-4 text-left">
                 <router-link :to="'/Employee/ViewEmployee/' + employee.id">
                   <i @click="viewCompany(company.id)" class="fas fa-eye fa-lg text-green-500 cursor-pointer"></i>
-
-                  <!-- <button class="bg-green-500 text-white px-2 py-1 rounded-lg">View</button> -->
                 </router-link>
-                <router-link :to="'/Employee/EditEmployee/' + employee.id">
-                  <i @click="editCompany(employee.id)" class="fas fa-edit fa-lg text-yellow-500 cursor-pointer ml-6"></i>
-
-                  <!-- <button class="bg-yellow-500 text-white px-2 py-1 rounded-lg ml-2">Edit</button> -->
+                <router-link :to="`/Employee/EditEmployee/${employee.id}`">
+                  <i @click="editEmployee(employee.id)" class="fas fa-edit fa-lg text-yellow-500 cursor-pointer ml-6"></i>
                 </router-link>
                 <i @click="confirmDelete(employee.id, employee.name)" class="fas fa-trash-alt fa-lg text-red-500 cursor-pointer ml-6"></i>
-
-                <!-- <button @click="deleteEmployee(employee.id)" class="bg-red-500 text-white px-2 py-1 rounded-lg ml-2">Delete</button> -->
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+      
+      <Dialog v-model:visible="deleteDialogVisible" header="Confirm" @hide="cancelDelete" class="w-[575px]"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <p>Are you sure you want to delete the Employee "{{ EmployeeToDeleteName }}"?</p>
+        <div class="flex justify-center mt-6">
+          <Button label="Delete" @click="performDelete" class="bg-red-500 border-red-500 ml-5" />
+          <Button label="Cancel" @click="cancelDelete" class="mr-3 ml-5" :style="{ backgroundColor: '#6B7280', borderColor: '#6B7280' }" />
+        </div>
+      </Dialog>
     </div>
   </div>
 </template>
@@ -251,18 +262,29 @@ export default {
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '@/api'; // Assuming you have an API module
+import { toast } from 'vue3-toastify';
 
+
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
 export default {
+  components: {
+    Dialog,
+    Button,
+  },
   setup() {
+    let EmployeeToDelete = null;
+    const EmployeeToDeleteName = ref('');
+    const deleteDialogVisible = ref(false);
     const selectedCompany = ref('All');
     const employees = ref([]);
-    const institutions = ref({}); // Object to store institution names by ID
+    const institutions = ref({}); 
 
     const router = useRouter();
 
     const fetchAllEmployees = async () => {
       try {
-        const employeesResponse = await api.get('/employees/');
+        const employeesResponse = await api.get('/employees/active_Employeess/');
         employees.value = employeesResponse.data;
         
         const institutionsResponse = await api.get('/institutions/');
@@ -281,14 +303,46 @@ export default {
         return employees.value.filter(employee => getInstitutionName(employee.institucion_id) === selectedCompany.value);
       }
     });
-
+    const editEmployee = (EmployeeId) => {
+      router.push(`/Employee/EditEmployee/${EmployeeId}`);
+    };
     const getInstitutionName = (institutionId) => {
       return institutions.value[institutionId] || '';
     };
 
-    const deleteEmployee = (employeeId) => {
-      // Logic to handle deleting an employee
+    const confirmDelete = (employeeId, employeeName) => {
+      EmployeeToDelete = employeeId;
+      EmployeeToDeleteName.value = employeeName;
+      deleteDialogVisible.value = true;
     };
+
+    const cancelDelete = () => {
+      EmployeeToDelete = null;
+      EmployeeToDeleteName.value = '';
+      deleteDialogVisible.value = false;
+    };
+
+    const performDelete = () => {
+      if (EmployeeToDelete) {
+        api.delete(`/employees/delete_employee/${EmployeeToDelete}`)
+          .then(() => {
+            deleteDialogVisible.value = false;
+            fetchAllEmployees();
+            toast.success("Employee deleted successfully!", {
+              autoClose: 3000,
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          })
+          .catch(error => {
+            console.error('Error deleting employee:', error);
+            toast.error("Failed to delete employee!", {
+              autoClose: 3000,
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          });
+      }
+    };
+
 
     onMounted(() => {
       fetchAllEmployees();
@@ -298,7 +352,16 @@ export default {
       selectedCompany,
       displayedEmployees,
       getInstitutionName,
-      deleteEmployee
+  
+      selectedCompany,
+      displayedEmployees,
+      getInstitutionName,
+      confirmDelete,
+      cancelDelete,
+      performDelete,
+      deleteDialogVisible,
+      EmployeeToDeleteName,
+      editEmployee,
     };
   }
 }

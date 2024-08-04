@@ -13,9 +13,9 @@ class EmployeeBase(BaseModel):
     username: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]
-    gender: Genders ='N/A'
-    ethnicity_id: Optional [int]
-    marital_status: Optional[MaritalStatus] = 'Single'
+    gender: Genders 
+    ethnicity_id: Optional[int]
+    marital_status: Optional[MaritalStatus]
     # driving_license: str
     date_of_birth: Optional[date]
     date_hired: Optional[date]
@@ -99,3 +99,22 @@ class EmployeeUpdate(BaseModel):
     deleted_at: Optional[datetime]
     class Config:
         from_attributes = True
+        
+class UsernameRequest(BaseModel):
+    name: str
+    last_name: str
+
+class UsernameResponse(BaseModel):
+    username: str
+
+class documentEmployee(BaseModel):
+    name: str
+    personal_number: str
+    date_of_birth: date
+    city: str
+    street: str
+    job_position_id: str
+    date_hired: date
+    contract_end_date: Optional[date]
+    created_at: date
+    salary: str

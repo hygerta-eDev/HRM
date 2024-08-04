@@ -310,8 +310,11 @@ from fastapi import Depends, HTTPException
 from Models.registersModel import Log
 from sqlalchemy import func
 from typing import Any, Callable
+from .database import get_db  # Assuming get_db is your database dependency
+
 
 logger = logging.getLogger(__name__)
+
 
 def log_function_call(entity_name: str = None):
     def decorator(func: Callable):
@@ -328,7 +331,19 @@ def log_function_call(entity_name: str = None):
             if not isinstance(db, Session):
                 raise ValueError("Database session not provided or incorrect argument position.")
 
-            user_id = kwargs.get('user_id', 1)
+            # Retrieve user_id from kwargs or pass from function arguments
+            # user_id = kwargs.get('user_id', None)
+            # if user_id is None:
+            #     # Attempt to retrieve from user context if available
+            #     user_context = kwargs.get('user')
+            #     if user_context:
+            #         user_id = user_context.get('user_id')
+
+            # if user_id is None:
+            #     user_id = 1  # default user_id if none is provided
+
+
+            user_id = kwargs.get('user_id',1)
             entity_id = kwargs.get('entity_id')
             entity_type = kwargs.get('entity_type')
             changes = kwargs.get('changes', {})

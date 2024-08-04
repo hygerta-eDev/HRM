@@ -13,7 +13,17 @@ class EmployeeLeaveQuotaCreate(BaseModel):
     additional_approved: float
     user_id:int
     created_at :datetime
-
+class EmployeeLeaveQuotaCall(BaseModel):
+    leave_type_id: int
+    employee_id: int
+    # leave_period_id: int
+    amount: float
+    taken: float
+    available: float
+    carried_over: float
+    additional_approved: float
+    user_id:int
+    created_at :datetime
 
 class EmployeeLeaveQuotaUpdate(BaseModel):
     leave_type_id: Optional[int]
