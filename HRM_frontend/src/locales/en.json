@@ -41,17 +41,32 @@
       "language":"Language",
       "english":"English",
       "albanian":"Albanian",
-        "home": "Home",
-        "administrator": "Administrator",
-        "companies": "Companies",
-        "all_companies": "All Companies",
-      
-      
-        "name": "Name",
-        "descriptions": "Descriptions",
-        "view": "View",
-        "confirm": "Confirm",
-        "confirm_delete": "Are you sure you want to delete the company \"{{ companyName }}\"?"
+      "home": "Home",
+      "administrator": "Administrator",
+      "companies": "Companies",
+      "all_companies": "All Companies",      
+      "name": "Name",
+      "descriptions": "Descriptions",
+      "view": "View",
+      "confirm": "Confirm",
+      "confirm_delete": "Are you sure you want to delete the {name} \"{nameToDelete}\"?",
+      "company_name": "Company name",
+      "view_company":"View Company",
+      "edit_company":"Edit Company",
+      "save":"Save",
+      "departments": "Departments",
+      "search": "Search",
+      "all_departments": "All Departments",
+      "all_departments_of": "All Departments of",
+      "new_department": "New Department",
+      "no_records_found": "No records found",
+      "company": "Company",
+      "department_name": "Departament name",
+      "select_company": "Select a Company",
+      "create_new_department": "Create new departament",
+      "view_department": "View departament"
+
+
 
       
     }

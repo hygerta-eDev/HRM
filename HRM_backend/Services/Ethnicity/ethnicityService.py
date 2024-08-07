@@ -47,9 +47,10 @@ class EthnicityService:
                 db_ethnicities.name = ethnicity.name
             if db_ethnicities.user_id is not None:
                 db_ethnicities.user_id = ethnicity.user_id
-            if db_ethnicities.updated_at is not None:
-                db_ethnicities.updated_at = ethnicity.updated_at
-            
+            # if db_ethnicities.updated_at is not None:
+            #     db_ethnicities.updated_at = ethnicity.func.now()
+            db_ethnicities.updated_at = func.now()
+
 
 
             db.commit()

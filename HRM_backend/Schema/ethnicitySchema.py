@@ -11,4 +11,4 @@ class EthnicityCreate(BaseModel):
 class EthnicityUpdate(BaseModel):
     name: Optional[str]
     user_id:Optional[int]
-    updated_at: Optional[datetime]
+    # updated_at: Optional[datetime]

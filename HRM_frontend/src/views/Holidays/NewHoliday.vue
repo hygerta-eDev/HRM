@@ -13,36 +13,41 @@
           Administrator
         </router-link>
         <span class="mx-2">></span>
-        <router-link to="/Qualifications" class="text-blue-500 hover:underline flex items-center">
-          <i class="fas fa-graduation-cap text-lg mr-2"></i> <!-- Qualifications icon -->
-          Qualifications
+        <router-link to="/Holidays" class="text-blue-500 hover:underline flex items-center">
+          <i class="fas fa-calendar-alt text-lg mr-2"></i> <!-- Holidays icon -->
+          Holidays
         </router-link>
         <span class="mx-2">></span>
-        <span class="font-semibold">New Qualification</span>
+        <span class="font-semibold">New Holiday</span>
       </nav>
     </div>
+
     <div class="shadow-lg rounded-lg border border-blue-500 relative mt-12">
       <div class="absolute inset-x-0 -top-5 flex justify-center">
         <h1 class="text-3xl font-bold text-gray-800 bg-white px-4 relative z-10">
-          Create New Qualification
+          Create New Holiday
         </h1>
       </div>
       <div class="pt-12 px-8 pb-8">
         <div class="flex flex-col md:flex-row p-10 gap-6">
           <div class="flex-1 relative">
-            <label class="block text-sm font-semibold mb-2 text-gray-700">Qualification Name</label>
-            <i class="absolute left-3 top-1/2 mt-3 transform -translate-y-1/2 text-gray-500 fas fa-graduation-cap"></i>
-            <input v-model="newQualification.name" type="text" class="w-full pl-12 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label class="block text-sm font-semibold mb-2 text-gray-700">Holiday date</label>
+            <VueDatePicker placeholder="Select a date" v-model="newHoliday.date" type="date" class="w-full pl-12 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">            <i class="absolute left-3 top-1/2 mt-3 transform -translate-y-1/2 text-gray-500 fas fa-calendar-alt"></i></VueDatePicker>
           </div>
           <div class="flex-1 relative">
-            <label class="block text-sm font-semibold mb-2 text-gray-700">Description</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-700">Holiday description</label>
             <i class="absolute left-3 top-1/2 mt-3 transform -translate-y-1/2 text-gray-500 fas fa-info-circle"></i>
-            <input v-model="newQualification.slug" type="text" class="w-full pl-12 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input v-model="newHoliday.description" type="text" class="w-full pl-12 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="flex-1 relative">
+            <label class="block text-sm font-semibold mb-2 text-gray-700">Holiday recurring</label>
+            <i class="absolute left-3 top-1/2 mt-3 transform -translate-y-1/2 text-gray-500 fas fa-sync-alt"></i>
+            <input v-model="newHoliday.recurring" type="text" class="w-full pl-12 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
         </div>
         <div class="mt-6 flex justify-end gap-4">
-          <button @click="validateAndCreateQualification" class="bg-sky-600 text-white px-6 py-2 rounded-lg shadow-md font-bold hover:bg-sky-700 transition duration-300">Create</button>
-          <router-link :to="`/Qualifications`">
+          <button @click="validateAndCreateHoliday" class="bg-sky-600 text-white px-6 py-2 rounded-lg shadow-md font-bold hover:bg-sky-700 transition duration-300">Create</button>
+          <router-link :to="`/Holidays`">
             <button class="bg-gray-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-gray-600 transition font-bold duration-300">Cancel</button>
           </router-link>
         </div>
@@ -56,15 +61,18 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '@/api';
 import { toast } from 'vue3-toastify';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 const router = useRouter();
-const newQualification = ref({
-  name: '',
-  slug: ''
+const newHoliday = ref({
+  date: '',
+  description: '',
+  recurring: '',
 });
 
-const validateAndCreateQualification = () => {
-  if (!newQualification.value.name || !newQualification.value.slug) {
+const validateAndCreateHoliday = () => {
+  if (!newHoliday.value.date || !newHoliday.value.description || newHoliday.value.recurring === '') {
     toast.error("Please fill in all required fields.", {
       autoClose: 3000,
       position: toast.POSITION.TOP_RIGHT,
@@ -72,21 +80,22 @@ const validateAndCreateQualification = () => {
     return;
   }
 
-  newQualification.value.user_id = 1;
-  api.post('/qualification/create_qualifications', newQualification.value)
+  newHoliday.value.user_id = 1;
+  api.post('holidays/create_holiday', newHoliday.value)
     .then(response => {
-      console.log('Qualification created successfully:', response.data);
-      router.push('/Qualifications');
+      console.log('Holiday created successfully:', response.data);
+
+      router.push('/Holidays');
       setTimeout(() => {
-        toast.success("Qualification created successfully!", {
+        toast.success("Holiday created successfully!", {
           autoClose: 3000,
           position: toast.POSITION.TOP_RIGHT,
         });
       }, 250);
     })
     .catch(error => {
-      console.error('Error creating Qualification:', error);
-      toast.error("Failed to create Qualification!", {
+      console.error('Error creating Holiday:', error);
+      toast.error("Failed to create Holiday!", {
         autoClose: 3000,
         position: toast.POSITION.TOP_RIGHT,
       });

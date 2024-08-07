@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from Config.database import get_db
 from Models.holidayModel import Holiday
 from Schema.holidaySchema import HolidayCreate,HolidayUpdate
+from sqlalchemy import func
 
 class HolidayService:
     @staticmethod
@@ -27,12 +28,11 @@ class HolidayService:
             recurring=Holidays.recurring,
             user_id=Holidays.user_id,
             description=Holidays.description,
-            created_at=Holidays.created_at,
-
             
         )
 
         db.add(db_holiday)
+        db_holiday.created_at=func.now()
         db.commit()
         db.refresh(db_holiday)
 
@@ -50,8 +50,7 @@ class HolidayService:
                 db_holiday.description = holiday.description
             if holiday.user_id is not None:
                 db_holiday.user_id = holiday.user_id
-            if holiday.updated_at is not None:
-                db_holiday.updated_at = holiday.updated_at
+            db_holiday.updated_at = func.now()
             db.commit()
             db.refresh(db_holiday)
 

@@ -72,7 +72,7 @@
           <!-- Active -->
           <div class="w-full">
             <label for="active" class="block text-sm font-semibold mb-2 text-gray-700">Active</label>
-            <div class="flex items-center mt-2">
+            <div class="flex items-center justify-center mt-2">
               <InputSwitch v-model="Department.active" />
             </div>
           </div>

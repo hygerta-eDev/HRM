@@ -14,6 +14,7 @@
     "@schedule-x/vue": "^1.46.0",
     "@vuepic/vue-datepicker": "^9.0.0",
     "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
     "flowbite": "^2.3.0",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",

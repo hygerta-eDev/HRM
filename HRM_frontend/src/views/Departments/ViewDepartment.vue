@@ -4,32 +4,35 @@
     <div class="relative mb-6">
       <nav class="flex items-center text-sm text-gray-700">
         <router-link to="/Dashboard" class="text-blue-500 hover:underline flex items-center">
-          <i class="fas fa-home text-lg mr-2"></i> Home
+          <i class="fas fa-home text-lg mr-2"></i> 
+          {{$t('home')}}
         </router-link>
         <span class="mx-2">/</span>
         <router-link to="/Administrator" class="text-blue-500 hover:underline flex items-center">
-          <i class="fas fa-user-cog text-lg mr-2"></i> Administrator
+          <i class="fas fa-user-cog text-lg mr-2"></i> 
+          {{$t('administrator')}}
         </router-link>
         <span class="mx-2">/</span>
         <router-link to="/Departments" class="text-blue-500 hover:underline flex items-center">
-          <i class="fas fa-building text-lg mr-2"></i> Departments
+          <i class="fas fa-building text-lg mr-2"></i> 
+          {{$t('departments')}}
         </router-link>
         <span class="mx-2">/</span>
-        <span class="font-semibold">View Department</span>
+        <span class="font-semibold">{{$t('view_department')}}</span>
       </nav>
     </div>
 
     <div class="shadow-2xl rounded-lg border border-blue-500 relative mt-12 bg-white">
       <div class="absolute inset-x-0 -top-5 flex justify-center">
         <h1 class="text-3xl font-bold text-gray-800 bg-white px-4 relative z-10">
-          View Department
+          {{$t('view_department')}} 
         </h1>
       </div>
       <div class="pt-12 px-8 pb-8">
         <div v-if="department" class="grid grid-cols-1 md:grid-cols-2 gap-8 p-10">
           <!-- Department Name -->
           <div class="w-full">
-            <label for="departmentName" class="block text-sm font-semibold mb-2 text-gray-700">Department Name</label>
+            <label for="departmentName" class="block text-sm font-semibold mb-2 text-gray-700">{{$t('department_name')}}</label>
             <div class="input-container">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160" class="absolute left-3 w-5 h-5" fill="gray" stroke="currentColor" stroke-width="4">
             <path d="M31.17,58.6V54.26a2,2,0,0,0-2.91-1.78l-14,7.15a2,2,0,0,0-1.09,1.78v5.76l4-1.9V62.64l10-5.11v3Z"/>
@@ -50,7 +53,7 @@
 
           <!-- Slug -->
           <div class="w-full">
-            <label for="slug" class="block text-sm font-semibold mb-2 text-gray-700">Slug</label>
+            <label for="slug" class="block text-sm font-semibold mb-2 text-gray-700">{{$t('description')}}</label>
             <div class="input-container">
               <i class="fas fa-tag input-icon"></i>
               <div class="w-full  py-3 bg-gray-100 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ department.slug }}</div>
@@ -59,7 +62,7 @@
 
           <!-- Company -->
           <div class="w-full">
-            <label for="company" class="block text-sm font-semibold mb-2 text-gray-700">Company</label>
+            <label for="company" class="block text-sm font-semibold mb-2 text-gray-700">{{$t('company')}}</label>
             <div class="input-container">
               <i class="fas fa-building input-icon"></i>
               <div class="w-full  py-3 bg-gray-100 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ companyName }}</div>
@@ -68,8 +71,8 @@
 
           <!-- Active -->
           <div class="w-full">
-            <label for="active" class="block text-sm font-semibold mb-2 text-gray-700">Active</label>
-            <div class="flex items-center mt-2">
+            <label for="active" class="block text-sm font-semibold mb-2 text-gray-700">{{$t('active')}}</label>
+            <div class="flex items-center justify-center mt-2">
               <InputSwitch v-model="department.active" disabled />
             </div>
           </div>
@@ -77,16 +80,16 @@
 
         <!-- Loading State -->
         <div v-else class="text-center mt-4">
-          <p>Loading...</p>
+          <p>{{$t('loading...')}}</p>
         </div>
 
         <!-- Action Buttons -->
         <div class="mt-6 flex justify-end gap-4">
           <router-link v-if="department" :to="`/Departments/Edit/${department.id}`">
-            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md font-bold hover:bg-blue-700 transition duration-300">Edit</button>
+            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md font-bold hover:bg-blue-700 transition duration-300">{{$t('edit')}}</button>
           </router-link>
           <router-link to="/Departments">
-            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-gray-600 transition font-bold duration-300">Back</button>
+            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-gray-600 transition font-bold duration-300">{{$t('back')}}</button>
           </router-link>
         </div>
       </div>

@@ -32,7 +32,7 @@
     "add_employees_to_training": "Shto PunonjësIT në Trajnim",
     "remove": "Largo",
     "add_employee_to_training": "Shto Punonjës në Trajnim",
-    "edit": "Ndrysho",
+    "edit": "Redakto",
     "back": "Prapa",
     "select_employees": "Zgjidh Punonjës",
     "assigned_employees": "Punonjësit e Caktuar",
@@ -40,16 +40,32 @@
     "language":"Gjuhët",
     "english":"Anglisht",
     "albanian":"Shqip",
-        "home": "Kryefaqja",
-        "administrator": "Administratori",
-        "companies": "Kompanitë",
-        "all_companies": "Të gjitha kompanitë",
-        "name": "Emri",
-        "descriptions": "Përshkrimet",
-        "view": "Shiko",
-        "confirm": "Konfirmo",
-        "confirm_delete": "A jeni të sigurt që dëshironi të fshini kompaninë \"{{ companyName }}\"?"
-        
+    "home": "Kryefaqja",
+    "administrator": "Administratori",
+    "companies": "Kompanitë",
+    "all_companies": "Të gjitha kompanitë",
+    "name": "Emri",
+    "descriptions": "Përshkrimet",
+    "view": "Shiko",
+    "confirm": "Konfirmo",
+    "confirm_delete": "A jeni të sigurt që dëshironi të fshini {name} \"{nameToDelete}\"?",
+    "company_name": "Emri i kompanisë",
+    "view_company":"Shiko Kompaninë",
+    "edit_company":"Ndrysho Kompaninë",
+    "save":"Ruaj",
+    "departments": "Departamentet",
+    "search": "Kërko",
+    "all_departments": "Të gjitha departamentet",
+    "all_departments_of": "Të gjitha departamentet e",
+    "new_department": "Departament i ri",
+    "no_records_found": "Nuk u gjetën regjistra",
+    "company": "Kompania",
+    "department_name": "Emri i departamentit",
+    "select_company": "Selekto Kompaninë",
+    "create_new_department": "Krijo departament të ri",
+    "view_department": "Shiko departamentin"
+
+
       
 }
   

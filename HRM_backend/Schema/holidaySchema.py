@@ -9,12 +9,13 @@ class HolidayBase(BaseModel):
     description: str
 
 class HolidayCreate(HolidayBase):
-    created_at: datetime
+    # created_at: datetime
 
-    # pass
+    pass
 
 class HolidayUpdate(HolidayBase):
-    updated_at: datetime
+    # updated_at: datetime]
+    pass
 
     class Config:
         orm_mode = True

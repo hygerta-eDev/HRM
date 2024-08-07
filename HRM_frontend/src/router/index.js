@@ -184,6 +184,35 @@ const routes = [
         meta: { requiresAuth: true, roles:[1]}
 
       },
+      // Holidays routes 
+      {
+        path: 'Holidays',
+        name: 'Holidays',
+        component: () => import('../views/Holidays/Holidays.vue'),
+        meta: { requiresAuth: true}
+
+      },
+      {
+        path: 'Holidays/NewHoliday',
+        name: 'NewHoliday',
+        component: () => import('../views/Holidays/NewHoliday.vue'),
+        // meta: { requiresAuth: true, roles:[1]}
+
+      },
+      {
+        path: 'Holidays/:id',
+        name: 'ViewHoliday',
+        component: () => import('../views/Holidays/ViewHoliday.vue'),
+        meta: { requiresAuth: true, roles:[1]}
+
+      },
+      {
+        path: 'Holidays/Edit/:id',
+        name: 'EditHoliday',
+        component: () => import('../views/Holidays/EditHoliday.vue'),
+        meta: { requiresAuth: true, roles:[1]}
+
+      },
       // LeaveTypes routes
       {
         path: 'LeaveTypes',

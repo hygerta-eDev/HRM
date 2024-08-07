@@ -14,6 +14,7 @@
               {{ $t('administrator') }}
             </router-link>
             <span class="mx-2">></span>
+            <i class="fas fa-building text-lg mr-2"></i>
             <span class="font-semibold">{{ $t('companies') }}</span>
           </nav>
         </div>
@@ -24,7 +25,7 @@
               <input
                 type="text"
                 v-model="searchQuery"
-                placeholder="Search companies"
+                :placeholder="$t('searchCompanies')"
                 class="border border-gray-300 rounded-lg px-4 py-2 pl-10 shadow-inner"
               />
               <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
@@ -36,7 +37,7 @@
             </router-link>
           </div>
         </div>
-        <div class="overflow-x-auto shadow-3xl rounded-lg border-2 border-blue-300">
+        <div class="overflow-x-auto shadow-2xl drop-shadow-2xl border border-blue-200 rounded-lg">
           <table class="min-w-full border-collapse">
             <thead>
               <tr class="bg-sky-600 text-white">
@@ -76,7 +77,7 @@
           </table>
         </div>
         <Dialog v-model:visible="deleteDialogVisible" :header="$t('confirm')" @hide="cancelDelete" class="w-[575px] bg-white" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-          <p>{{ $t('confirm_delete', { companyName: companyToDeleteName }) }}</p>
+          <p>{{ $t('confirm_delete', { name: 'company', nameToDelete: companyToDeleteName }) }}</p>
           <div class="flex justify-center mt-6">
             <Button :label="$t('delete')" @click="performDelete" class="bg-red-500 border-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300 ml-5 shadow-md" />
             <Button :label="$t('cancel')" @click="cancelDelete" class="bg-slate-400 border-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition duration-300 mr-3 ml-5 shadow-md" />
@@ -87,9 +88,6 @@
   </div>
 </template>
 
-
-
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -97,7 +95,6 @@ import { api } from '@/api';
 import { toast } from 'vue3-toastify';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-// import 'primevue/resources/themes/aura-light-indigo/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 
@@ -122,7 +119,7 @@ const getAllCompanies = () => {
 
   api.get('/institutions/active_institutions', {})
     .then(response => {
-      console.log('All companies:', response.data);
+      // console.log('All companies:', response.data);
       companies.value = response.data;
       totalRecords.value = response.data.length;
     })
@@ -176,6 +173,7 @@ const cancelDelete = () => {
 };
 
 const performDelete = () => {
+
   if (companyToDelete) {
     api.delete(`/institutions/delete_institution/${companyToDelete}`)
       .then(() => {

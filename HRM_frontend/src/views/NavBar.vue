@@ -164,7 +164,7 @@
                     to="/Companies"
                     class="group flex items-center px-2 py-2 text-xl leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
                   >
-                    <i class="pi pi-briefcase mr-4"></i>
+                  <i class="fa-regular fa-building mr-4"></i>
                     Companies
                   </RouterLink>
                   <router-link
@@ -201,6 +201,13 @@
                   >
                     <i class="pi pi-calendar-minus mr-4"></i>
                     Leave Types
+                  </RouterLink>
+                  <RouterLink
+                    to="/Holidays"
+                    class="group flex items-center px-2 py-2 text-xl leading-6 font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150"
+                  >
+                    <i class="pi pi-calendar-minus mr-4"></i>
+                    Holidays
                   </RouterLink>
                 </div>
               </transition>
